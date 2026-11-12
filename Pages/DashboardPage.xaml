@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="FrameForge.Pages.DashboardPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/FrameForge;component/FfTheme.xaml"/>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="28,24,28,40">
+            <TextBlock Text="Painel" Style="{StaticResource H1}"/>
+            <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,16"
+                       Text="O teu hardware e, mais importante, o que está a custar desempenho neste PC — lido do Windows, sem tocar em nada."/>
+            <WrapPanel x:Name="Stats"/>
+            <Border Style="{StaticResource FfCard}">
+                <StackPanel x:Name="Hw">
+                    <TextBlock Text="Hardware" Style="{StaticResource H2}"/>
+                    <TextBlock Text="A ler o hardware…" Style="{StaticResource MutedText}"/>
+                </StackPanel>
+            </Border>
+            <DockPanel Margin="0,8,0,8">
+                <Button DockPanel.Dock="Right" Content="Voltar a analisar" Style="{StaticResource Btn}" Click="Refresh_Click"/>
+                <TextBlock Text="O que encontrei no teu PC" Style="{StaticResource H2}" VerticalAlignment="Center"/>
+            </DockPanel>
+            <StackPanel x:Name="Advice"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

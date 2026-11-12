@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="FrameForge.Pages.SessionsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/FrameForge;component/FfTheme.xaml"/>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="28,24,28,40">
+            <TextBlock Text="Sessões e relatórios" Style="{StaticResource H1}"/>
+            <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,16"
+                       Text="Grava qualquer jogo que já esteja aberto (ou usa JOGAR no separador Jogos). No fim recebes um relatório com cada quebra, a causa provável e se se resolve com ajustes ou só com upgrade."/>
+
+            <Border Style="{StaticResource FfCard}">
+                <StackPanel>
+                    <TextBlock Text="Gravar agora" Style="{StaticResource H2}"/>
+                    <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,10"
+                               Text="Programas a desenhar frames neste momento (detetados por ETW). Atalho dentro do jogo: Ctrl+Alt+R começa/para a gravação do jogo em primeiro plano; Ctrl+Alt+O liga/desliga o overlay."/>
+                    <ListBox x:Name="Presenters" Height="130" Background="{DynamicResource Hover}" BorderThickness="0" Foreground="{DynamicResource Fg}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button x:Name="RecBtn" Content="● Gravar selecionado" Style="{StaticResource BtnAccent}" Click="Rec_Click"/>
+                        <Button x:Name="StopBtn" Content="■ Parar e analisar" Style="{StaticResource BtnDanger}" Click="Stop_Click"/>
+                        <Button Content="Overlay" Style="{StaticResource Btn}" Click="Overlay_Click"/>
+                    </StackPanel>
+                    <TextBlock x:Name="RecStatus" Style="{StaticResource Body}" Margin="0,10,0,0"/>
+                    <TextBlock x:Name="EtwStatus" Style="{StaticResource MutedText}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource FfCard}">
+                <StackPanel>
+                    <TextBlock Text="Sensibilidade a quebras" Style="{StaticResource H2}"/>
+                    <Slider x:Name="Sens" Minimum="0.5" Maximum="2" TickFrequency="0.25" IsSnapToTickEnabled="True" ValueChanged="Sens_Changed" Width="300" HorizontalAlignment="Left"/>
+                    <TextBlock x:Name="SensText" Style="{StaticResource MutedText}"/>
+                    <CheckBox x:Name="AdvCpu" Margin="0,10,0,0" Content="Sensores avançados da CPU (temperatura/consumo via driver PawnIO)" Click="AdvCpu_Click"/>
+                    <TextBlock Style="{StaticResource MutedText}" Text="Desligado por omissão: usa um driver de kernel e alguns anti-cheats (Vanguard, FACEIT) podem recusá-lo ou não deixar o jogo abrir. Sem ele, a perda de clock da CPU continua a ser detetada pelos contadores do Windows. Requer 'winget install namazso.PawnIO'."/>
+                </StackPanel>
+            </Border>
+
+            <DockPanel Margin="0,8,0,8">
+                <Button DockPanel.Dock="Right" Content="Abrir pasta" Style="{StaticResource Btn}" Click="Folder_Click"/>
+                <TextBlock Text="Relatórios" Style="{StaticResource H2}" VerticalAlignment="Center"/>
+            </DockPanel>
+            <StackPanel x:Name="Reports"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

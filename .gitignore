@@ -1,0 +1,14 @@
+bin/
+obj/
+publicar/
+artifacts/
+instaladora/
+.xgrok/
+AGENTS.md
+.env*
+*.user
+*.suo
+.vs/
+.idea/
+.vscode/
+Native/
