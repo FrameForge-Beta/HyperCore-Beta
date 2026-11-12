@@ -1,0 +1,81 @@
+﻿<UserControl x:Class="FrameForge.Pages.OverclockPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/FrameForge;component/FfTheme.xaml"/>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="28,24,28,40">
+            <TextBlock Text="Overclock da GPU" Style="{StaticResource H1}"/>
+            <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,12"
+                       Text="Como o MSI Afterburner: offset do núcleo e da memória (NVAPI), limite de energia, teto de clock para undervolt e ventoinha (NVML). Nada é gravado na placa: tudo volta ao normal ao reiniciar ou com 'Stock'."/>
+            <StackPanel x:Name="Warnings"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="320"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Style="{StaticResource FfCard}">
+                    <StackPanel>
+                        <!-- Tudo o que escreve na placa: só aparece em NVIDIA (NVAPI/NVML). -->
+                        <StackPanel x:Name="WriteControls">
+                        <DockPanel>
+                            <ComboBox x:Name="Profiles" DockPanel.Dock="Right" MinWidth="230" SelectionChanged="Profiles_Changed"/>
+                            <TextBlock Text="Perfil" Style="{StaticResource H2}" VerticalAlignment="Center"/>
+                        </DockPanel>
+                        <TextBlock x:Name="ProfileDesc" Style="{StaticResource Body}" Foreground="{DynamicResource Muted}" Margin="0,4,0,14"/>
+
+                        <TextBlock x:Name="CoreLbl" Text="Offset do núcleo" Style="{StaticResource Label}"/>
+                        <Slider x:Name="Core" Minimum="-300" Maximum="300" TickFrequency="15" IsSnapToTickEnabled="True" ValueChanged="Slider_Changed" Margin="0,4,0,12"/>
+                        <TextBlock x:Name="MemLbl" Text="Offset da memória" Style="{StaticResource Label}"/>
+                        <Slider x:Name="Mem" Minimum="-500" Maximum="1500" TickFrequency="50" IsSnapToTickEnabled="True" ValueChanged="Slider_Changed" Margin="0,4,0,12"/>
+                        <TextBlock x:Name="PowerLbl" Text="Limite de energia" Style="{StaticResource Label}"/>
+                        <Slider x:Name="Power" Minimum="50" Maximum="120" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="Slider_Changed" Margin="0,4,0,12"/>
+                        <TextBlock x:Name="LockLbl" Text="Teto de clock (undervolt)" Style="{StaticResource Label}"/>
+                        <Slider x:Name="Lock" Minimum="0" Maximum="2200" TickFrequency="15" IsSnapToTickEnabled="True" ValueChanged="Slider_Changed" Margin="0,4,0,12"/>
+                        <TextBlock x:Name="FanLbl" Text="Ventoinha" Style="{StaticResource Label}"/>
+                        <Slider x:Name="Fan" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Slider_Changed" Margin="0,4,0,16"/>
+
+                        <WrapPanel>
+                            <Button x:Name="BtnApply" Content="Aplicar" Style="{StaticResource BtnAccent}" Click="Apply_Click"/>
+                            <Button x:Name="BtnStock" Content="Stock (fábrica)" Style="{StaticResource BtnDanger}" Click="Stock_Click"/>
+                        </WrapPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <TextBox x:Name="ProfileName" Width="220" Margin="0,0,8,0" ToolTip="Nome do teu perfil (ex.: Valorant OC)"/>
+                            <Button Content="Guardar como perfil" Style="{StaticResource Btn}" Click="Save_Click"/>
+                            <Button Content="Apagar perfil" Style="{StaticResource Btn}" Click="Delete_Click"/>
+                        </StackPanel>
+                        <CheckBox x:Name="OnStart" Content="Aplicar este perfil quando o FrameForge abrir" Margin="0,12,0,0" Click="OnStart_Click"/>
+                        <CheckBox x:Name="Guard" Content="Guarda de crash: se o driver de vídeo for abaixo, voltar a Stock e marcar o perfil como instável" Click="Guard_Click"/>
+                        <TextBlock x:Name="Log" Style="{StaticResource Body}" Margin="0,12,0,0"/>
+                        </StackPanel>
+
+                        <!-- Placas AMD/Intel: leitura apenas. -->
+                        <StackPanel x:Name="ReadOnlyNote" Visibility="Collapsed">
+                            <TextBlock Text="Apenas leitura nesta placa" Style="{StaticResource H2}"/>
+                            <TextBlock x:Name="ReadOnlyGpu" Style="{StaticResource Body}" Foreground="{DynamicResource Muted}"/>
+                            <TextBlock Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,10,0,0"
+                                       Text="O FrameForge lê os sensores pelo driver e mostra clocks, temperatura, consumo e ventoinha em tempo real. Não altera nada na gráfica, porque a escrita de offsets, energia e ventoinha só existe em NVIDIA (NVAPI/NVML)."/>
+                            <TextBlock Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,8,0,0"
+                                       Text="Para alterar clocks, limite de energia ou ventoinha usa o painel oficial do fabricante: em AMD, Adrenalin → Desempenho → Afinação; em Intel, o Intel Graphics Software. O guia abaixo continua a valer — aplica lá os valores que ele indica."/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Style="{StaticResource FfCard}" VerticalAlignment="Top">
+                    <StackPanel>
+                        <TextBlock x:Name="GpuName" Text="GPU" Style="{StaticResource H2}"/>
+                        <TextBlock x:Name="State" Style="{StaticResource Body}" FontFamily="Consolas" FontSize="12.5"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border Style="{StaticResource FfCard}">
+                <StackPanel x:Name="Guide"/>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
