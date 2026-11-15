@@ -24,8 +24,9 @@ public static class NavCatalog
     {
         new("S:home", "", "Início", "", "O estado do teu PC e atalhos para o que mais usas.", new NavTab[]
         {
-            new("FF:home", "Resumo", "", "O estado do teu PC e atalhos para o que mais usas.",
-                "Escolhe o que queres fazer e a app leva-te à página certa. Se é a primeira vez, segue os passos no fundo.", "inicio painel principal"),
+            new("FF:home", "Resumo", "", "A nota do teu PC, o que melhorar e o estado ao vivo.",
+                "Carrega em ANALISAR O PC: em poucos segundos a app lê o PC (não muda nada) e dá a Nota HyperCore de 0 a 100 com a lista do que melhorar. Cada ponto leva-te à página que o resolve. Por baixo vês o processador, a gráfica, a RAM e as temperaturas ao vivo, o Modo Jogo e o último jogo medido.",
+                "inicio painel principal nota analisar analise rapida pontuacao score estado"),
             new("PageDash", "Visão geral", "", "Temperaturas, carga e saúde do PC em tempo real.",
                 "Resumo do PC em tempo real: gráfico de temperatura/carga da CPU e da GPU, componentes, memória e uma lista de saúde do PC. Só mostra — não muda nada.",
                 "resumo dashboard temperatura carga"),
