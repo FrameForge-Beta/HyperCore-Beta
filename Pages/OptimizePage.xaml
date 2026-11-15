@@ -82,10 +82,7 @@
     </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="28,24,28,40">
-            <TextBlock Text="Níveis de desempenho" Style="{StaticResource H1}"/>
-            <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,16"
-                       Text="Escolhe quanto queres afinar o Windows para jogos. Tudo volta atrás com um clique."/>
+        <StackPanel Margin="32,4,32,40">
 
             <!-- 4 níveis lado a lado: clicar seleciona; o aplicado tem a etiqueta ATIVO -->
             <UniformGrid x:Name="LevelCards" Columns="4" Rows="1" Margin="0,0,-10,0"/>

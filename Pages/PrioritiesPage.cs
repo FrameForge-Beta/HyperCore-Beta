@@ -31,11 +31,7 @@ public sealed class PrioritiesPage : UserControl
     public PrioritiesPage()
     {
         Ui.UseTheme(this);
-        var root = new StackPanel { Margin = new Thickness(28, 18, 28, 40) };
-        root.Children.Add(Ui.T("Prioridade dos programas", "H1"));
-        var sub = Ui.T("Como no Gestor de Tarefas (Detalhes → Definir prioridade), mas fica GRAVADO: o Windows aplica-a sozinho sempre que o programa abre, mesmo depois de reiniciar o PC.", "MutedText");
-        sub.Margin = new Thickness(0, 0, 0, 16);
-        root.Children.Add(sub);
+        var root = new StackPanel { Margin = Ui.PageMargin };
 
         // ---- explicação
         var ex = new StackPanel();

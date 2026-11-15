@@ -152,7 +152,7 @@ public partial class MainWindow
         if (_makerBusy) return;
         if (!AppInstaller.WingetAvailable)
         {
-            MakerIdeResult.Text = "O winget não foi encontrado: abra FERRAMENTAS › Instalar apps para ver como resolver, ou baixe a IDE no site.";
+            MakerIdeResult.Text = "O winget não foi encontrado: abra Instalar aplicações no menu para ver como resolver, ou baixe a IDE no site.";
             return;
         }
         if (MakerDrivers.IdeRunning)

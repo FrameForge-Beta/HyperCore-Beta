@@ -77,11 +77,7 @@ public sealed class TipsPage : UserControl
     public TipsPage()
     {
         Ui.UseTheme(this);
-        var root = new StackPanel { Margin = new Thickness(28, 24, 28, 40) };
-        root.Children.Add(Ui.T("Dicas e avisos", "H1"));
-        var sub = Ui.T("O que funciona, o que é mito e porque é que esta app é segura com anti-cheat.", "MutedText");
-        sub.Margin = new Thickness(0, 0, 0, 16);
-        root.Children.Add(sub);
+        var root = new StackPanel { Margin = Ui.PageMargin };
         foreach (var (title, tag, lines) in Sections)
         {
             var sp = new StackPanel();

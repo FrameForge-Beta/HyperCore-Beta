@@ -23,7 +23,7 @@ public sealed class HomePage : UserControl
     public HomePage()
     {
         Ui.UseTheme(this);
-        var root = new StackPanel { Margin = new Thickness(32, 24, 32, 36) };
+        var root = new StackPanel { Margin = new Thickness(32, 4, 32, 36) };
 
         var hero = new Border
         {
@@ -60,7 +60,7 @@ public sealed class HomePage : UserControl
         sub.Margin = new Thickness(0, 3, 0, 18);
         root.Children.Add(sub);
 
-        var grid = new UniformGrid { Columns = 2, Margin = new Thickness(0, 0, 0, 10) };
+        var grid = new UniformGrid { Columns = 2, Margin = new Thickness(0, 0, -12, 10) };
         foreach (var (glyph, eyebrow, title, text, tag) in Actions)
         {
             var body = new Grid();
@@ -87,7 +87,6 @@ public sealed class HomePage : UserControl
             body.Children.Add(detail);
 
             var card = Ui.Card(body);
-            card.Width = 390;
             card.Margin = new Thickness(0, 0, 12, 12);
             card.MinHeight = 148;
             card.Cursor = Cursors.Hand;
@@ -203,10 +202,8 @@ public sealed class GlossaryPage : UserControl
     public GlossaryPage()
     {
         Ui.UseTheme(this);
-        var root = new StackPanel { Margin = new Thickness(28, 18, 28, 40) };
-        root.Children.Add(Ui.T("Glossário", "H1"));
-        var search = new TextBox { Width = 360, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 8, 0, 14), ToolTip = "Procurar uma palavra" };
-        root.Children.Add(Ui.T("Cada palavra que aparece na app, explicada sem complicações. Escreve para procurar.", "MutedText"));
+        var root = new StackPanel { Margin = Ui.PageMargin };
+        var search = new TextBox { Width = 360, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 0, 0, 14), ToolTip = "Procurar uma palavra", Tag = "Procurar uma palavra…" };
         root.Children.Add(search);
         var list = new WrapPanel();
         void Fill()

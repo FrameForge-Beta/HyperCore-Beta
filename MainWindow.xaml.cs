@@ -124,10 +124,6 @@ public partial class MainWindow : Window
         InitForge();
         ThemeManager.Apply(_settings.LightTheme);
         UpdateThemeButton();
-        // Começa no Início ("o que queres fazer?")
-        PageFF.Content = ForgePage("home");
-        ShowPage("PageFF");
-        UpdateHelp("FF:home");
 
         // Sensores: a lista começa vazia e é preenchida quando a detecção do hardware termina (LoadHardwareAsync).
         _monitor = new SensorMonitor();
@@ -140,10 +136,9 @@ public partial class MainWindow : Window
         InitBench();
         SnapshotUsb();
         RefreshDrives();
-        TitlePage.Text = "Início";
         // Versão do programa mostrada no rodapé da barra lateral (vém do <Version> do csproj).
         string appVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.4.0";
-        SideVersion.Text = $"HyperCore v{appVersion} · ferramentas para o teu PC";
+        SideVersion.Text = $"HyperCore v{appVersion}";
         UpdateDashboard();
 
         // A janela aparece já; as coletas pesadas (WMI, sensores, GPU) rodam em paralelo fora da thread da janela.
@@ -536,30 +531,9 @@ public partial class MainWindow : Window
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool SetForegroundWindow(IntPtr hwnd);
 
-    private void Nav_Checked(object sender, RoutedEventArgs e)
+    /// <summary>Algumas páginas carregam dados só quando abertas (chamado pelo shell ao mostrar uma aba).</summary>
+    private void OnPageOpened(string page)
     {
-        if (PageSystem == null) return; // disparado durante InitializeComponent
-        var item = (FrameworkElement)sender;
-        string page = (string)item.Tag;
-        _currentTag = page;
-        UpdateHelp(page);
-        if (page.StartsWith("FF:")) { PageFF.Content = ForgePage(page[3..]); page = "PageFF"; }
-        ShowPage(page);
-
-        // Abre a categoria da página (ex.: quando o painel pula direto para o Benchmark)
-        // e mostra "CATEGORIA · página" na barra de título.
-        string name = item is ContentControl { Content: Panel panel }
-            ? panel.Children.OfType<TextBlock>().LastOrDefault()?.Text ?? "" : "";
-        foreach (var group in _navGroups.Values)
-        {
-            if (!group.Items.Children.Contains(item)) continue;
-            group.Toggle.IsChecked = true;
-            name = $"{group.Toggle.Content} · {name}";
-            break;
-        }
-        TitlePage.Text = name;
-
-        // Algumas páginas carregam dados só quando abertas.
         switch (page)
         {
             case "PageDash": UpdateDashboard(); break;
@@ -899,14 +873,15 @@ public partial class MainWindow : Window
         return sp;
     }
 
-    private static Brush GradeBrush(string grade) => grade switch
+    // Notas A–E com as cores do tema (Good → Accent → Warn → Bad); E é um vermelho mais escuro
+    private Brush GradeBrush(string grade) => grade switch
     {
-        "A" => new SolidColorBrush(Color.FromRgb(0x22, 0xC5, 0x5E)),
-        "B" => new SolidColorBrush(Color.FromRgb(0xA7, 0x8B, 0xFA)),
-        "C" => new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B)),
-        "D" => new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)),
+        "A" => (Brush)FindResource("Good"),
+        "B" => (Brush)FindResource("Accent"),
+        "C" => (Brush)FindResource("Warn"),
+        "D" => (Brush)FindResource("Bad"),
         "E" => new SolidColorBrush(Color.FromRgb(0xB9, 0x1C, 0x1C)),
-        _ => new SolidColorBrush(Color.FromRgb(0x4A, 0x4A, 0x4A)),
+        _ => (Brush)FindResource("LineStrong"),
     };
 
     private void OpenReport(string path)

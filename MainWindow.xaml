@@ -10,7 +10,7 @@
         UseLayoutRounding="True" TextOptions.TextFormattingMode="Display">
 
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="54" ResizeBorderThickness="6" GlassFrameThickness="0"
+        <WindowChrome CaptionHeight="44" ResizeBorderThickness="6" GlassFrameThickness="0"
                       CornerRadius="0" UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
 
@@ -168,7 +168,7 @@
                 <TextBlock Grid.Column="1" Text="{Binding Value}" FontFamily="{StaticResource Mono}" HorizontalAlignment="Right"
                            TextTrimming="CharacterEllipsis"/>
                 <Grid Grid.Row="1" Grid.ColumnSpan="2" Height="4" Margin="0,6,0,0" Background="{DynamicResource Line}">
-                    <Border Background="{DynamicResource Fg}" RenderTransformOrigin="0,0.5">
+                    <Border Background="{DynamicResource Accent}" RenderTransformOrigin="0,0.5">
                         <Border.RenderTransform>
                             <ScaleTransform ScaleX="{Binding Fraction}"/>
                         </Border.RenderTransform>
@@ -189,52 +189,70 @@
     </Window.Resources>
 
     <Border x:Name="Root" BorderBrush="{DynamicResource Line}" BorderThickness="1" Background="{DynamicResource Bg}">
-        <Grid>
+        <Grid x:Name="RootGrid">
             <Grid.RowDefinitions>
-                <RowDefinition Height="54"/>
+                <RowDefinition Height="44"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="SideCol" Width="280"/>
+                <ColumnDefinition x:Name="SideCol" Width="264"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- ===== Barra de título (marca + página atual + botões da janela) ===== -->
-            <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Margin="26,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Image x:Name="TitleLogo" Source="Assets/logo.png" Width="26" Height="26" Margin="0,0,12,0" VerticalAlignment="Center"
-                       RenderOptions.BitmapScalingMode="HighQuality"/>
-                <TextBlock Text="HYPER" FontWeight="Bold" FontSize="13" VerticalAlignment="Center"/>
-                <TextBlock Text="CORE" FontWeight="Light" FontSize="13" VerticalAlignment="Center"/>
-                <TextBlock x:Name="TitlePage" Foreground="{DynamicResource Faint}" FontSize="13" Margin="16,0,0,0" VerticalAlignment="Center"/>
+            <!-- Brilho radial subtil no canto superior direito do conteúdo -->
+            <Rectangle Grid.Column="1" Grid.RowSpan="2" Fill="{DynamicResource ContentGlow}" IsHitTestVisible="False"/>
+
+            <!-- ===== Barra de título: Voltar + onde estás + botões da janela ===== -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="24,0,0,0" VerticalAlignment="Center">
+                <Button x:Name="BtnBack" Style="{StaticResource IconButton}" Content="&#xE72B;" Width="32" Height="30" Margin="0,0,12,0"
+                        Click="Back_Click" ToolTip="Voltar (Alt+←)" Visibility="Collapsed" WindowChrome.IsHitTestVisibleInChrome="True"/>
+                <TextBlock x:Name="TitlePage" Foreground="{DynamicResource Faint}" FontSize="12.5" VerticalAlignment="Center"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right"
                         WindowChrome.IsHitTestVisibleInChrome="True">
-                <Button Style="{StaticResource CaptionButton}" Content="&#xE897;" Click="HelpToggle_Click" ToolTip="Mostrar/esconder a explicação de cada página"/>
                 <Button x:Name="BtnTheme" Style="{StaticResource CaptionButton}" Content="&#xE706;" Click="Theme_Click" ToolTip="Modo claro"/>
                 <Button Style="{StaticResource CaptionButton}" Content="&#xE921;" Click="Min_Click" ToolTip="Minimizar"/>
                 <Button x:Name="BtnMax" Style="{StaticResource CaptionButton}" Content="&#xE922;" Click="Max_Click" ToolTip="Maximizar"/>
                 <Button Style="{StaticResource CloseButton}" Content="&#xE8BB;" Click="Close_Click" ToolTip="Fechar"/>
             </StackPanel>
 
-            <!-- ===== Menu lateral por categorias (painel arredondado, sempre visível) ===== -->
-            <Border x:Name="Sidebar" Grid.Row="1" Margin="12,0,0,12" Background="{DynamicResource Panel}"
-                    BorderBrush="{DynamicResource Line}" BorderThickness="1" CornerRadius="18">
+            <!-- ===== Menu lateral: logótipo, pesquisa, 14 secções sempre visíveis ===== -->
+            <Border x:Name="Sidebar" Grid.RowSpan="2" Background="{DynamicResource Panel}"
+                    BorderBrush="{DynamicResource Line}" BorderThickness="0,0,1,0">
                 <DockPanel>
-                    <!-- Rodapé: aviso de sensores + leitura ao vivo compacta -->
-                    <StackPanel DockPanel.Dock="Bottom" Margin="16,6,16,16">
+                    <!-- Logótipo: chip + HYPER + CORE (gradiente) + lema -->
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="20,14,16,10">
+                        <Image x:Name="TitleLogo" Source="Assets/logo.png" Width="40" Height="40" VerticalAlignment="Center"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <StackPanel Margin="11,0,0,0" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="HYPER" FontWeight="Black" FontSize="19"/>
+                                <TextBlock Text="CORE" FontWeight="Black" FontSize="19" Foreground="{StaticResource AccentTextGradient}"/>
+                            </StackPanel>
+                            <TextBlock Text="Cada núcleo no máximo." Foreground="{DynamicResource Faint}" FontSize="11" Margin="1,1,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <Button DockPanel.Dock="Top" Style="{StaticResource NavSearch}" Margin="14,0,14,6" Click="NavSearch_Click"
+                            ToolTip="Procura qualquer página: fps, ping, temperatura, overlay, ventoinha, limpar…"/>
+
+                    <!-- Rodapé: Central Desfazer, Ajuda, Configurações + leitura ao vivo compacta -->
+                    <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,12">
+                        <Border Height="1" Background="{DynamicResource Line}" Margin="18,0,18,6"/>
+                        <StackPanel x:Name="NavFooter"/>
                         <Border x:Name="CpuSensorWarn" Visibility="Collapsed" BorderBrush="{DynamicResource Warn}" BorderThickness="1"
-                                CornerRadius="12" Padding="12,10" Margin="0,0,0,12">
+                                CornerRadius="12" Padding="12,10" Margin="14,8,14,0">
                             <StackPanel>
                                 <TextBlock Text="Sem temperatura e consumo da CPU" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
                                 <TextBlock x:Name="CpuSensorWarnText" Foreground="{DynamicResource Muted}" FontSize="11" TextWrapping="Wrap" Margin="0,3,0,8"/>
-                                <Button Style="{StaticResource PrimaryButton}" Content="CORRIGIR" Padding="10,5" FontSize="11"
+                                <Button Style="{StaticResource PrimaryButton}" Content="Corrigir" Padding="10,5" FontSize="11"
                                         Click="BtnFixCpuSensors_Click"/>
                             </StackPanel>
                         </Border>
-                        <Border Background="{DynamicResource Card}" BorderBrush="{DynamicResource Line}" BorderThickness="1" CornerRadius="14" Padding="14,10">
+                        <Border Background="{DynamicResource Card}" BorderBrush="{DynamicResource Line}" BorderThickness="1" CornerRadius="12"
+                                Padding="12,7" Margin="14,10,14,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="46"/>
+                                    <ColumnDefinition Width="40"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
@@ -243,65 +261,72 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Text="CPU" Foreground="{DynamicResource Faint}" FontSize="10.5" FontWeight="Bold" Margin="0,3" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="SideTemp" Grid.Column="1" Text="—" FontFamily="{StaticResource Mono}" FontSize="12" Margin="0,3"/>
-                                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,3" VerticalAlignment="Center">
+                                <TextBlock Text="CPU" Foreground="{DynamicResource Faint}" FontSize="10.5" FontWeight="Bold" Margin="0,2" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="SideTemp" Grid.Column="1" Text="—" FontFamily="{StaticResource Mono}" FontSize="12" Margin="0,2"/>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,2" VerticalAlignment="Center">
                                     <TextBlock Text="USO" Foreground="{DynamicResource Faint}" FontSize="10.5" FontWeight="Bold" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                     <TextBlock x:Name="SideLoad" Text="—" FontFamily="{StaticResource Mono}" FontSize="12" Foreground="{DynamicResource Fg}" VerticalAlignment="Center"/>
                                 </StackPanel>
-                                <TextBlock Grid.Row="1" Text="GPU" Foreground="{DynamicResource Faint}" FontSize="10.5" FontWeight="Bold" Margin="0,3" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="SideGpuTemp" Grid.Row="1" Grid.Column="1" Text="—" FontFamily="{StaticResource Mono}" FontSize="12" Margin="0,3"/>
-                                <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="0,3" VerticalAlignment="Center">
+                                <TextBlock Grid.Row="1" Text="GPU" Foreground="{DynamicResource Faint}" FontSize="10.5" FontWeight="Bold" Margin="0,2" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="SideGpuTemp" Grid.Row="1" Grid.Column="1" Text="—" FontFamily="{StaticResource Mono}" FontSize="12" Margin="0,2"/>
+                                <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="0,2" VerticalAlignment="Center">
                                     <TextBlock Text="USO" Foreground="{DynamicResource Faint}" FontSize="10.5" FontWeight="Bold" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                     <TextBlock x:Name="SideGpuLoad" Text="—" FontFamily="{StaticResource Mono}" FontSize="12" Foreground="{DynamicResource Fg}" VerticalAlignment="Center"/>
                                 </StackPanel>
-                                <TextBlock Grid.Row="2" Text="TESTE" Foreground="{DynamicResource Faint}" FontSize="10.5" FontWeight="Bold" Margin="0,3" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="SideStress" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="parado" FontFamily="{StaticResource Mono}" FontSize="12" Margin="0,3"/>
+                                <TextBlock Grid.Row="2" Text="TESTE" Foreground="{DynamicResource Faint}" FontSize="10.5" FontWeight="Bold" Margin="0,2" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="SideStress" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="parado" FontFamily="{StaticResource Mono}" FontSize="12" Margin="0,2"/>
                             </Grid>
                         </Border>
-                        <TextBlock x:Name="SideVersion" Text="HyperCore · ferramentas para o teu PC" Foreground="{DynamicResource Faint}" FontSize="11" Margin="4,10,0,0"/>
+                        <TextBlock x:Name="SideVersion" Text="HyperCore" Foreground="{DynamicResource Faint}" FontSize="10.5" Margin="20,8,0,0"/>
                     </StackPanel>
 
-                    <!-- Navegação por objetivo: cada item tem uma explicação (ToolTip) e a página mostra a barra de ajuda -->
-                    <ScrollViewer x:Name="NavScroll" VerticalScrollBarVisibility="Auto" Margin="0,2,0,0">
-                        <StackPanel x:Name="NavList" Margin="0,4,0,12"/>
+                    <!-- Secções (construídas a partir do NavCatalog em MainWindow.Shell.cs) -->
+                    <ScrollViewer x:Name="NavScroll" VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="NavList" Margin="0,0,0,2"/>
                     </ScrollViewer>
                 </DockPanel>
             </Border>
 
             <!-- ===== Conteúdo ===== -->
-            <DockPanel Grid.Row="1" Grid.Column="1" Margin="0,6,0,0">
-            <!-- Barra de ajuda: o que faz a página atual, em linguagem simples (MainWindow.Forge.cs, PageHelp) -->
+            <DockPanel Grid.Row="1" Grid.Column="1">
             <!-- Reinício pendente: fica até o PC reiniciar (RestartNotice) -->
-            <Border x:Name="RestartBar" DockPanel.Dock="Top" Margin="20,0,24,8" Padding="16,10" CornerRadius="14" Visibility="Collapsed"
-                    Background="{DynamicResource Card}" BorderBrush="#F59E0B" BorderThickness="1">
+            <Border x:Name="RestartBar" DockPanel.Dock="Top" Margin="32,0,32,10" Padding="16,10" CornerRadius="14" Visibility="Collapsed"
+                    Background="{DynamicResource Card}" BorderBrush="{DynamicResource Warn}" BorderThickness="1">
                 <DockPanel>
                     <Button DockPanel.Dock="Right" Style="{StaticResource PrimaryButton}" Content="Reiniciar agora" Padding="16,7" Click="RestartNow_Click" VerticalAlignment="Center"/>
-                    <TextBlock DockPanel.Dock="Left" Text="&#xE777;" FontFamily="{StaticResource Icons}" FontSize="18" Margin="0,0,14,0" VerticalAlignment="Center" Foreground="#F59E0B"/>
+                    <TextBlock DockPanel.Dock="Left" Text="&#xE777;" FontFamily="{StaticResource Icons}" FontSize="18" Margin="0,0,14,0" VerticalAlignment="Center" Foreground="{DynamicResource Warn}"/>
                     <StackPanel VerticalAlignment="Center" Margin="0,0,14,0">
                         <TextBlock Text="Reinício pendente — estes ajustes só valem depois de reiniciar o PC:" FontWeight="SemiBold" FontSize="13.5"/>
                         <TextBlock x:Name="RestartText" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" FontSize="12.5" Margin="0,3,0,0"/>
                     </StackPanel>
                 </DockPanel>
             </Border>
-            <Border x:Name="HelpBar" DockPanel.Dock="Top" Margin="20,0,24,8" Padding="16,10" CornerRadius="14" Background="{DynamicResource Card}" BorderBrush="{DynamicResource Line}" BorderThickness="1">
+
+            <!-- Cabeçalho padrão da secção: título + 1 linha + abas (MainWindow.Shell.cs, a partir do NavCatalog) -->
+            <StackPanel x:Name="SectionHeader" DockPanel.Dock="Top" Margin="32,4,32,14">
                 <DockPanel>
-                    <Button DockPanel.Dock="Right" Style="{StaticResource CaptionButton}" Content="&#xE711;" Width="32" Height="28" ToolTip="Esconder as explicações (voltam no ? da barra de título)" Click="HelpHide_Click" VerticalAlignment="Top"/>
-                    <TextBlock DockPanel.Dock="Left" Text="&#xE946;" FontFamily="{StaticResource Icons}" FontSize="18" Margin="0,2,14,0" VerticalAlignment="Top" Foreground="{DynamicResource Muted}"/>
+                    <Button x:Name="BtnHelp" DockPanel.Dock="Right" Style="{StaticResource IconButton}" Content="&#xE897;" VerticalAlignment="Top"
+                            Margin="16,4,0,0" Click="Help_Click"/>
                     <StackPanel>
-                        <TextBlock x:Name="HelpTitle" FontWeight="SemiBold" FontSize="13.5"/>
-                        <TextBlock x:Name="HelpText" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" FontSize="12.5" Margin="0,3,0,0"/>
+                        <TextBlock x:Name="SectionTitle" Style="{StaticResource PageTitle}"/>
+                        <TextBlock x:Name="SectionDesc" Style="{StaticResource PageDesc}"/>
                     </StackPanel>
                 </DockPanel>
-            </Border>
-            <Grid>
+                <Border x:Name="HelpPanel" Visibility="Collapsed" Margin="0,12,0,0" Padding="14,10" CornerRadius="12"
+                        Background="{DynamicResource Card}" BorderBrush="{DynamicResource Line}" BorderThickness="1" MaxWidth="820" HorizontalAlignment="Left">
+                    <TextBlock x:Name="HelpText" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" FontSize="12.5" LineHeight="18"/>
+                </Border>
+                <ContentControl x:Name="SectionTabsHost" Margin="0,16,0,0" Focusable="False"/>
+            </StackPanel>
+            <Grid x:Name="PageHost">
+                <Grid.RenderTransform><TranslateTransform/></Grid.RenderTransform>
 
-                <!-- ===== HYPERCORE: aqui entra a página escolhida da categoria HYPERCORE ===== -->
+                <!-- ===== Páginas FF:* (Pages/*.cs): o conteúdo muda conforme a aba ===== -->
                 <ContentControl x:Name="PageFF" Visibility="Collapsed" Focusable="False"/>
 
                 <!-- ===== VISÃO GERAL (painel) ===== -->
                 <ScrollViewer x:Name="PageDash" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="20,6,24,20">
+                    <StackPanel Margin="32,4,32,20">
 
                         <!-- Linha 1: gráfico grande + desempenho -->
                         <Grid Margin="0,0,0,16">
@@ -548,14 +573,13 @@
                 </ScrollViewer>
 
                 <!-- ===== SISTEMA ===== -->
-                <Grid x:Name="PageSystem" Margin="36,30,36,30" Visibility="Collapsed">
+                <Grid x:Name="PageSystem" Margin="32,4,32,30" Visibility="Collapsed">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Grid Margin="0,0,0,24">
                         <StackPanel Margin="0,0,200,0">
-                            <TextBlock Text="Sistema" Style="{StaticResource H1}"/>
                             <TextBlock x:Name="SystemSub" Text="Hardware e software detectados" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
                         </StackPanel>
                         <Button x:Name="BtnReport" Style="{StaticResource OutlineButton}" Content="EXPORTAR RELATÓRIO" Padding="16,9"
@@ -631,10 +655,9 @@
 
                 <!-- ===== DISCOS (saúde) ===== -->
                 <ScrollViewer x:Name="PageDisks" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="36,30,36,30">
+                    <StackPanel Margin="32,4,32,30">
                         <Grid Margin="0,0,0,20">
                             <StackPanel Margin="0,0,160,0">
-                                <TextBlock Text="Discos" Style="{StaticResource H1}"/>
                                 <TextBlock x:Name="DiskHealthStatus" Text="Saúde, desgaste e temperatura de cada disco" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
                             </StackPanel>
                             <Button x:Name="BtnDiskRefresh" Style="{StaticResource OutlineButton}" Content="ATUALIZAR" Padding="18,9"
@@ -709,10 +732,9 @@
 
                 <!-- ===== ENERGIA (bateria e fonte) ===== -->
                 <ScrollViewer x:Name="PageEnergy" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="36,30,36,30">
+                    <StackPanel Margin="32,4,32,30">
                         <Grid Margin="0,0,0,20">
                             <StackPanel Margin="0,0,160,0">
-                                <TextBlock Text="Energia" Style="{StaticResource H1}"/>
                                 <TextBlock x:Name="EnergyStatus" Text="Bateria, fonte de energia e consumo" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
                             </StackPanel>
                             <Button x:Name="BtnEnergyRefresh" Style="{StaticResource OutlineButton}" Content="ATUALIZAR" Padding="18,9"
@@ -778,17 +800,13 @@
 
                 <!-- ===== REDE (diagnóstico de lag) ===== -->
                 <ScrollViewer x:Name="PageNet" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="36,30,36,30">
+                    <StackPanel Margin="32,4,32,30">
                         <Grid Margin="0,0,0,20">
-                            <StackPanel Margin="0,0,160,0">
-                                <TextBlock Text="Rede" Style="{StaticResource H1}"/>
-                                <TextBlock Text="Velocidade, latência e qualidade da ligação" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
-                            </StackPanel>
                             <Button x:Name="BtnNetTest" Style="{StaticResource PrimaryButton}" Content="TESTAR" Padding="22,9"
                                     HorizontalAlignment="Right" VerticalAlignment="Top" Click="BtnNetTest_Click"/>
                         </Grid>
                         <Grid Height="3" Margin="0,0,0,8" Background="{DynamicResource Line}">
-                            <Border Background="{DynamicResource Fg}" RenderTransformOrigin="0,0.5">
+                            <Border Background="{DynamicResource Accent}" RenderTransformOrigin="0,0.5">
                                 <Border.RenderTransform><ScaleTransform x:Name="NetProgress" ScaleX="0"/></Border.RenderTransform>
                             </Border>
                         </Grid>
@@ -903,17 +921,13 @@
 
                 <!-- ===== DRIVERS ===== -->
                 <ScrollViewer x:Name="PageDriver" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="36,30,36,30">
+                    <StackPanel Margin="32,4,32,30">
                         <Grid Margin="0,0,0,20">
-                            <StackPanel Margin="0,0,190,0">
-                                <TextBlock Text="DRIVERS" Style="{StaticResource H1}"/>
-                                <TextBlock Text="Verifique, baixe e instale drivers · NVIDIA e AMD automáticos, fabricantes pela página oficial" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
-                            </StackPanel>
                             <Button x:Name="BtnDrvScan" Style="{StaticResource PrimaryButton}" Content="VERIFICAR TUDO" Padding="20,9"
                                     HorizontalAlignment="Right" VerticalAlignment="Top" Click="BtnDrvScan_Click"/>
                         </Grid>
                         <Grid Height="3" Margin="0,0,0,8" Background="{DynamicResource Line}">
-                            <Border Background="{DynamicResource Fg}" RenderTransformOrigin="0,0.5">
+                            <Border Background="{DynamicResource Accent}" RenderTransformOrigin="0,0.5">
                                 <Border.RenderTransform><ScaleTransform x:Name="DrvProgress" ScaleX="0"/></Border.RenderTransform>
                             </Border>
                         </Grid>
@@ -1013,12 +1027,8 @@
 
                 <!-- ===== INTEGRAÇÃO (iluminação) ===== -->
                 <ScrollViewer x:Name="PageInteg" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="36,30,36,30">
+                    <StackPanel Margin="32,4,32,30">
                         <Grid Margin="0,0,0,20">
-                            <StackPanel Margin="0,0,190,0">
-                                <TextBlock Text="INTEGRAÇÃO" Style="{StaticResource H1}"/>
-                                <TextBlock Text="Iluminação e efeitos do PC · Corsair iCUE, OpenRGB (MSI, Gigabyte, ASUS...) e Razer Chroma (em teste)" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
-                            </StackPanel>
                             <Button x:Name="BtnLightConnect" Style="{StaticResource OutlineButton}" Content="CONECTAR TUDO" Padding="20,9"
                                     HorizontalAlignment="Right" VerticalAlignment="Top" Click="BtnLightConnect_Click"/>
                         </Grid>
@@ -1147,7 +1157,7 @@
                 </ScrollViewer>
 
                 <!-- ===== JOGOS (inicializador) ===== -->
-                <Grid x:Name="PageLauncher" Margin="36,30,36,30" Visibility="Collapsed">
+                <Grid x:Name="PageLauncher" Margin="32,4,32,30" Visibility="Collapsed">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="320"/>
                         <ColumnDefinition Width="24"/>
@@ -1162,7 +1172,6 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Margin="0,0,0,14">
-                            <TextBlock Text="JOGOS" Style="{StaticResource H1}"/>
                             <TextBlock x:Name="LGameCount" Text="Procurando seus jogos…" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
                         </StackPanel>
                         <StackPanel Grid.Row="1" Margin="0,0,0,10">
@@ -1301,7 +1310,7 @@
                 </Grid>
 
                 <!-- ===== SENSORES ===== -->
-                <Grid x:Name="PageSensors" Margin="36,30,36,30" Visibility="Collapsed">
+                <Grid x:Name="PageSensors" Margin="32,4,32,30" Visibility="Collapsed">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -1309,7 +1318,6 @@
                     </Grid.RowDefinitions>
                     <Grid Margin="0,0,0,20">
                         <StackPanel>
-                            <TextBlock Text="Sensores" Style="{StaticResource H1}"/>
                             <TextBlock x:Name="StatusText" Text="Lendo sensores…" Style="{StaticResource Sub}"/>
                         </StackPanel>
                         <TextBox x:Name="SensorSearch" Width="260" HorizontalAlignment="Right" VerticalAlignment="Center"
@@ -1340,7 +1348,7 @@
                 </Grid>
 
                 <!-- ===== PLACA DE VÍDEO ===== -->
-                <Grid x:Name="PageGpu" Margin="36,30,36,30" Visibility="Collapsed">
+                <Grid x:Name="PageGpu" Margin="32,4,32,30" Visibility="Collapsed">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -1348,10 +1356,6 @@
                     </Grid.RowDefinitions>
 
                     <Grid Margin="0,0,0,20">
-                        <StackPanel>
-                            <TextBlock Text="Placa de vídeo" Style="{StaticResource H1}"/>
-                            <TextBlock Text="Especificações completas e sensores em tempo real" Style="{StaticResource Sub}"/>
-                        </StackPanel>
                         <WrapPanel x:Name="GpuChips" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
                     </Grid>
 
@@ -1416,10 +1420,9 @@
 
                 <!-- ===== JOGOS ===== -->
                 <ScrollViewer x:Name="PageGames" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="36,30,36,30">
+                    <StackPanel Margin="32,4,32,30">
                         <Grid Margin="0,0,0,18">
                             <StackPanel Margin="0,0,190,0">
-                                <TextBlock Text="Os meus resultados" Style="{StaticResource H1}"/>
                                 <TextBlock x:Name="ResultsSub" Text="FPS medidos nas suas sessões" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
                             </StackPanel>
                             <Button x:Name="BtnResultsRefresh" Style="{StaticResource OutlineButton}" Content="ATUALIZAR" Padding="18,9"
@@ -1446,11 +1449,7 @@
 
                 <!-- ===== GARGALO ===== -->
                 <ScrollViewer x:Name="PageBottleneck" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="36,30,36,30">
-                        <StackPanel Margin="0,0,0,20">
-                            <TextBlock Text="Detector de gargalo" Style="{StaticResource H1}"/>
-                            <TextBlock Text="Descobre o que está limitando o seu FPS: GPU, CPU, memória ou temperatura" Style="{StaticResource Sub}"/>
-                        </StackPanel>
+                    <StackPanel Margin="32,4,32,30">
 
                         <Grid Margin="0,0,0,14">
                             <Grid.ColumnDefinitions>
@@ -1548,11 +1547,7 @@
 
                 <!-- ===== OVERLAY ===== -->
                 <ScrollViewer x:Name="PageOverlay" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="36,30,36,30">
-                        <StackPanel Margin="0,0,0,20">
-                            <TextBlock Text="Overlay" Style="{StaticResource H1}"/>
-                            <TextBlock Text="FPS, frametime e sensores por cima do jogo" Style="{StaticResource Sub}"/>
-                        </StackPanel>
+                    <StackPanel Margin="32,4,32,30">
 
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,0,14">
                             <Grid>
@@ -1622,14 +1617,13 @@
                 </ScrollViewer>
 
                 <!-- ===== BENCH ===== -->
-                <Grid x:Name="PageBench" Margin="36,30,36,30" Visibility="Collapsed">
+                <Grid x:Name="PageBench" Margin="32,4,32,30" Visibility="Collapsed">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <StackPanel Margin="0,0,0,16">
-                        <TextBlock Text="BENCH" Style="{StaticResource H1}"/>
                         <TextBlock x:Name="BenchSub" Text="Benchmark de CPU por renderização 3D (path tracing), no mesmo princípio do Cinebench" Style="{StaticResource Sub}"/>
                     </StackPanel>
 
@@ -1664,7 +1658,7 @@
                                     </Viewbox>
                                 </Border>
                                 <Grid Height="3" Margin="0,12,0,8" Background="{DynamicResource Line}">
-                                    <Border Background="{DynamicResource Fg}" RenderTransformOrigin="0,0.5">
+                                    <Border Background="{DynamicResource Accent}" RenderTransformOrigin="0,0.5">
                                         <Border.RenderTransform>
                                             <ScaleTransform x:Name="BenchProgress" ScaleX="0"/>
                                         </Border.RenderTransform>
@@ -1773,7 +1767,7 @@
                                     </StackPanel>
                                 </Grid>
                                 <Grid Height="3" Margin="0,14,0,8" Background="{DynamicResource Line}">
-                                    <Border Background="{DynamicResource Fg}" RenderTransformOrigin="0,0.5">
+                                    <Border Background="{DynamicResource Accent}" RenderTransformOrigin="0,0.5">
                                         <Border.RenderTransform><ScaleTransform x:Name="GbProgress" ScaleX="0"/></Border.RenderTransform>
                                     </Border>
                                 </Grid>
@@ -1843,7 +1837,7 @@
                                             </StackPanel>
                                         </Grid>
                                         <Grid Height="3" Margin="0,14,0,8" Background="{DynamicResource Line}">
-                                            <Border Background="{DynamicResource Fg}" RenderTransformOrigin="0,0.5">
+                                            <Border Background="{DynamicResource Accent}" RenderTransformOrigin="0,0.5">
                                                 <Border.RenderTransform><ScaleTransform x:Name="RtProgress" ScaleX="0"/></Border.RenderTransform>
                                             </Border>
                                         </Grid>
@@ -1931,7 +1925,7 @@
                                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Grid>
                                 <Grid Height="3" Margin="0,12,0,8" Background="{DynamicResource Line}">
-                                    <Border Background="{DynamicResource Fg}" RenderTransformOrigin="0,0.5">
+                                    <Border Background="{DynamicResource Accent}" RenderTransformOrigin="0,0.5">
                                         <Border.RenderTransform><ScaleTransform x:Name="SimProgress" ScaleX="0"/></Border.RenderTransform>
                                     </Border>
                                 </Grid>
@@ -2000,7 +1994,7 @@
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
                                 <Grid Height="3" Margin="0,16,0,8" Background="{DynamicResource Line}">
-                                    <Border Background="{DynamicResource Fg}" RenderTransformOrigin="0,0.5">
+                                    <Border Background="{DynamicResource Accent}" RenderTransformOrigin="0,0.5">
                                         <Border.RenderTransform><ScaleTransform x:Name="MemProgress" ScaleX="0"/></Border.RenderTransform>
                                     </Border>
                                 </Grid>
@@ -2055,7 +2049,7 @@
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
                                 <Grid Height="3" Margin="0,16,0,8" Background="{DynamicResource Line}">
-                                    <Border Background="{DynamicResource Fg}" RenderTransformOrigin="0,0.5">
+                                    <Border Background="{DynamicResource Accent}" RenderTransformOrigin="0,0.5">
                                         <Border.RenderTransform><ScaleTransform x:Name="DiskProgress" ScaleX="0"/></Border.RenderTransform>
                                     </Border>
                                 </Grid>
@@ -2094,11 +2088,7 @@
 
                 <!-- ===== OTIMIZA ===== -->
                 <ScrollViewer x:Name="PageOptimize" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="36,30,36,30">
-                        <StackPanel Margin="0,0,0,20">
-                            <TextBlock Text="OTIMIZA" Style="{StaticResource H1}"/>
-                            <TextBlock Text="Libera memória, fecha o que atrapalha e ajusta o Windows para jogos" Style="{StaticResource Sub}"/>
-                        </StackPanel>
+                    <StackPanel Margin="32,4,32,30">
 
                         <!-- Botão principal -->
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,0,14" Padding="24,20">
@@ -2113,7 +2103,7 @@
                                         <TextBlock x:Name="OptRamText" FontFamily="{StaticResource Mono}" HorizontalAlignment="Right"/>
                                     </Grid>
                                     <Grid Height="6" Background="{DynamicResource Line}" Margin="0,0,0,12">
-                                        <Border Background="{DynamicResource Fg}" RenderTransformOrigin="0,0.5">
+                                        <Border Background="{DynamicResource Accent}" RenderTransformOrigin="0,0.5">
                                             <Border.RenderTransform>
                                                 <ScaleTransform x:Name="OptRamBar" ScaleX="0"/>
                                             </Border.RenderTransform>
@@ -2192,12 +2182,8 @@
 
                 <!-- ===== INICIALIZAÇÃO (programas que abrem com o Windows) ===== -->
                 <ScrollViewer x:Name="PageStartup" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="36,30,36,30">
+                    <StackPanel Margin="32,4,32,30">
                         <Grid Margin="0,0,0,20">
-                            <StackPanel Margin="0,0,190,0">
-                                <TextBlock Text="INICIALIZAÇÃO" Style="{StaticResource H1}"/>
-                                <TextBlock Text="Programas que abrem junto com o Windows · desative ou remova o que não precisa" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
-                            </StackPanel>
                             <Button Style="{StaticResource PrimaryButton}" Content="ATUALIZAR" Padding="20,9"
                                     HorizontalAlignment="Right" VerticalAlignment="Top" Click="BtnStartupScan_Click"/>
                         </Grid>
@@ -2252,17 +2238,13 @@
 
                 <!-- ===== INSTALAR APPS (pós-formatação, via winget) ===== -->
                 <ScrollViewer x:Name="PageApps" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="36,30,36,30">
+                    <StackPanel Margin="32,4,32,30">
                         <Grid Margin="0,0,0,20">
-                            <StackPanel Margin="0,0,250,0">
-                                <TextBlock Text="INSTALAR APPS" Style="{StaticResource H1}"/>
-                                <TextBlock Text="Os essenciais depois de formatar o PC · versão oficial mais recente, instalação silenciosa" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
-                            </StackPanel>
                             <Button x:Name="BtnAppsInstall" Style="{StaticResource PrimaryButton}" Content="INSTALAR SELECIONADOS" Padding="20,9"
                                     HorizontalAlignment="Right" VerticalAlignment="Top" Click="BtnAppsInstall_Click"/>
                         </Grid>
                         <Grid Height="3" Margin="0,0,0,8" Background="{DynamicResource Line}">
-                            <Border Background="{DynamicResource Fg}" RenderTransformOrigin="0,0.5">
+                            <Border Background="{DynamicResource Accent}" RenderTransformOrigin="0,0.5">
                                 <Border.RenderTransform><ScaleTransform x:Name="AppsProgress" ScaleX="0"/></Border.RenderTransform>
                             </Border>
                         </Grid>
@@ -2325,11 +2307,7 @@
 
                 <!-- ===== MAKER · Portas COM (fantasmas e números COM presos) ===== -->
                 <ScrollViewer x:Name="PageMakerPorts" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="36,30,36,30">
-                        <StackPanel Margin="0,0,0,20">
-                            <TextBlock Text="PORTAS COM" Style="{StaticResource H1}"/>
-                            <TextBlock Text="Arduino, ESP32 e conversores seriais · remova dispositivos fantasmas e libere números COM presos" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
-                        </StackPanel>
+                    <StackPanel Margin="32,4,32,30">
                         <Border Style="{StaticResource CardBorder}">
                             <StackPanel>
                                 <Grid Margin="0,0,0,6">
@@ -2397,12 +2375,8 @@
 
                 <!-- ===== MAKER · Drivers seriais (CH340, CP210x, FTDI, Prolific, Arduino) ===== -->
                 <ScrollViewer x:Name="PageMakerDrv" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="36,30,36,30">
+                    <StackPanel Margin="32,4,32,30">
                         <Grid Margin="0,0,0,20">
-                            <StackPanel Margin="0,0,190,0">
-                                <TextBlock Text="DRIVERS SERIAIS" Style="{StaticResource H1}"/>
-                                <TextBlock Text="CH340 · CP2102/CP210x · FTDI · Prolific · Arduino — diagnóstico, reinstalação e troca de versão do driver" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
-                            </StackPanel>
                             <Button x:Name="BtnMakerScan" Style="{StaticResource PrimaryButton}" Content="VERIFICAR" Padding="20,9"
                                     HorizontalAlignment="Right" VerticalAlignment="Top" Click="BtnMakerScan_Click"/>
                         </Grid>
@@ -2559,11 +2533,7 @@
 
                 <!-- ===== OC ===== -->
                 <ScrollViewer x:Name="PageOc" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="36,30,36,30">
-                        <StackPanel Margin="0,0,0,20">
-                            <TextBlock Text="OC" Style="{StaticResource H1}"/>
-                            <TextBlock Text="Ajustes da GPU, verificador de estabilidade e guia de overclock na BIOS" Style="{StaticResource Sub}"/>
-                        </StackPanel>
+                    <StackPanel Margin="32,4,32,30">
 
                         <!-- GPU: limite de energia e teto de clock -->
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,0,14">
@@ -2637,7 +2607,7 @@
                                         HorizontalAlignment="Left" Padding="24,10" Margin="0,14,0,0" Click="BtnOcCheck_Click"/>
 
                                 <Grid Height="4" Margin="0,12,0,8" Background="{DynamicResource Line}">
-                                    <Border Background="{DynamicResource Fg}" RenderTransformOrigin="0,0.5">
+                                    <Border Background="{DynamicResource Accent}" RenderTransformOrigin="0,0.5">
                                         <Border.RenderTransform>
                                             <ScaleTransform x:Name="OcProgress" ScaleX="0"/>
                                         </Border.RenderTransform>
@@ -2710,7 +2680,7 @@
                 </ScrollViewer>
 
                 <!-- ===== STRESS TEST ===== -->
-                <Grid x:Name="PageStress" Margin="36,30,36,30" Visibility="Collapsed">
+                <Grid x:Name="PageStress" Margin="32,4,32,30" Visibility="Collapsed">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -2719,10 +2689,6 @@
                         <RowDefinition Height="110"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Margin="0,0,0,20">
-                        <TextBlock Text="Stress test" Style="{StaticResource H1}"/>
-                        <TextBlock Text="Carga máxima com corte automático por temperatura" Style="{StaticResource Sub}"/>
-                    </StackPanel>
 
                     <!-- Configuração -->
                     <Border Grid.Row="1" Style="{StaticResource CardBorder}" Margin="0,0,0,14">

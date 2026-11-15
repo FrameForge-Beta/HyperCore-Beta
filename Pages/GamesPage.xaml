@@ -4,7 +4,7 @@
     <UserControl.Resources>
         <ResourceDictionary Source="/HyperCore;component/FfTheme.xaml"/>
     </UserControl.Resources>
-    <Grid Margin="28,24,28,20">
+    <Grid Margin="32,4,32,20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -21,10 +21,7 @@
                     <Button Content="Adicionar .exe" Style="{StaticResource Btn}" Click="Add_Click"/>
                     <Button Content="Procurar de novo" Style="{StaticResource Btn}" Click="Rescan_Click"/>
                 </StackPanel>
-                <TextBlock Text="Jogos" Style="{StaticResource H1}"/>
             </DockPanel>
-            <TextBlock Style="{StaticResource MutedText}"
-                       Text="Launcher com perfil por jogo: aplica otimização e overclock só enquanto jogas, grava frames + sensores e no fim dá o relatório com a causa de cada quebra. Seguro com anti-cheat: não injeta nada nem abre o processo do jogo."/>
         </StackPanel>
 
         <Border Grid.Row="1" Style="{StaticResource FfCard}" Padding="6" Margin="0">

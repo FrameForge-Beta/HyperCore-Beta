@@ -106,11 +106,11 @@ public sealed class OverlayPage : UserControl
 
     private UIElement BuildLayout()
     {
-        var root = new DockPanel { Margin = new Thickness(14, 4, 14, 8), ClipToBounds = true };
+        var root = new DockPanel { Margin = new Thickness(32, 4, 32, 8), ClipToBounds = true };
         Window? layoutWindow = null;
         EventHandler? stateChanged = null;
         void UpdateBottomMargin() =>
-            root.Margin = new Thickness(14, 4, 14, layoutWindow?.WindowState == WindowState.Maximized ? 32 : 8);
+            root.Margin = new Thickness(32, 4, 32, layoutWindow?.WindowState == WindowState.Maximized ? 32 : 8);
         Loaded += (_, _) =>
         {
             layoutWindow = Window.GetWindow(this);
@@ -137,7 +137,6 @@ public sealed class OverlayPage : UserControl
         actions.Children.Add(Ui.Btn("Esconder", (_, _) => FrameForge.OverlayWindow.HideOverlay()));
         DockPanel.SetDock(actions, Dock.Right);
         top.Children.Add(actions);
-        top.Children.Add(Ui.T("Overlay (editor)", "H1"));
         head.Children.Add(top);
         head.Children.Add(Ui.T("Arrasta os elementos na pré-visualização e seleciona-os para editar. Escolhe abaixo a combinação de teclas que mostra e esconde o overlay no jogo.", "MutedText"));
         var auto = new CheckBox { Content = "Mostrar automaticamente quando um jogo estiver em primeiro plano", IsChecked = OverlayStore.Data.AutoShow, Margin = new Thickness(0, 2, 0, 0) };
@@ -1154,7 +1153,7 @@ public sealed class OverlayPage : UserControl
 
     private static readonly string[] Palette =
     {
-        "#FFFFFFFF", "#FFD1D5DB", "#FF9CA3AF", "#FF4B5563", "#FF000000", "#FF4F8CFF", "#FF38BDF8", "#FF22D3EE",
+        "#FFFFFFFF", "#FFD1D5DB", "#FF9CA3AF", "#FF4B5563", "#FF000000", "#FF2E9BFF", "#FF38BDF8", "#FF22D3EE",
         "#FF8B5CF6", "#FFF472B6", "#FFEF4444", "#FFF97316", "#FFF59E0B", "#FFFACC15", "#FF22C55E", "#FF10B981",
     };
 

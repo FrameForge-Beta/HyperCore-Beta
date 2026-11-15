@@ -60,6 +60,13 @@ public partial class App : Application
             return;
         }
         base.OnStartup(e);
+        // Tooltips: aparecem ao fim de 350 ms e ficam o tempo suficiente para ler as explicações longas
+        try
+        {
+            System.Windows.Controls.ToolTipService.InitialShowDelayProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(350));
+            System.Windows.Controls.ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(30000));
+        }
+        catch (Exception) { }
         // Antes de tudo o resto: cria %AppData%\HyperCore e, no 1.º arranque, copia para lá os dados do FrameForge
         // (definições e backups têm de ser lidos já da pasta nova). O inicializador de AppPaths.Root faz a migração.
         _ = FrameForge.Core.AppPaths.Root;

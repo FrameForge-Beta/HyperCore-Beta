@@ -56,11 +56,7 @@ public sealed class ScanPage : UserControl
     public ScanPage()
     {
         Ui.UseTheme(this);
-        var root = new StackPanel { Margin = new Thickness(32, 24, 32, 40) };
-        root.Children.Add(Ui.T("Scan e afinação automática", "H1"));
-        var sub = Ui.T("Mede o teu PC a fundo, afina a gráfica sozinho e diz-te o que vale a pena mudar.", "MutedText", 14);
-        sub.Margin = new Thickness(0, 0, 0, 18);
-        root.Children.Add(sub);
+        var root = new StackPanel { Margin = Ui.PageMargin };
         root.Children.Add(_recovery);
         root.Children.Add(_before);
         root.Children.Add(_during);

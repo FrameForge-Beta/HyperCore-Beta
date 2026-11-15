@@ -5,10 +5,7 @@
         <ResourceDictionary Source="/HyperCore;component/FfTheme.xaml"/>
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="28,24,28,40">
-            <TextBlock Text="Sessões e relatórios" Style="{StaticResource H1}"/>
-            <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,16"
-                       Text="Grava qualquer jogo que já esteja aberto (ou usa JOGAR no separador Jogos). No fim recebes um relatório com cada quebra, a causa provável e se se resolve com ajustes ou só com upgrade."/>
+        <StackPanel Margin="32,4,32,40">
 
             <Border Style="{StaticResource FfCard}">
                 <StackPanel>

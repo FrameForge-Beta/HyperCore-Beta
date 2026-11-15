@@ -142,9 +142,9 @@ public static class HardwareAdvisor
                 "Sem ficheiro de paginação, quando a RAM enche os jogos fecham ou travam em vez de abrandar. É um 'tweak' antigo que hoje só causa problemas.",
                 "Sistema → Acerca de → Definições avançadas do sistema → Desempenho → Avançadas → Memória virtual → 'Gerir automaticamente'."));
         if (p.GameMode == false)
-            a.Add(new Advice(2, "Windows", "Modo de Jogo desligado", "O Modo de Jogo impede o Windows Update de instalar coisas durante o jogo.", "Liga-o no separador Otimização (nível Seguro)."));
+            a.Add(new Advice(2, "Windows", "Modo de Jogo desligado", "O Modo de Jogo impede o Windows Update de instalar coisas durante o jogo.", "Liga-o em Níveis de desempenho (nível Seguro)."));
         if (p.GameDvr == true)
-            a.Add(new Advice(1, "Windows", "Gravação em segundo plano da Xbox Game Bar ativa", "Grava continuamente usando a GPU e o disco.", "Desliga no separador Otimização (nível Seguro)."));
+            a.Add(new Advice(1, "Windows", "Gravação em segundo plano da Xbox Game Bar ativa", "Grava continuamente usando a GPU e o disco.", "Desliga em Níveis de desempenho (nível Seguro)."));
         // Só avisa em planos de poupança: planos personalizados de desempenho (ex.: "Ultra Performance" do ReviOS/Atlas) já servem
         if (!p.IsLaptop && System.Text.RegularExpressions.Regex.IsMatch(p.PowerPlan, "Equilibrado|Balanced|Poupança|Power saver|Economia", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
             a.Add(new Advice(1, "Windows", $"Plano de energia: {p.PowerPlan}", "Num desktop, o plano Alto desempenho melhora ligeiramente o 1% low.",

@@ -17,11 +17,9 @@ public sealed class SettingsPage : UserControl
         _setTrayMode = setTrayMode;
         Ui.UseTheme(this);
 
-        var content = new StackPanel { Margin = new Thickness(28) };
-        content.Children.Add(Ui.T("Configurações", "H1"));
-        content.Children.Add(Ui.T("Preferências da aplicação", "MutedText", 13));
+        var content = new StackPanel { Margin = Ui.PageMargin };
 
-        var general = new StackPanel { Margin = new Thickness(0, 20, 0, 0) };
+        var general = new StackPanel();
         general.Children.Add(Ui.T("Arranque do Windows", "H2"));
         _startup = new CheckBox
         {

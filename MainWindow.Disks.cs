@@ -207,7 +207,7 @@ public partial class MainWindow
     {
         try
         {
-            var info = Application.GetResourceStream(new Uri("pack://application:,,,/Assets/logo-badge.png"));
+            var info = Application.GetResourceStream(new Uri("pack://application:,,,/HyperCore;component/Assets/logo-badge.png"));
             using var ms = new MemoryStream();
             info.Stream.CopyTo(ms);
             return Convert.ToBase64String(ms.ToArray());

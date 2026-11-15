@@ -10,7 +10,7 @@ namespace FrameForge.Pages;
 /// <summary>Ventoinhas: sensores personalizados → curvas → ventoinhas, com tudo explicado e valores ao vivo.</summary>
 public sealed class FansPage : UserControl
 {
-    private readonly StackPanel _root = new() { Margin = new Thickness(28, 24, 28, 40) };
+    private readonly StackPanel _root = new() { Margin = new Thickness(32, 4, 32, 40) };
     private readonly StackPanel _sensors = new(), _curves = new(), _controls = new();
     private readonly List<Action> _live = new();
     private StackPanel _detectionList = new();
@@ -49,11 +49,6 @@ public sealed class FansPage : UserControl
         {
         _root.Children.Clear();
         _live.Clear();
-        _root.Children.Add(Ui.T("Ventoinhas", "H1"));
-        var sub = Ui.T("Escolhe O QUE MEDIR (uma temperatura ou a média de várias), desenha COMO REAGIR (uma curva) e diz QUEM OBEDECE (cada ventoinha). " +
-                       "Exemplo: média entre o núcleo e o hotspot da gráfica → curva → ventoinha da gráfica.", "MutedText");
-        sub.Margin = new Thickness(0, 0, 0, 16);
-        _root.Children.Add(sub);
         _root.Children.Add(StatusCard());
         _root.Children.Add(DetectionCard());
         _root.Children.Add(Section("1 · O que medir", "Sensores personalizados: juntam várias leituras numa só (média, máximo, mínimo, soma, diferença), fazem a média ao longo do tempo (para a ventoinha não andar aos saltos) ou somam um desvio.",
