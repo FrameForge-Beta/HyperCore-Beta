@@ -22,6 +22,8 @@ public sealed class GameRunner
         var tweaksChanged = new List<Tweak>();
         string? planBefore = null;
         OcProfile? ocBefore = AppServices.Tuner.Applied;
+        // O perfil temporário de um passo do scan nunca é "o perfil de antes" (reaplicá-lo no fim do jogo deixaria um valor em teste na placa)
+        if (ocBefore?.Name == FrameForge.Tuning.GpuAutoTuner.TestProfileName || (ocBefore != null && GpuTuner.IsStockValues(ocBefore))) ocBefore = null;
         bool ocChanged = false;
         try
         {
@@ -61,6 +63,8 @@ public sealed class GameRunner
             {
                 if (AppServices.Settings.UnstableOcProfiles.Contains(oc.Name))
                     status($"O perfil '{oc.Name}' está marcado como instável: não o apliquei.");
+                else if (FrameForge.Tuning.ScanService.Instance.Running)
+                    status($"Há um scan a afinar a gráfica: não apliquei o overclock '{oc.Name}' neste jogo.");
                 else
                 {
                     var log = await Task.Run(() => AppServices.Tuner.Apply(oc));
@@ -129,7 +133,9 @@ public sealed class GameRunner
             }
             foreach (var t in tweaksChanged) t.Set(false);
             if (planBefore != null) TweakCatalog.PowerCfg($"/setactive {planBefore}");
-            if (ocChanged)
+            // Com um scan a correr não se mexe na placa: um Stock a meio de um passo validava um valor que não foi testado.
+            // O fim do scan repõe sempre os valores de fábrica.
+            if (ocChanged && !FrameForge.Tuning.ScanService.Instance.Running)
                 await Task.Run(() => { if (ocBefore != null) AppServices.Tuner.Apply(ocBefore); else AppServices.Tuner.Stock(); });
         }
     }

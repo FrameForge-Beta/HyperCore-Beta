@@ -43,11 +43,19 @@ public sealed class GpuBurn
     public string? Error { get; private set; }
     public string AdapterUsed { get; private set; } = "";
     public bool ClosedByUser { get; private set; }
+    /// <summary>O driver removeu o dispositivo D3D (crash/TDR) ou a GPU deixou de terminar frames (ver <see cref="FenceTimeout"/>).</summary>
+    public bool DeviceRemoved { get; private set; }
+    public bool Hung { get; private set; }
+    /// <summary>Tempo máximo à espera de um frame antes de considerar que a GPU deixou de responder.</summary>
+    public TimeSpan FenceTimeout { get; set; } = TimeSpan.FromSeconds(8);
+
+    // DXGI_ERROR_DEVICE_REMOVED / HUNG / RESET / DRIVER_INTERNAL_ERROR
+    private static bool IsRemovedCode(int hr) => hr is unchecked((int)0x887A0005) or unchecked((int)0x887A0006) or unchecked((int)0x887A0007) or unchecked((int)0x887A0020);
 
     public void Start(GpuBurnSettings s)
     {
         if (Running) return;
-        _stop = false; _frames = 0; _seconds = 0; Fps = 0; Error = null; ClosedByUser = false;
+        _stop = false; _frames = 0; _seconds = 0; Fps = 0; Error = null; ClosedByUser = false; DeviceRemoved = false; Hung = false;
         _thread = new Thread(() => Run(s)) { IsBackground = true, Name = "GPU burn" };
         _thread.Start();
     }
@@ -283,7 +291,20 @@ float4 PS(PSIn i) : SV_TARGET
 
                 var fence = fences[frame % inFlight];
                 if (frame >= inFlight)
-                    while (!ctx.IsDataAvailable(fence) && !_stop) Thread.Yield();
+                {
+                    long waitStart = Stopwatch.GetTimestamp();
+                    while (!ctx.IsDataAvailable(fence) && !_stop)
+                    {
+                        Thread.Yield();
+                        // Nunca ficar preso numa GPU que deixou de responder (TDR / driver a reiniciar)
+                        if (Stopwatch.GetElapsedTime(waitStart) > FenceTimeout)
+                        {
+                            Hung = true;
+                            DeviceRemoved = device.DeviceRemovedReason.Failure;
+                            throw new TimeoutException("A placa gráfica deixou de responder (o driver pode ter reiniciado).");
+                        }
+                    }
+                }
 
                 float t = (float)clock.Elapsed.TotalSeconds;
                 var world = Matrix4x4.CreateRotationY(t * 0.6f) * Matrix4x4.CreateRotationX(0.55f + 0.25f * MathF.Sin(t * 0.35f));
@@ -322,7 +343,12 @@ float4 PS(PSIn i) : SV_TARGET
                 {
                     if (msaa > 1) ctx.ResolveSubresource(backBuffer!, 0, colorMs!, 0, Format.B8G8R8A8_UNorm);
                     else ctx.CopyResource(backBuffer!, colorMs!);
-                    swap.Present(0, tearing ? PresentFlags.AllowTearing : PresentFlags.None);
+                    var hr = swap.Present(0, tearing ? PresentFlags.AllowTearing : PresentFlags.None);
+                    if (IsRemovedCode(hr.Code))
+                    {
+                        DeviceRemoved = true;
+                        throw new InvalidOperationException($"O driver de vídeo removeu o dispositivo (0x{hr.Code:X8}).");
+                    }
                     Interlocked.Increment(ref _presents);
                     lastPresent = now;
                 }
@@ -340,6 +366,7 @@ float4 PS(PSIn i) : SV_TARGET
         catch (Exception ex)
         {
             Error = ex.Message;
+            if (IsRemovedCode(ex.HResult)) DeviceRemoved = true;
         }
         finally
         {

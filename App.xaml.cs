@@ -63,12 +63,28 @@ public partial class App : Application
         DispatcherUnhandledException += (_, ex) =>
         {
             try { System.IO.File.AppendAllText(System.IO.Path.Combine(FrameForge.Core.AppPaths.Root, "erros.log"), $"[{DateTime.Now}] {ex.Exception}\n\n"); } catch { }
+            // Scan a correr: pára e devolve a gráfica a Stock antes de mostrar o erro
+            try { FrameForge.Tuning.ScanService.Instance.OnUnhandledException(ex.Exception, fatal: false); } catch { }
             MessageBox.Show(ex.Exception.Message, "FrameForge — erro", MessageBoxButton.OK, MessageBoxImage.Warning);
             ex.Handled = true;
         };
+        // Erro fatal fora do thread da interface / fim de sessão do Windows: Stock na gráfica se o scan estiver a afinar
+        AppDomain.CurrentDomain.UnhandledException += (_, ex) =>
+        {
+            try { FrameForge.Tuning.ScanService.Instance.OnUnhandledException(ex.ExceptionObject as Exception, fatal: ex.IsTerminating); } catch { }
+        };
+        SessionEnding += (_, _) => { try { FrameForge.Tuning.ScanService.Instance.OnAppExit(); } catch { } };
+
+        // Scan interrompido (bloqueio/reinício/crash a meio da afinação)? Tem de ser visto ANTES de o AppServices aplicar o perfil de arranque.
+        FrameForge.Tuning.RecoveryInfo? recovery = null;
+        try { recovery = FrameForge.Tuning.ScanService.Instance.CheckRecoveryOnStartup(); } catch { }
+
         FrameForge.Core.AppServices.Start();
         var window = new MainWindow();
         window.Show();
+        if (recovery is { Novo: true } && recovery.Mensagem.Length > 0)
+            window.Dispatcher.BeginInvoke(() => FrameForge.Core.AppServices.Toast(recovery.Mensagem),
+                                          System.Windows.Threading.DispatcherPriority.ApplicationIdle);
         if (FrameForge.Core.AppServices.Settings.StartMinimizedToTray &&
             FrameForge.Core.WindowsStartupRegistration.IsStartupLaunch(e.Args))
             window.StartInTray();
@@ -76,6 +92,7 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        try { FrameForge.Tuning.ScanService.Instance.OnAppExit(); } catch { } // scan a meio: Stock na gráfica
         FrameForge.Core.AppServices.Stop();
         base.OnExit(e);
     }

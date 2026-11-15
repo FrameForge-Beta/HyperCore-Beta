@@ -1,9 +1,13 @@
 using FrameForge.Analysis;
 using FrameForge.Hardware;
+using FrameForge.Tuning;
 
 namespace FrameForge.Optimize;
 
-public sealed record Advice(int Severity /*1 dica, 2 aviso, 3 importante*/, string Area, string Title, string Detail, string Action);
+/// <param name="Page">Página da app que resolve isto (tag para AppServices.Navigate, ex.: "FF:fans"); null se não houver.</param>
+/// <param name="PageLabel">Texto do botão ("Abrir Ventoinhas").</param>
+public sealed record Advice(int Severity /*1 dica, 2 aviso, 3 importante*/, string Area, string Title, string Detail, string Action,
+                            string? Page = null, string? PageLabel = null);
 
 /// <summary>
 /// Lê o hardware e o Windows e aponta o que está a custar desempenho no TEU PC (não conselhos genéricos):
@@ -173,5 +177,151 @@ public static class HardwareAdvisor
         if (browsers > 0)
             a.Add(new Advice(1, "Software", "Browser aberto", "Browsers com muitos separadores usam 1–4 GB de RAM e alguma VRAM, e vídeos usam a GPU.",
                 "Fecha-o nos jogos competitivos ou adiciona-o a 'Fechar antes de jogar' no perfil do jogo."));
+    }
+
+    // ------------------------------------------------------------------ conselhos medidos (scan)
+
+    /// <summary>
+    /// Os conselhos do <see cref="Analyze"/> mais os que vêm das MEDIÇÕES do scan (latência/banda da RAM, throttle térmico,
+    /// limite de energia, disco lento/doente, HAGS…), sem repetir o mesmo tema. Cada um com ação concreta e, quando existe,
+    /// a página da app que resolve.
+    /// </summary>
+    public static List<Advice> AnalyzeWithScan(SystemProbe? p, ScanReport r)
+    {
+        var measured = Measured(r, p);
+        var basic = p != null ? Analyze(p) : new List<Advice>();
+        // O medido substitui o estático do mesmo tema
+        if (measured.Any(m => m.Title.StartsWith("XMP", StringComparison.Ordinal))) basic.RemoveAll(b => b.Title.StartsWith("XMP/EXPO desligado", StringComparison.Ordinal));
+        if (measured.Any(m => m.Title.Contains("canal", StringComparison.OrdinalIgnoreCase))) basic.RemoveAll(b => b.Title.Contains("canal", StringComparison.OrdinalIgnoreCase));
+        if (r.Upgrades.Count > 0) basic.RemoveAll(b => b.Title.StartsWith("Upgrade de CPU", StringComparison.Ordinal));
+        return measured.Concat(basic.Select(WithPage))
+                       .GroupBy(a => a.Title).Select(g => g.First())
+                       .OrderByDescending(a => a.Severity).ToList();
+    }
+
+    /// <summary>Página da app para os conselhos estáticos que têm uma (plano de energia, Modo de Jogo, disco cheio, driver…).</summary>
+    private static Advice WithPage(Advice a)
+    {
+        if (a.Page != null) return a;
+        if (a.Title.StartsWith("Plano de energia") || a.Title.StartsWith("Modo de Jogo") || a.Title.StartsWith("Gravação em segundo plano"))
+            return a with { Page = "FF:optimize", PageLabel = "Abrir Níveis de desempenho" };
+        if (a.Area == "Disco" && a.Title.Contains("quase cheio")) return a with { Page = "FF:maintenance", PageLabel = "Abrir Manutenção" };
+        if (a.Title.StartsWith("Driver da placa gráfica")) return a with { Page = "PageDriver", PageLabel = "Abrir Drivers" };
+        if (a.Area == "Software" && a.Title.Contains("Afterburner")) return a with { Page = "FF:oc", PageLabel = "Abrir Overclock da gráfica" };
+        return a;
+    }
+
+    /// <summary>Só os conselhos que vêm das medições do scan.</summary>
+    public static List<Advice> Measured(ScanReport r, SystemProbe? p)
+    {
+        var a = new List<Advice>();
+        var lim = TuningLimits.For(r.Perfil);
+        var inv = r.Inventario;
+
+        // RAM
+        if (r.Ram is RamResult ram)
+        {
+            if (ram.XmpDesligado)
+                a.Add(new Advice(3, "RAM", "XMP/EXPO desligado (medido)",
+                    $"A RAM corre a {ram.MHz} MHz mas foi feita para {ram.MHzNominal} MHz" + (ram.LatenciaNs is double l ? $"; a latência medida é {l:0} ns." : "."),
+                    "Na BIOS liga o perfil XMP/EXPO (o passo a passo está no relatório do scan). Em jogos limitados pela CPU dá 5–15% de FPS e 1% low melhores. Faz um scan a seguir para confirmar que não há erros."));
+            else if (ram.LatenciaNs is double lat && lat > BottleneckFromScan.LatencyHigh(inv.RamTipo))
+                a.Add(new Advice(2, "RAM", $"Latência da RAM alta ({lat:0} ns)",
+                    "A CPU espera mais pela memória do que é normal para este tipo de RAM. Nos jogos limitados pela CPU isto custa FPS e 1% low.",
+                    "Confirma na BIOS que o XMP/EXPO está no perfil 1; em Ryzen mantém o FCLK 1:1. Se os pentes forem lentos (ex.: 3200 CL22), um kit 3600 CL16 (DDR4) ou 6000 CL30 (DDR5) resolve."));
+
+            if (ram.CanalUnicoProvavel && inv.Pentes >= 2)
+                a.Add(new Advice(3, "RAM", "A RAM parece estar em canal único (medido)",
+                    $"Tens {inv.Pentes} pentes, mas a banda medida ({ram.LeituraGBs:0} GB/s) é a de um só canal.",
+                    "Põe os pentes nas ranhuras indicadas no manual (normalmente A2 e B2, a 2.ª e a 4.ª a contar do processador)."));
+            else if (ram.CanalUnicoProvavel && inv.Pentes == 1)
+                a.Add(new Advice(3, "RAM", "RAM em canal único (1 pente)",
+                    $"A banda medida é {ram.LeituraGBs:0} GB/s: com um só pente a memória fica a metade da velocidade.",
+                    "Junta um segundo pente igual (mesmo modelo). Costuma dar +20–40% no 1% low."));
+        }
+
+        // CPU
+        if (r.Cpu is CpuResult cpu)
+        {
+            if (!cpu.Estavel && (cpu.ErroCalculo || cpu.ErrosRam > 0 || cpu.ErrosWhea > 0))
+            {
+                var what = new List<string>();
+                if (cpu.ErroCalculo) what.Add("erros de cálculo");
+                if (cpu.ErrosRam > 0) what.Add($"{cpu.ErrosRam} erros de RAM");
+                if (cpu.ErrosWhea > 0) what.Add($"{cpu.ErrosWhea} erros de hardware (WHEA)");
+                a.Add(new Advice(3, "CPU", "CPU/RAM instáveis no stress",
+                    "O scan encontrou " + string.Join(", ", what) + ". Isto dá crashes e ecrãs azuis aleatórios.",
+                    "Se tens PBO/Curve Optimizer ou XMP ligados, desliga-os (um de cada vez) e repete o scan. Se acontecer de fábrica: atualiza a BIOS e testa a RAM com o MemTest86.",
+                    "PageOc", "Abrir Teste de estabilidade"));
+            }
+            if (cpu.Stress.ThrottleTermico || cpu.Stress.TempMax >= lim.CpuTempMax - 3)
+                a.Add(new Advice(cpu.Stress.ThrottleTermico ? 3 : 2, "CPU",
+                    $"CPU quente: {cpu.Stress.TempMax:0} °C no stress" + (cpu.Stress.ThrottleTermico ? " e a perder clock" : ""),
+                    "Quando passa do limite, a CPU baixa o clock sozinha para se proteger (throttle): perdes FPS nos jogos mais pesados.",
+                    "Limpa o pó do cooler, confirma que a ventoinha do cooler está ligada a CPU_FAN e a rodar, e que a caixa tem entrada e saída de ar. Pasta térmica com mais de 4–5 anos: troca. Na BIOS, Curve Optimizer/undervolt baixa muito a temperatura.",
+                    "FF:fans", "Abrir Ventoinhas"));
+        }
+
+        // GPU
+        if (r.Gpu is GpuResult gpu)
+        {
+            if (!gpu.Estavel)
+                a.Add(new Advice(3, "GPU", "A gráfica falhou em valores de fábrica",
+                    "Houve um problema com a gráfica sem overclock: " + string.Join("; ", gpu.Problemas.Take(2)) + ".",
+                    "Reinstala o driver de vídeo (instalação limpa), confirma os cabos de energia da gráfica (sem adaptadores/derivações) e que a fonte chega para a placa.",
+                    "PageDriver", "Abrir Drivers"));
+
+            bool hot = gpu.Jogo.TempMax >= lim.GpuTempMax - 2 || gpu.Jogo.ThrottleTermico;
+            if (hot)
+                a.Add(new Advice(gpu.Jogo.ThrottleTermico ? 3 : 2, "GPU", $"Gráfica quente: {gpu.Jogo.TempMax:0} °C numa cena de jogo",
+                    "Perto deste valor a gráfica baixa o clock sozinha. A causa costuma ser a caixa com pouco fluxo de ar ou pó nos dissipadores.",
+                    "Aumenta a curva de ventoinha da gráfica, limpa o pó e confirma a entrada de ar da caixa. Um undervolt (perfil 'Silencioso / Eficiente') baixa 8–15 °C com quase o mesmo FPS.",
+                    "FF:fans", "Abrir Ventoinhas"));
+            double? hs = gpu.Jogo.HotspotMax ?? gpu.Termico.HotspotMax;
+            double? core = gpu.Jogo.HotspotMax != null ? gpu.Jogo.TempMax : gpu.Termico.TempMax;
+            if (hs is double h && core is double c && h - c > 25)
+                a.Add(new Advice(2, "GPU", $"Diferença grande entre o hotspot e a temperatura da gráfica ({h - c:0} °C)",
+                    $"Hotspot a {h:0} °C com o núcleo a {c:0} °C. Mais de 20–25 °C de diferença indica pasta térmica seca ou contacto fraco do dissipador.",
+                    "Se a placa tem mais de 3 anos ou já está fora da garantia, a troca da pasta térmica costuma resolver. Se estiver na garantia, contacta a loja/marca."));
+            if (gpu.Jogo.ThrottleEnergia && r.Oc is not { PotenciaPct: > 100 })
+                a.Add(new Advice(1, "GPU", "O limite de energia segura a gráfica",
+                    "Numa cena de jogo a placa bate no limite de energia de fábrica e não sobe mais o clock.",
+                    "Subir o limite de energia (perfil Avançado do scan ou o cursor de energia no Overclock) dá mais 2–5% em jogos pesados, com mais consumo e calor.",
+                    "FF:oc", "Abrir Overclock da gráfica"));
+            if (gpu.Termico.ThrottleTermico && !hot)
+                a.Add(new Advice(1, "GPU", "Em stress máximo a gráfica chega ao limite de temperatura",
+                    "Nos jogos está bem, mas em carga máxima contínua (renderização, IA) pode perder clock.",
+                    "Uma curva de ventoinha um pouco mais forte resolve.", "FF:fans", "Abrir Ventoinhas"));
+        }
+
+        // Discos
+        foreach (var d in r.Discos)
+        {
+            if (d.SaudeAlerta)
+                a.Add(new Advice(3, "Disco", $"Disco {d.Unidade} com sinais de desgaste ({d.Saude})",
+                    $"{d.Modelo}: o S.M.A.R.T. do disco aponta problemas.",
+                    "Faz já uma cópia de segurança dos ficheiros importantes e vê os detalhes na página Discos.", "PageDisks", "Abrir Discos"));
+            if (d.LeituraMBs is not double rd) continue;
+            bool nvme = d.Tipo == "NVMe";
+            bool ssd = nvme || d.Tipo == "SSD";
+            if ((nvme && rd < 1000) || (ssd && !nvme && rd < 300))
+                a.Add(new Advice(2, "Disco", $"Disco {d.Unidade} mais lento do que devia ({rd:N0} MB/s)",
+                    nvme ? "Um SSD NVMe devia passar dos 1500 MB/s; este está muito abaixo." : "Um SSD SATA devia andar perto dos 500 MB/s.",
+                    nvme ? "Pode estar numa ranhura M.2 mais lenta (do chipset ou PCIe 3.0 x2), quase cheio ou a aquecer. Vê no manual da placa qual é a ranhura M.2 ligada à CPU."
+                         : "Confirma o modo AHCI na BIOS, troca o cabo SATA e usa uma porta SATA da placa (não de controladoras extra). SSDs quase cheios também abrandam.",
+                    "PageDisks", "Abrir Discos"));
+            if (d.Jogos && d.Tipo == "HDD")
+                a.Add(new Advice(2, "Disco", $"Os jogos estão num disco rígido ({d.Unidade}, {rd:N0} MB/s)",
+                    "Num HDD os mapas demoram a carregar e os jogos de mundo aberto têm quebras ao carregar texturas.",
+                    "Passa os jogos que mais jogas para um SSD (um NVMe de 1 TB é barato e 10–20× mais rápido)."));
+        }
+
+        // Windows
+        if (inv.Hags == false && System.Text.RegularExpressions.Regex.IsMatch(inv.Gpu, @"RTX (30|40|50)\d0|RX (6|7|9)\d{3}"))
+            a.Add(new Advice(1, "Windows", "Agendamento de GPU acelerado por hardware desligado",
+                "Nas gráficas recentes reduz um pouco a latência e é obrigatório para a geração de frames (DLSS 3/4 Frame Generation).",
+                "Definições → Sistema → Ecrã → Gráficos → Alterar as predefinições de gráficos → ligar 'Agendamento de GPU acelerado por hardware' e reiniciar."));
+
+        return a.OrderByDescending(x => x.Severity).ToList();
     }
 }

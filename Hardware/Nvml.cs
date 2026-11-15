@@ -23,6 +23,15 @@ public static class Nvml
     [StructLayout(LayoutKind.Sequential)] public struct Memory { public ulong Total, Free, Used; }
     [StructLayout(LayoutKind.Sequential)] public struct Utilization { public uint Gpu, Mem; }
 
+    /// <summary>nvmlPciInfo_t (v3): identifica a placa no barramento PCI (para escolher a MESMA GPU na NVML e na NVAPI).</summary>
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    public struct PciInfo
+    {
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)] public string BusIdLegacy;
+        public uint Domain, Bus, Device, PciDeviceId, PciSubSystemId;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] public string BusId;
+    }
+
     [DllImport(Dll, EntryPoint = "nvmlInit_v2")] private static extern int nvmlInit();
     [DllImport(Dll, EntryPoint = "nvmlDeviceGetCount_v2")] private static extern int nvmlDeviceGetCount(out uint n);
     [DllImport(Dll, EntryPoint = "nvmlDeviceGetHandleByIndex_v2")] private static extern int nvmlDeviceGetHandleByIndex(uint i, out IntPtr h);
@@ -51,6 +60,7 @@ public static class Nvml
     [DllImport(Dll)] private static extern int nvmlDeviceGetCurrPcieLinkGeneration(IntPtr h, out uint g);
     [DllImport(Dll)] private static extern int nvmlDeviceGetMaxPcieLinkGeneration(IntPtr h, out uint g);
     [DllImport(Dll)] private static extern int nvmlDeviceGetPerformanceState(IntPtr h, out int p);
+    [DllImport(Dll, EntryPoint = "nvmlDeviceGetPciInfo_v3")] private static extern int nvmlDeviceGetPciInfo(IntPtr h, out PciInfo pci);
 
     private static bool? _ok;
     public static bool Available => _ok ??= Try(() => nvmlInit()) == Success;
@@ -72,12 +82,38 @@ public static class Nvml
         _ => $"erro NVML {rc}"
     };
 
+    /// <summary>
+    /// A GPU NVIDIA "principal": a dedicada com mais VRAM (a mesma regra dos benchmarks e da UI). Com uma só placa é o índice 0.
+    /// O nome ficou por compatibilidade; todos os leitores/escritores usam esta escolha, por isso a NVML, a NVAPI e os testes
+    /// falam com a mesma placa em PCs com várias GPUs.
+    /// </summary>
     public static IntPtr FirstDevice()
     {
         if (!Available) return IntPtr.Zero;
-        IntPtr h = IntPtr.Zero;
-        return Try(() => nvmlDeviceGetHandleByIndex(0, out h)) == Success ? h : IntPtr.Zero;
+        uint n = 0;
+        if (Try(() => nvmlDeviceGetCount(out n)) != Success || n == 0) n = 1;
+        IntPtr best = IntPtr.Zero;
+        ulong bestVram = 0;
+        for (uint i = 0; i < Math.Min(n, 16u); i++)
+        {
+            IntPtr h = IntPtr.Zero;
+            uint idx = i;
+            if (Try(() => nvmlDeviceGetHandleByIndex(idx, out h)) != Success || h == IntPtr.Zero) continue;
+            ulong vram = Vram(h)?.Total ?? 0;
+            if (best == IntPtr.Zero || vram > bestVram) { best = h; bestVram = vram; }
+        }
+        return best;
     }
+
+    /// <summary>Número de GPUs NVIDIA vistas pela NVML (0 sem driver).</summary>
+    public static int DeviceCount()
+    {
+        if (!Available) return 0;
+        uint n = 0;
+        return Try(() => nvmlDeviceGetCount(out n)) == Success ? (int)n : 0;
+    }
+
+    public static PciInfo? Pci(IntPtr h) { PciInfo p = default; return Try(() => nvmlDeviceGetPciInfo(h, out p)) == Success ? p : null; }
 
     public static string? Name(IntPtr h)
     {

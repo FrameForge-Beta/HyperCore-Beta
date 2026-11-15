@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Controls.Primitives;
 using FrameForge.Core;
+using FrameForge.Tuning;
 
 namespace FrameForge.Pages;
 
@@ -16,6 +17,8 @@ public sealed class HomePage : UserControl
         ("", "03 · AJUSTAR", "Melhorar desempenho", "Aplica ajustes reversíveis do Windows, por níveis.", "FF:optimize"),
         ("", "04 · PERSONALIZAR", "Configurar o overlay", "Escolhe sensores, posição, cores e apresentação no jogo.", "FF:overlay"),
     };
+
+    private readonly StackPanel _scan = new();
 
     public HomePage()
     {
@@ -45,6 +48,12 @@ public sealed class HomePage : UserControl
         heroGrid.Children.Add(heroButton);
         hero.Child = heroGrid;
         root.Children.Add(hero);
+        root.Children.Add(_scan);
+        FillScan();
+        ScanService.Instance.Completed += r =>
+        {
+            if (r.Resultado == ScanOutcome.Completo) Dispatcher.BeginInvoke(FillScan);
+        };
 
         root.Children.Add(Ui.T("O que queres fazer?", "H1", 22));
         var sub = Ui.T("Escolhe uma ação. O resto das ferramentas está organizado no menu lateral.", "MutedText", 13);
@@ -106,6 +115,51 @@ public sealed class HomePage : UserControl
         steps.Children.Add(Ui.T("1  Diagnostica o PC     →     2  Grava uma sessão     →     3  Aplica um ajuste     →     4  Compara os resultados", "MutedText", 13));
         root.Children.Add(Ui.Card(steps, Ui.Res("Accent2")));
         Content = new ScrollViewer { VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Content = root };
+    }
+
+    /// <summary>Cartão do scan: convite para o primeiro, ou o resumo do último (nota + quem segura o PC).</summary>
+    private void FillScan()
+    {
+        _scan.Children.Clear();
+        ScanReport? last = null;
+        try { last = ScanService.Instance.Last; } catch { }
+        var grid = new Grid();
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        var left = new Border { Width = 64, Height = 64, CornerRadius = new CornerRadius(16), Background = Ui.Res("Hover"), Margin = new Thickness(0, 0, 18, 0), VerticalAlignment = VerticalAlignment.Center };
+        if (last?.Nota is int nota)
+            left.Child = new TextBlock { Text = nota.ToString(), FontSize = 26, FontWeight = FontWeights.Bold, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center,
+                                         Foreground = nota >= 80 ? Ui.Res("Good") : nota >= 60 ? Ui.Res("Warn") : Ui.Res("Bad"), ToolTip = "Nota do último scan (0–100)" };
+        else
+            left.Child = new TextBlock { Text = "", FontFamily = (System.Windows.Media.FontFamily)FindResource("Icons"), FontSize = 28, Foreground = Ui.Res("Accent2"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+        grid.Children.Add(left);
+        var txt = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
+        if (last == null)
+        {
+            txt.Children.Add(Ui.T("SCAN E AFINAÇÃO AUTOMÁTICA", "Label", 10, Ui.Res("Accent2"), FontWeights.Bold));
+            txt.Children.Add(Ui.T("Faz um scan ao PC", "H2", 17));
+            txt.Children.Add(Ui.T("Mede tudo, encontra sozinho o overclock estável da gráfica e diz o que vale a pena mudar.", "MutedText", 13));
+        }
+        else
+        {
+            txt.Children.Add(Ui.T($"ÚLTIMO SCAN · {last.Data:dd/MM/yyyy}", "Label", 10, Ui.Res("Accent2"), FontWeights.Bold));
+            string main = last.Segurar.Select(f => f.Titulo).FirstOrDefault(t => t.Length > 0) ?? last.Resumo;
+            txt.Children.Add(Ui.T(main.Length > 0 ? main : "Scan concluído.", "H2", 16));
+            if (last.Resumo.Length > 0 && last.Resumo != main) txt.Children.Add(Ui.T(last.Resumo, "MutedText", 13));
+        }
+        Grid.SetColumn(txt, 1);
+        grid.Children.Add(txt);
+        var go = Ui.Btn(last == null ? "INICIAR SCAN   ›" : "VER RELATÓRIO   ›", (_, _) => AppServices.Navigate("FF:scan"), last == null ? "BtnAccent" : "Btn");
+        go.VerticalAlignment = VerticalAlignment.Center;
+        go.Margin = new Thickness(16, 0, 0, 0);
+        Grid.SetColumn(go, 2);
+        grid.Children.Add(go);
+        var card = Ui.Card(grid);
+        card.Margin = new Thickness(0, 0, 0, 24);
+        card.Cursor = Cursors.Hand;
+        card.MouseLeftButtonUp += (_, e) => { if (e.OriginalSource is not System.Windows.Controls.Primitives.ButtonBase) AppServices.Navigate("FF:scan"); };
+        _scan.Children.Add(card);
     }
 }
 

@@ -50,7 +50,14 @@ public sealed class StressTester
     {
         if (_cts == null) return;
         _cts.Cancel();
-        foreach (var t in _threads) t.Join(2000);
+        // Prazo TOTAL de 3 s (não 2 s por thread): com 32 threads o Stop podia demorar mais de um minuto.
+        // Os threads são de fundo e saem sozinhos no próximo ciclo; não vale a pena esperar mais.
+        var deadline = DateTime.UtcNow.AddSeconds(3);
+        foreach (var t in _threads)
+        {
+            int left = (int)Math.Max(0, (deadline - DateTime.UtcNow).TotalMilliseconds);
+            if (!t.Join(left)) break;
+        }
         _threads.Clear();
         _cts.Dispose();
         _cts = null;

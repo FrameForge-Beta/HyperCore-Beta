@@ -48,6 +48,8 @@ public partial class OverclockPage : UserControl
             Warnings.Children.Add(Ui.Card(Ui.T($"⚠ {string.Join(", ", tools)} está aberto. Dois programas de overclock ao mesmo tempo sobrepõem-se: o último a escrever ganha, " +
                 "e o Afterburner reaplica o perfil dele ao arrancar. Fecha-o (ou desliga 'Apply overclocking at system startup' nele) antes de usar este separador.", "Body"), Ui.Res("Bad")));
 
+        if (canWrite) ShowAutoProfiles();
+
         if (_st.CoreMin is int cmin && _st.CoreMax is int cmax) { Core.Minimum = Math.Max(cmin, -500); Core.Maximum = Math.Min(cmax, 400); }
         if (_st.MemMin is int mmin && _st.MemMax is int mmax) { Mem.Minimum = Math.Max(mmin, -1000); Mem.Maximum = Math.Min(mmax, 2000); }
         if (_st.PowerDefaultW is uint def && def > 0 && _st.PowerMinW is uint pmin && _st.PowerMaxW is uint pmax)
@@ -101,6 +103,7 @@ public partial class OverclockPage : UserControl
 
     private async void Apply_Click(object sender, RoutedEventArgs e)
     {
+        if (ScanBusy()) return;
         var name = Selected?.Name ?? "Manual";
         var p = FromSliders(name);
         if (p.CoreOffset > 150 || p.MemOffset > 1000)
@@ -113,10 +116,71 @@ public partial class OverclockPage : UserControl
 
     private async void Stock_Click(object sender, RoutedEventArgs e)
     {
+        if (ScanBusy()) return;
         Log.Text = "A repor valores de fábrica…";
         var log = await Task.Run(AppServices.Tuner.Stock);
         Log.Text = string.Join("\n", log);
         LoadProfiles("Stock");
+    }
+
+    /// <summary>Durante o scan quem escreve na placa é o afinador automático: dois a escrever estragam o teste.</summary>
+    private bool ScanBusy()
+    {
+        if (!FrameForge.Tuning.ScanService.Instance.Running) return false;
+        Log.Text = "Há um scan a correr na página Scan e afinação automática: espera que acabe (ou pára-o lá) antes de mexer aqui.";
+        return true;
+    }
+
+    /// <summary>Perfis "Auto · …" encontrados pelo scan: um cartão com o ganho medido e atalhos para escolher/aplicar.</summary>
+    private void ShowAutoProfiles()
+    {
+        var autos = AppServices.Settings.OcProfiles.Where(p => p.Name.StartsWith("Auto · ", StringComparison.Ordinal)).ToList();
+        var last = FrameForge.Tuning.ScanService.Instance.Last;
+        var sp = new StackPanel();
+        sp.Children.Add(Ui.T("Perfis automáticos (do scan)", "H2"));
+        if (autos.Count == 0)
+        {
+            sp.Children.Add(Ui.T("Ainda não tens nenhum. O scan sobe o núcleo (e a memória) aos poucos, testa cada passo e guarda aqui o máximo estável.", "MutedText"));
+            var go = Ui.Btn("Abrir Scan e afinação automática", (_, _) => AppServices.Navigate("FF:scan"));
+            go.Margin = new Thickness(0, 10, 0, 0);
+            go.HorizontalAlignment = HorizontalAlignment.Left;
+            sp.Children.Add(go);
+        }
+        foreach (var a in autos)
+        {
+            bool unstable = AppServices.Settings.UnstableOcProfiles.Contains(a.Name);
+            var row = new DockPanel { Margin = new Thickness(0, 8, 0, 0) };
+            var buttons = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+            var pick = Ui.Btn("Escolher", (_, _) => LoadProfiles(a.Name));
+            pick.Margin = new Thickness(8, 0, 0, 0);
+            buttons.Children.Add(pick);
+            if (!unstable)
+            {
+                var apply = Ui.Btn("Aplicar", async (_, _) =>
+                {
+                    if (ScanBusy()) return;
+                    try
+                    {
+                        LoadProfiles(a.Name);
+                        Log.Text = "A aplicar…";
+                        var log = await Task.Run(() => AppServices.Tuner.Apply(a));
+                        Log.Text = string.Join("\n", log);
+                    }
+                    catch (Exception ex) { Log.Text = "Não consegui aplicar: " + ex.Message; } // async void: nada pode escapar
+                }, "BtnAccent");
+                apply.Margin = new Thickness(8, 0, 0, 0);
+                buttons.Children.Add(apply);
+            }
+            DockPanel.SetDock(buttons, Dock.Right);
+            row.Children.Add(buttons);
+            var txt = new StackPanel();
+            txt.Children.Add(Ui.T(a.Name + (unstable ? "  (instável)" : ""), "Body", weight: FontWeights.SemiBold));
+            string gain = last?.Oc is { NomePerfil: string n, GanhoPct: double g } && n == a.Name ? $" · {g:+0.#;-0.#;0}% FPS medido" : "";
+            txt.Children.Add(Ui.T($"Núcleo {a.CoreOffset:+0;-0;0} MHz · memória {a.MemOffset:+0;-0;0} · energia {a.PowerPct}%{gain}", "MutedText", 12.5));
+            row.Children.Add(txt);
+            sp.Children.Add(row);
+        }
+        Warnings.Children.Add(Ui.Card(sp, Ui.Res("Accent")));
     }
 
     private void Save_Click(object sender, RoutedEventArgs e)
