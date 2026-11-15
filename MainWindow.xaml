@@ -2174,44 +2174,16 @@
                                 </StackPanel>
                             </Border>
 
-                            <!-- Ajustes do Windows -->
+                            <!-- Ajustes do Windows: passaram para a página Níveis de desempenho (um só catálogo, um só "repor") -->
                             <Border Grid.Column="2" Style="{StaticResource CardBorder}" VerticalAlignment="Top">
                                 <StackPanel>
-                                    <Grid Margin="0,0,0,6">
-                                        <TextBlock Text="AJUSTES DO WINDOWS PARA JOGOS" Style="{StaticResource Label}"/>
-                                        <Button Style="{StaticResource OutlineButton}" Content="RESTAURAR ORIGINAIS" Padding="10,4" FontSize="11"
-                                                HorizontalAlignment="Right" VerticalAlignment="Top" Click="BtnRestoreTweaks_Click"/>
-                                    </Grid>
-                                    <TextBlock Foreground="{DynamicResource Faint}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,10">
-                                        O interruptor mostra o estado atual e aplica na hora. O valor original é guardado na primeira
-                                        alteração. Não mexemos em segurança (Defender, Integridade de Memória, UAC, Windows Update).
+                                    <TextBlock Text="AJUSTES DO WINDOWS PARA JOGOS" Style="{StaticResource Label}" Margin="0,0,0,6"/>
+                                    <TextBlock Foreground="{DynamicResource Faint}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,12">
+                                        Modo de Jogo, Game DVR, HAGS, plano de energia e os outros ajustes estão agora em Níveis de desempenho:
+                                        escolhes um nível, fica guardado e voltas ao original com um clique.
                                     </TextBlock>
-                                    <ItemsControl x:Name="OptTweaks">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,1,0,0" Padding="0,10">
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <CheckBox IsChecked="{Binding IsOn, Mode=OneWay}" Tag="{Binding}" Click="Tweak_Click"
-                                                                  VerticalAlignment="Top" Margin="0,1,12,0"/>
-                                                        <StackPanel Grid.Column="1">
-                                                            <Grid>
-                                                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,110,0"/>
-                                                                <TextBlock Text="{Binding Badge}" FontSize="9.5" FontWeight="Bold" Foreground="{DynamicResource Muted}"
-                                                                           HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,3,0,0"/>
-                                                            </Grid>
-                                                            <TextBlock Text="{Binding Description}" Foreground="{DynamicResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="0,3,0,0"/>
-                                                            <TextBlock Text="{Binding Effect}" Foreground="{DynamicResource Faint}" FontSize="11" TextWrapping="Wrap" Margin="0,3,0,0"/>
-                                                            <TextBlock Text="{Binding Status}" FontSize="11" TextWrapping="Wrap" Margin="0,3,0,0"/>
-                                                        </StackPanel>
-                                                    </Grid>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
+                                    <Button Style="{StaticResource OutlineButton}" Content="ABRIR NÍVEIS DE DESEMPENHO" Padding="12,6" FontSize="11"
+                                            HorizontalAlignment="Left" Click="BtnOpenLevels_Click"/>
                                 </StackPanel>
                             </Border>
                         </Grid>

@@ -58,7 +58,7 @@ public partial class MainWindow
         ["PageGames"] = ("Os meus resultados", "FPS médio e 1% low realmente medidos nos jogos que já gravaste, com nota, quebras e data. Não são estimativas: vêm das tuas sessões."),
         ["PageOverlay"] = ("Overlay clássico", "O overlay original (lista simples de itens). Para escolher qualquer sensor, posição e cor, usa o Overlay (editor)."),
         ["PageLauncher"] = ("Biblioteca clássica", "O launcher original, com menu de gráficos e gravação das opções de arranque da Steam. Para relatórios de quebras usa 'Jogar e gravar'."),
-        ["FF:optimize"] = ("Níveis de desempenho", "Ajustes do Windows para jogos, por níveis. Cada um diz o ganho real e o que perdes. 'Restaurar tudo' devolve o PC exatamente como estava. Nada desliga a segurança do Windows."),
+        ["FF:optimize"] = ("Níveis de desempenho", "Escolhe um nível e carrega em Aplicar; fica guardado e nada mexe na segurança do Windows."),
         ["FF:priorities"] = ("Prioridade dos programas", "Escolhe que programas passam à frente na fila do processador — como no Gestor de Tarefas → Detalhes → Definir prioridade, mas fica gravado: o Windows aplica sozinho sempre que o programa abre, mesmo depois de reiniciar. Não precisa de reiniciar o PC: basta fechar e abrir o programa."),
         ["FF:maintenance"] = ("Manutenção do PC", "Limpa ficheiros temporários antigos, abre a ferramenta nativa de limpeza do Windows, desfragmenta apenas HDDs e em sequência, e calcula o espaço ocupado por pastas. SSDs e discos não identificados são sempre excluídos da desfragmentação."),
         ["PageOptimize"] = ("Limpeza rápida", "Liberta memória e fecha programas de fundo antes de jogar. Não mexe em jogos abertos."),

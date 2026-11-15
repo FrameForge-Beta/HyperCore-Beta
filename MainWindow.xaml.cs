@@ -86,8 +86,7 @@ public partial class MainWindow : Window
 
     // OTIMIZA
     private List<BackgroundApp> _apps = new();
-    private readonly List<Tweak> _tweaks = WindowsTweaks.All(); // só as definições; o estado é lido ao abrir a página
-    private bool _optInit;
+    private readonly List<Tweak> _tweaks = WindowsTweaks.All(); // só leitura (Modo de Jogo/Game DVR na Visão geral); mudar é na página Níveis de desempenho
 
     // Stress de GPU (estilo FurMark)
     private readonly GpuBurn _burn = new();
@@ -1180,16 +1179,9 @@ public partial class MainWindow : Window
 
     // ---------------- OTIMIZA ----------------
 
-    /// <summary>Carrega a página OTIMIZA quando ela é aberta (os ajustes do Windows só na primeira vez).</summary>
+    /// <summary>Carrega a página OTIMIZA quando ela é aberta.</summary>
     private void InitOptimize()
     {
-        if (!_optInit)
-        {
-            _optInit = true;
-            foreach (var t in _tweaks)
-                try { t.Refresh(); } catch (Exception ex) { t.Status = $"Não foi possível ler: {ex.Message}"; }
-            OptTweaks.ItemsSource = _tweaks;
-        }
         RefreshApps();
         UpdateRamStatus();
     }
@@ -1241,28 +1233,8 @@ public partial class MainWindow : Window
         UpdateRamStatus();
     }
 
-    private void Tweak_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not CheckBox { Tag: Tweak t } box) return;
-        bool turnOn = box.IsChecked == true;
-        try
-        {
-            t.Write(turnOn, _settings);
-            _settings.Save();
-            t.Refresh();
-            t.Status = t.IsOn == turnOn
-                ? (turnOn ? "Aplicado." : "Desligado.") + (t.NeedsRestart ? " Reinicie o PC para valer." : "")
-                : "O Windows não aceitou a mudança (pode exigir administrador).";
-            if (t.IsOn == turnOn && t.NeedsRestart && !FrameForge.RestartNotice.Toggled(t.Title, turnOn))
-                t.Status = "Anulou a mudança anterior: já não é preciso reiniciar.";
-        }
-        catch (Exception ex)
-        {
-            t.Refresh();
-            t.Status = $"Falhou: {ex.Message}";
-        }
-        box.IsChecked = t.IsOn; // o binding é só leitura: volta ao estado real
-    }
+    /// <summary>Os ajustes do Windows vivem na página Níveis de desempenho (o cartão antigo daqui foi retirado).</summary>
+    private void BtnOpenLevels_Click(object sender, RoutedEventArgs e) => AppServices.Navigate("FF:optimize");
 
     // ----- USB e portas COM -----
 
@@ -1367,24 +1339,6 @@ public partial class MainWindow : Window
         }
         catch (Exception ex) { UsbResult.Text = $"Falhou: {ex.Message}"; }
         ScanUsb();
-    }
-
-    private void BtnRestoreTweaks_Click(object sender, RoutedEventArgs e)
-    {
-        if (_settings.TweakBackup.Count == 0)
-        {
-            MessageBox.Show("Nenhum ajuste foi alterado pelo FrameForge ainda.", "OTIMIZA",
-                            MessageBoxButton.OK, MessageBoxImage.Information);
-            return;
-        }
-        var r = MessageBox.Show("Voltar todos os ajustes do Windows para como estavam antes do FrameForge alterá-los?",
-                                "OTIMIZA", MessageBoxButton.YesNo, MessageBoxImage.Question);
-        if (r != MessageBoxResult.Yes) return;
-        var before = _tweaks.Where(t => t.NeedsRestart && _settings.TweakBackup.ContainsKey(t.Id)).ToDictionary(t => t, t => t.IsOn);
-        WindowsTweaks.RestoreAll(_tweaks, _settings);
-        foreach (var t in _tweaks) { t.Refresh(); t.Status = "Restaurado."; }
-        var changed = before.Where(kv => kv.Key.IsOn != kv.Value).Select(kv => (kv.Key.Title, kv.Key.IsOn)).ToList();
-        if (changed.Count > 0) FrameForge.RestartNotice.ToggledMany(changed);
     }
 
     // ---------------- BENCH: benchmarks de jogo ----------------

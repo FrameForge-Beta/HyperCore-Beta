@@ -53,6 +53,13 @@ public sealed class AppSettings
     public List<string> PendingRestart { get; set; } = new();   // ajustes à espera de reinício
     public long? PendingRestartBootId { get; set; }             // arranque do Windows (BootId) em que foram pedidos
 
+    // Níveis de desempenho: o que o utilizador escolheu (sobrevive a reiniciar a app e o PC)
+    public int AppliedOptimizeLevel { get; set; }               // 0 = nenhum; 1..4 = nível aplicado na página Níveis de desempenho
+    public Dictionary<string, bool> TweakOverrides { get; set; } = new(); // ajustes ligados/desligados à mão fora do nível (id → ligado)
+    public bool KeepLevelApplied { get; set; } = true;          // reaplicar sozinho no arranque o que o Windows desfizer
+    public bool LegacyTweakBackupMigrated { get; set; }         // originais do cartão antigo (settings.json) já copiados para backup-ajustes.json
+    public bool LegacyLevelChecked { get; set; }                // já se viu (uma vez) se a versão antiga tinha deixado um nível inteiro aplicado
+
     private static readonly JsonSerializerOptions Json = new()
     {
         WriteIndented = true,

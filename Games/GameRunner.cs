@@ -19,7 +19,8 @@ public sealed class GameRunner
 {
     public static async Task RunAsync(LibGame g, GameProfile p, Action<string> status, CancellationToken ct)
     {
-        var tweaksChanged = new List<Tweak>();
+        // Fotografia do valor bruto de cada ajuste que o JOGAR mexe: no fim repõe-se exatamente isto (não o "original de fábrica")
+        var snapshots = new List<(Tweak Tweak, string Snap, bool HadBackup)>();
         string? planBefore = null;
         OcProfile? ocBefore = AppServices.Tuner.Applied;
         bool ocChanged = false;
@@ -37,23 +38,50 @@ public sealed class GameRunner
             if (p.OptimizeLevel > 0)
             {
                 var probe = await AppServices.Probe;
-                foreach (var t in AppServices.Tweaks.Where(t => t.Level <= p.OptimizeLevel && t.Instant))
+                var target = TweakCatalog.Target(p.OptimizeLevel, probe);
+                await Task.Run(() =>
                 {
-                    t.Refresh(probe);
-                    if (t.IsOn || !t.Enabled) continue;
-                    if (t.Set(true) == null) tweaksChanged.Add(t);
-                }
-                status($"Otimização nível {p.OptimizeLevel} aplicada ({tweaksChanged.Count} ajustes temporários).");
+                    lock (TweakCatalog.Gate)
+                        foreach (var t in AppServices.Tweaks.Where(t => t.Level <= p.OptimizeLevel && t.Instant).OrderBy(t => t.Order))
+                        {
+                            t.Refresh(probe);
+                            if (!t.Enabled || t.Capture == null || t.Restore == null) continue;
+                            // Plano: se já há um plano de desempenho ativo (Alto desempenho, Máximo ou personalizado), não se mexe
+                            if (t.IsPlan ? t.IsOn : t.Satisfied(target)) continue;
+                            string? snap;
+                            try { snap = t.Capture(); } catch { snap = null; }
+                            if (snap == null) continue; // sem fotografia não havia como repor: não mexer
+                            bool had = t.Touched;
+                            if (t.Set(true, target, quiet: true) == null) snapshots.Add((t, snap, had));
+                            else
+                            {
+                                try { t.Restore(snap); if (!had) t.ForgetBackup(); } catch { }
+                            }
+                        }
+                });
+                status($"Otimização nível {p.OptimizeLevel} aplicada ({snapshots.Count} ajustes temporários).");
             }
             else if (p.HighPerfPlan)
             {
-                planBefore = TweakCatalog.ActiveScheme();
-                if (planBefore != TweakCatalog.HighPerf && planBefore != TweakCatalog.Ultimate)
+                // Em segundo plano (powercfg demora) e sem abortar o jogo: o powercfg lança exceção se o Windows recusar
+                // (ex.: PCs com Modern Standby sem o plano Alto desempenho)
+                string? planErr = await Task.Run(() =>
                 {
-                    TweakCatalog.EnsureScheme(TweakCatalog.HighPerf);
-                    TweakCatalog.PowerCfg($"/setactive {TweakCatalog.HighPerf}");
-                }
-                else planBefore = null;
+                    lock (TweakCatalog.Gate)
+                        try
+                        {
+                            var plan = TweakCatalog.ActivePlan();
+                            if (plan != null && !TweakCatalog.IsPerformancePlan(plan.Guid, plan.Name))
+                            {
+                                TweakCatalog.EnsureScheme(TweakCatalog.HighPerf);
+                                TweakCatalog.PowerCfg($"/setactive {TweakCatalog.HighPerf}");
+                                planBefore = plan.Guid;
+                            }
+                            return null;
+                        }
+                        catch (Exception ex) { return ex.Message; }
+                });
+                if (planErr != null) status("Não consegui ativar o plano Alto desempenho: " + planErr);
             }
 
             // 3) Perfil de overclock só durante o jogo
@@ -127,8 +155,18 @@ public sealed class GameRunner
                 var r = await AppServices.Recorder.StopAsync();
                 if (r != null) status($"Relatório pronto: nota {r.Value.Report.Grade} — {r.Value.Report.Verdict}");
             }
-            foreach (var t in tweaksChanged) t.Set(false);
-            if (planBefore != null) TweakCatalog.PowerCfg($"/setactive {planBefore}");
+            if (snapshots.Count > 0)
+                await Task.Run(() =>
+                {
+                    lock (TweakCatalog.Gate)
+                        for (int i = snapshots.Count - 1; i >= 0; i--) // ao contrário: as definições de energia antes de trocar o plano de volta
+                        {
+                            var (t, snap, had) = snapshots[i];
+                            try { t.Restore!(snap); if (!had) t.ForgetBackup(); } catch { }
+                            t.ReadState();
+                        }
+                });
+            if (planBefore != null) { try { TweakCatalog.PowerCfg($"/setactive {planBefore}"); } catch { } }
             if (ocChanged)
                 await Task.Run(() => { if (ocBefore != null) AppServices.Tuner.Apply(ocBefore); else AppServices.Tuner.Stock(); });
         }

@@ -2,27 +2,124 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
-        <ResourceDictionary Source="/FrameForge;component/FfTheme.xaml"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/FrameForge;component/FfTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Cartão de nível: um RadioButton (clicável e com teclado) com aspeto de cartão -->
+            <Style x:Key="LevelCard" TargetType="RadioButton">
+                <Setter Property="Foreground" Value="{DynamicResource Fg}"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Margin" Value="0,0,10,12"/>
+                <Setter Property="GroupName" Value="lvl"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RadioButton">
+                            <Border x:Name="b" Background="{DynamicResource Card}" BorderBrush="{DynamicResource Line}" BorderThickness="1.5"
+                                    CornerRadius="14" Padding="16,14">
+                                <ContentPresenter/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="b" Property="BorderBrush" Value="{DynamicResource LineStrong}"/>
+                                </Trigger>
+                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                    <Setter TargetName="b" Property="BorderBrush" Value="{DynamicResource LineStrong}"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="b" Property="BorderBrush" Value="{StaticResource Accent}"/>
+                                    <Setter TargetName="b" Property="Background" Value="{DynamicResource AccentSoft}"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.55"/></Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Expander simples: seta + texto, sem o cabeçalho cinzento do Windows -->
+            <Style x:Key="FfExpander" TargetType="Expander">
+                <Setter Property="Foreground" Value="{DynamicResource Fg}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Expander">
+                            <StackPanel>
+                                <ToggleButton x:Name="hdr" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                              Content="{TemplateBinding Header}" Foreground="{TemplateBinding Foreground}"
+                                              Cursor="Hand" Focusable="True" HorizontalAlignment="Left">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border x:Name="hb" Background="Transparent" CornerRadius="10" Padding="8,7,12,7">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock x:Name="arrow" Text="&#xE76C;" FontFamily="{StaticResource Icons}" FontSize="11"
+                                                               Foreground="{DynamicResource Muted}" VerticalAlignment="Center" Margin="0,1,10,0"
+                                                               RenderTransformOrigin="0.5,0.5">
+                                                        <TextBlock.RenderTransform><RotateTransform Angle="0"/></TextBlock.RenderTransform>
+                                                    </TextBlock>
+                                                    <ContentPresenter VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="hb" Property="Background" Value="{DynamicResource Hover}"/></Trigger>
+                                                <Trigger Property="IsChecked" Value="True"><Setter TargetName="arrow" Property="RenderTransform">
+                                                    <Setter.Value><RotateTransform Angle="90"/></Setter.Value></Setter></Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                                <ContentPresenter x:Name="body" Visibility="Collapsed"/>
+                            </StackPanel>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsExpanded" Value="True"><Setter TargetName="body" Property="Visibility" Value="Visible"/></Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
+
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="28,24,28,40">
-            <TextBlock Text="Otimização do Windows" Style="{StaticResource H1}"/>
+            <TextBlock Text="Níveis de desempenho" Style="{StaticResource H1}"/>
             <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,16"
-                       Text="Escolhe um nível. Cada ajuste diz o ganho REAL esperado e quando não o usar. Tudo guarda o valor original e volta atrás com 'Restaurar tudo'. Nada aqui desliga segurança (Defender, UAC, Windows Update, VBS)."/>
+                       Text="Escolhe quanto queres afinar o Windows para jogos. Tudo volta atrás com um clique."/>
+
+            <!-- 4 níveis lado a lado: clicar seleciona; o aplicado tem a etiqueta ATIVO -->
+            <UniformGrid x:Name="LevelCards" Columns="4" Rows="1" Margin="0,0,-10,0"/>
+
+            <!-- Estado + ações -->
             <Border Style="{StaticResource FfCard}">
                 <StackPanel>
-                    <TextBlock Text="Nível de desempenho" Style="{StaticResource H2}"/>
-                    <WrapPanel x:Name="Levels" Margin="0,4,0,8"/>
-                    <TextBlock x:Name="LevelText" Style="{StaticResource Body}" Margin="0,4,0,12"/>
-                    <StackPanel Orientation="Horizontal">
-                        <Button x:Name="ApplyBtn" Content="Aplicar este nível" Style="{StaticResource BtnAccent}" Click="Apply_Click"/>
-                        <Button Content="Restaurar tudo" Style="{StaticResource BtnDanger}" Click="Restore_Click"/>
-                    </StackPanel>
-                    <TextBlock x:Name="Result" Style="{StaticResource MutedAuto}" Margin="0,10,0,0"/>
+                    <TextBlock x:Name="StatusTitle" Style="{StaticResource H2}" Text="A ler o estado do Windows…"/>
+                    <TextBlock x:Name="StatusDetail" Style="{StaticResource MutedAuto}"/>
+                    <StackPanel x:Name="Notices" Margin="0,4,0,0"/>
+                    <DockPanel Margin="0,14,0,0" LastChildFill="False">
+                        <Button x:Name="ApplyBtn" DockPanel.Dock="Left" Content="Aplicar" Style="{StaticResource BtnAccent}"
+                                IsEnabled="False" Click="Apply_Click"/>
+                        <Button x:Name="RestoreBtn" DockPanel.Dock="Right" Content="Repor Windows original" Style="{StaticResource Btn}"
+                                Background="Transparent" BorderBrush="Transparent" Foreground="{DynamicResource Muted}" Margin="0"
+                                FontWeight="Normal" IsEnabled="False" Click="Restore_Click"
+                                ToolTip="Volta a pôr cada ajuste que a app mudou exatamente como estava antes."/>
+                    </DockPanel>
+                    <CheckBox x:Name="KeepBox" Margin="0,14,0,0" Click="Keep_Click"
+                              Content="Manter sempre aplicado (reaplica sozinho se o Windows desfizer algo)"
+                              ToolTip="Ao abrir a app, confirma o nível e volta a aplicar os ajustes instantâneos que o Windows, a Game Bar ou outro programa tenham reposto."/>
+                    <TextBlock x:Name="Result" Style="{StaticResource MutedAuto}" Margin="0,8,0,0"/>
                 </StackPanel>
             </Border>
-            <TextBlock Text="Ajustes individuais" Style="{StaticResource H2}" Margin="0,8,0,8"/>
-            <StackPanel x:Name="List"/>
+
+            <!-- Lista de ajustes: recolhida por defeito -->
+            <Expander x:Name="TweaksBox" Style="{StaticResource FfExpander}" IsExpanded="False" Margin="-8,0,0,0">
+                <Expander.Header>
+                    <TextBlock x:Name="TweaksHeader" Text="Ver os ajustes" FontWeight="SemiBold" FontSize="13.5"/>
+                </Expander.Header>
+                <Border Style="{StaticResource FfCard}" Margin="8,8,0,0" Padding="20,4">
+                    <StackPanel x:Name="List"/>
+                </Border>
+            </Expander>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

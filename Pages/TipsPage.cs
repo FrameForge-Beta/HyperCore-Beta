@@ -26,10 +26,11 @@ public sealed class TipsPage : UserControl
         }),
         ("Níveis de desempenho", "OTIMIZAÇÃO", new[]
         {
-            "Seguro: só o que a Microsoft recomenda para jogos (Modo de Jogo, desligar a gravação da Game Bar, otimizações em janela, plano Alto desempenho, rato sem aceleração). Para qualquer PC.",
+            "Seguro: Modo de Jogo, sem gravação da Game Bar, otimizações em janela, rato sem aceleração e plano Alto desempenho. Para qualquer PC.",
             "Equilibrado: tira poupanças de energia que causam micro-atrasos (USB, PCIe), ativa o HAGS e trava apps da Loja em segundo plano. Recomendado para desktop.",
-            "Competitivo: plano Desempenho Máximo, núcleos sempre acordados, temporizador global, sem upload P2P de atualizações. Desktop. Mais consumo em repouso.",
-            "Extremo: desliga serviços de fundo (indexação da pesquisa, SysMain em PCs só com SSD). Perdes conveniência. Só se jogas competitivo a sério.",
+            "Competitivo: troca para o plano Desempenho Máximo, núcleos sempre acordados, temporizador global e sem envio P2P de atualizações. Só desktop. Mais consumo em repouso.",
+            "Extremo: desliga a indexação da pesquisa e, em PCs sem HDD, o SysMain. Perdes conveniência; fica completo depois de reiniciar.",
+            "O nível fica guardado: com 'Manter sempre aplicado', a app volta a aplicar sozinha o que o Windows ou outro programa desfizer.",
             "Ganho realista somando tudo: 0–5% de FPS médio, mas 1% low mais estável e menos picos. Quem promete +30% com tweaks do Windows está a mentir — esses ganhos vêm de hardware, XMP, drivers e definições do jogo.",
         }),
         ("O que dá MESMO mais FPS (por ordem)", "PRIORIDADES", new[]
@@ -68,8 +69,8 @@ public sealed class TipsPage : UserControl
         {
             "Overclock e undervolt nunca são garantidos: cada chip é diferente. Testa sempre e usa a guarda de crash.",
             "Em portáteis: nada de níveis Competitivo/Extremo nem OC. Prefere limitar FPS e undervolt — temperatura é o teu limite.",
-            "A app precisa de administrador para ler frames por ETW, aplicar overclock e mudar definições do sistema. Tudo o que muda fica registado e pode ser reposto em 'Restaurar tudo'.",
-            "Se o PC ficar instável depois de um ajuste: Overclock → Stock, Otimização → Restaurar tudo, e reinicia.",
+            "A app precisa de administrador para ler frames por ETW, aplicar overclock e mudar definições do sistema. Tudo o que muda fica registado e pode ser reposto em 'Repor Windows original'.",
+            "Se o PC ficar instável depois de um ajuste: Overclock → Stock, Níveis de desempenho → Repor Windows original, e reinicia.",
         }),
     };
 
