@@ -61,6 +61,7 @@ public static class TweakBackup
             Data[key] = value;
             Write(Data);
         }
+        FrameForge.Undo.UndoDates.MarkExact("tweak:" + key); // data para a Central Desfazer
     }
 
     public static void Forget(string key) { lock (Sync) if (Data.Remove(key)) Write(Data); }
