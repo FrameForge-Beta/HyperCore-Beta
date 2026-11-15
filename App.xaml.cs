@@ -98,6 +98,10 @@ public partial class App : Application
         var s = FrameForge.Core.AppServices.Settings;
         string? skippedOc = recovered && s.OcApplyOnStart is string ocp && !s.UnstableOcProfiles.Contains(ocp) ? ocp : null;
         FrameForge.Core.AppServices.Start(skipOcOnStart: recovered);
+        // Quem sabe desfazer cada alteração registada no ChangeJournal tem de existir antes de a Central Desfazer abrir
+        // (mesmo que a página da função nunca seja aberta nesta sessão). Ambos são idempotentes.
+        FrameForge.Net.GameNet.Init();       // "dns": DNS mudado na Rede para jogos
+        FrameForge.Games.GameMode.Init();    // "modo-jogo": repõe também se a app fechou com o Modo Jogo ligado
         var window = new MainWindow();
         window.Show();
         if (recovered && recovery!.Mensagem.Length > 0)

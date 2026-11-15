@@ -194,15 +194,43 @@ public sealed partial class HomePage
         var h = Ui.T("Pronto para jogar?", "H2", 17);
         h.Margin = new Thickness(0, 3, 0, 3);
         sp.Children.Add(h);
-        sp.Children.Add(Ui.T("Um clique antes de jogar: fecha o que pesa em fundo, liberta RAM e aplica o teu nível. Ao desligar, repõe tudo.", "MutedText", 13));
-        var go = Ui.Btn("Abrir Modo Jogo   ›", (_, _) => AppServices.Navigate("FF:gamemode"));
-        go.HorizontalAlignment = HorizontalAlignment.Left;
-        go.Margin = new Thickness(0, 14, 0, 0);
-        sp.Children.Add(go);
+        var sub = Ui.T("", "MutedText", 13);
+        sub.TextWrapping = TextWrapping.Wrap;
+        sp.Children.Add(sub);
+        var buttons = new WrapPanel { Margin = new Thickness(0, 14, 0, 0) };
+        var toggle = Ui.Btn("Ligar Modo Jogo", (_, _) => FrameForge.Games.GameMode.Toggle());
+        toggle.Margin = new Thickness(0, 0, 8, 0);
+        buttons.Children.Add(toggle);
+        buttons.Children.Add(Ui.Btn("Opções   ›", (_, _) => AppServices.Navigate("FF:gamemode")));
+        sp.Children.Add(buttons);
         Grid.SetColumn(sp, 1);
         grid.Children.Add(sp);
         var card = Ui.Card(grid);
         card.Margin = new Thickness(0, 0, 0, 12);
+
+        // O cartão acompanha o estado do Modo Jogo (ligado pelo atalho, pela bandeja ou pela página)
+        void Refresh()
+        {
+            var s = FrameForge.Games.GameMode.Session;
+            bool busy = FrameForge.Games.GameMode.IsBusy;
+            if (s != null)
+            {
+                int min = Math.Max(0, (int)(DateTime.UtcNow - s.StartedUtc).TotalMinutes);
+                h.Text = "Modo Jogo ligado";
+                sub.Text = $"Há {FrameForge.Games.GameMode.Duration(min)}: {FrameForge.Games.GameMode.Summary(s)} Ao desligar, repõe tudo.";
+                toggle.Content = "Desligar e repor";
+            }
+            else
+            {
+                h.Text = "Pronto para jogar?";
+                sub.Text = $"Um clique antes de jogar: fecha o que pesa em fundo, liberta RAM e aplica o teu nível. Ao desligar, repõe tudo. Atalho: {FrameForge.Games.GameMode.HotkeyText}.";
+                toggle.Content = "Ligar Modo Jogo";
+            }
+            toggle.IsEnabled = !busy;
+            if (busy) toggle.Content = "A trabalhar…";
+        }
+        FrameForge.Games.GameMode.StateChanged += () => Dispatcher.BeginInvoke(new Action(Refresh));
+        Refresh();
         return card;
     }
 

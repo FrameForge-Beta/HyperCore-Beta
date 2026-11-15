@@ -1,5 +1,5 @@
 ﻿#define AppName "HyperCore"
-#define AppVersion "0.4.0"
+#define AppVersion "0.5.0"
 #define AppPublisher "HyperCore"
 #define AppExe "HyperCore.exe"
 ; Nome antigo da app (até à 0.3.50): binários, atalhos e tarefa agendada a limpar ao atualizar.

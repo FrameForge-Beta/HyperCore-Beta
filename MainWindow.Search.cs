@@ -227,7 +227,7 @@ public partial class MainWindow
             if (single) continue;
             foreach (var t in s.Tabs)
             {
-                // Aba repetida noutra secção (ex.: Visão geral no Início e em O meu PC): fica só na secção com mais abas
+                // Aba repetida noutra secção (se um tag estiver em duas): fica só na secção com mais abas
                 var home = NavCatalog.SectionsWith(t.Tag).OrderByDescending(x => x.Tabs.Length).First();
                 if (!ReferenceEquals(home, s)) continue;
                 list.Add(new SearchHit($"{s.Id}/{t.Tag}", t.Icon, t.Label, s.Label, t.Desc,

@@ -121,6 +121,8 @@ public partial class MainWindow : Window
                 }
             }
         };
+        // A Central Desfazer mexe na MESMA lista StartupRemoved/ComDbBackup desta janela (não numa cópia lida do disco)
+        FrameForge.Undo.UndoCenter.LegacySettingsProvider = () => _settings;
         InitForge();
         ThemeManager.Apply(_settings.LightTheme);
         UpdateThemeButton();
@@ -137,7 +139,7 @@ public partial class MainWindow : Window
         SnapshotUsb();
         RefreshDrives();
         // Versão do programa mostrada no rodapé da barra lateral (vém do <Version> do csproj).
-        string appVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.4.0";
+        string appVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.5.0";
         SideVersion.Text = $"HyperCore v{appVersion}";
         UpdateDashboard();
 
@@ -380,8 +382,14 @@ public partial class MainWindow : Window
                 _exitFromTray = true;
                 Close();
             };
+            var gameItem = new MenuItem { Header = "Ligar Modo Jogo", InputGestureText = FrameForge.Games.GameMode.HotkeyText };
+            gameItem.Click += (_, _) => ToggleGameMode();
             _trayMenu = new ContextMenu();
             _trayMenu.Items.Add(_trayOpenItem);
+            _trayMenu.Items.Add(gameItem);
+            // O texto acompanha o estado (o menu é aberto à mão em TrayWindowProc, mas Opened dispara na mesma)
+            _trayMenu.Opened += (_, _) =>
+                gameItem.Header = FrameForge.Games.GameMode.IsActive ? "Desligar Modo Jogo" : "Ligar Modo Jogo";
             _trayMenu.Items.Add(new Separator());
             _trayMenu.Items.Add(_trayExitItem);
             if (IsInitialized && PresentationSource.FromVisual(this) != null)

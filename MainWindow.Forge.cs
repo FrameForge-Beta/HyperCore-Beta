@@ -17,6 +17,7 @@ public partial class MainWindow
     private readonly Dictionary<string, UserControl> _forgePages = new();
     private const int HotRecord = 0x4652;
     private const int HotUserOverlay = 0x4658;
+    private const int HotGameMode = 0x4659; // Ctrl+Alt+G: Modo Jogo
     // Ctrl+Alt + / − (teclado principal e numérico): tamanho do overlay
     private static readonly (int Id, uint Vk, double Step)[] HotOverlaySize =
         { (0x4654, 0xBB, 0.1), (0x4655, 0x6B, 0.1), (0x4656, 0xBD, -0.1), (0x4657, 0x6D, -0.1) };
@@ -68,6 +69,7 @@ public partial class MainWindow
     {
         InitShell();
         RestartNotice.Init();
+        FrameForge.Optimize.GamerSetup.Init(); // desfazer de hags, win-gamemode, game-dvr, windowed-opt, win-vrr, mpo, display-hz, shader-cache
         RestartNotice.Changed += () => Dispatcher.Invoke(UpdateRestartBar);
         UpdateRestartBar();
         AppServices.NavigateRequested += tag => Dispatcher.Invoke(() => NavigateTo(tag));
@@ -82,6 +84,7 @@ public partial class MainWindow
         {
             var h = new WindowInteropHelper(this).Handle;
             RegisterHotKey(h, HotRecord, 0x0001 | 0x0002 | 0x4000, 0x52);       // Ctrl+Alt+R
+            RegisterHotKey(h, HotGameMode, 0x0001 | 0x0002 | 0x4000, 0x47);     // Ctrl+Alt+G: Modo Jogo
             foreach (var k in HotOverlaySize) RegisterHotKey(h, k.Id, 0x0001 | 0x0002, k.Vk); // com repetição: manter carregado vai crescendo
             ApplyOverlayHotkey();
             HwndSource.FromHwnd(h)?.AddHook(ForgeHotkeys);
@@ -90,9 +93,11 @@ public partial class MainWindow
         {
             var h = new WindowInteropHelper(this).Handle;
             UnregisterHotKey(h, HotRecord);
+            UnregisterHotKey(h, HotGameMode);
             UnregisterOverlayHotkey();
             foreach (var k in HotOverlaySize) UnregisterHotKey(h, k.Id);
             FrameForge.OverlayWindow.HideOverlay();
+            try { FrameForge.Net.GameNetMonitor.Stop(); } catch { } // sessão de ping ao vivo ainda a correr: fica no histórico
         };
     }
 
@@ -101,6 +106,7 @@ public partial class MainWindow
         if (msg != 0x0312) return IntPtr.Zero;
         int id = wParam.ToInt32();
         if (id == HotRecord) { handled = true; _ = ToggleRecord(); }
+        else if (id == HotGameMode) { handled = true; ToggleGameMode(); }
         else if (id == HotUserOverlay)
         {
             handled = true;
@@ -147,6 +153,16 @@ public partial class MainWindow
         }
         int foreground = SystemSampler.ForegroundPid();
         FrameForge.OverlayWindow.ShowFor(AppServices.Frames.ActivePresenters().Any(p => p.Pid == foreground) ? foreground : 0);
+    }
+
+    /// <summary>
+    /// Ctrl+Alt+G e menu da bandeja. Na 1.ª vez (lista ainda não confirmada) o Modo Jogo abre a página para confirmar,
+    /// por isso a janela tem de sair da bandeja.
+    /// </summary>
+    private void ToggleGameMode()
+    {
+        if (!FrameForge.Games.GameMode.IsActive && !FrameForge.Games.GameMode.Config.Confirmed) ShowFromTray();
+        FrameForge.Games.GameMode.Toggle();
     }
 
     private async Task ToggleRecord()

@@ -93,7 +93,7 @@ public partial class OptimizePage : UserControl
     {
         if (S.LegacyLevelChecked) return;
         // Com um JOGAR a correr, os ajustes temporários do jogo parecem um nível aplicado: adia-se para a próxima abertura
-        if (FrameForge.Games.GameRunner.TemporaryTweaksActive) return;
+        if (FrameForge.Games.GameRunner.TemporaryTweaksActive || FrameForge.Games.GameMode.IsActive) return;
         TweakBackup.MigrateLegacy(); // os originais do cartão antigo contam como "mudado pela app" (o arranque pode ainda não o ter feito)
         S.LegacyLevelChecked = true;
         if (S.AppliedOptimizeLevel == 0 && S.TweakOverrides.Count == 0 && All.Any(t => t.Touched))

@@ -27,9 +27,6 @@ public static class NavCatalog
             new("FF:home", "Resumo", "", "A nota do teu PC, o que melhorar e o estado ao vivo.",
                 "Carrega em ANALISAR O PC: em poucos segundos a app lê o PC (não muda nada) e dá a Nota HyperCore de 0 a 100 com a lista do que melhorar. Cada ponto leva-te à página que o resolve. Por baixo vês o processador, a gráfica, a RAM e as temperaturas ao vivo, o Modo Jogo e o último jogo medido.",
                 "inicio painel principal nota analisar analise rapida pontuacao score estado"),
-            new("PageDash", "Visão geral", "", "Temperaturas, carga e saúde do PC em tempo real.",
-                "Resumo do PC em tempo real: gráfico de temperatura/carga da CPU e da GPU, componentes, memória e uma lista de saúde do PC. Só mostra — não muda nada.",
-                "resumo dashboard temperatura carga"),
         }, "inicio home"),
 
         // ---------------- JOGAR ----------------
@@ -65,7 +62,7 @@ public static class NavCatalog
         {
             new("FF:netgame", "Ping e lag", "", "Ping, jitter e perda de pacotes ao vivo, e de onde vem o lag.",
                 "Mede continuamente o ping, o jitter e a perda de pacotes contra servidores públicos, testa o bufferbloat e diz em linguagem simples se o lag vem do Wi-Fi, do router ou do fornecedor.",
-                "ping lag latencia jitter perda pacotes bufferbloat dns servidor online"),
+                "ping lag latencia jitter perda de pacotes bufferbloat dns servidor online wifi router fornecedor isp"),
             new("PageNet", "Rede", "", "Teste de 30 s: velocidade, latência e qualidade da ligação.",
                 "Teste de ~30 s: ping, jitter, perda de pacotes, velocidade e bufferbloat. Diz se o problema é a tua rede (Wi-Fi/router) ou o operador. Inclui o seletor de DNS.",
                 "internet velocidade speedtest dns wifi router"),
@@ -75,7 +72,7 @@ public static class NavCatalog
         {
             new("FF:gamemode", "Modo Jogo", "", "Um clique antes de jogar: fecha o que pesa e repõe tudo no fim.",
                 "Antes de jogar fecha os programas pesados de fundo, liberta memória e aplica o nível e o plano de energia escolhidos. Ao desligar repõe tudo como estava.",
-                "modo jogo boost turbo fechar programas fundo ram"),
+                "modo jogo boost turbo fechar programas fundo ram ctrl alt g atalho bandeja onedrive dropbox launchers windows update pausar"),
         }, "modo jogo boost"),
 
         // ---------------- DESEMPENHO ----------------
@@ -99,7 +96,7 @@ public static class NavCatalog
                 "prioridade cpu processos afinidade"),
             new("FF:gamersetup", "Configuração gamer", "", "Hz do monitor, VRR, HAGS, Modo de Jogo, MPO e cache de shaders.",
                 "Para cada monitor, Hz atual vs máximo; estado de G-Sync/FreeSync/VRR, HAGS, Modo de Jogo do Windows, Game DVR, MPO e otimizações para jogos em janela; limpeza da cache de shaders. Cada item com estado, recomendação e correção reversível.",
-                "monitor hz refresh 144 165 240 vrr gsync freesync hags mpo shaders cache game dvr"),
+                "monitor hz refresh 144 165 240 vrr gsync g-sync freesync hags agendamento gpu mpo shaders cache game dvr captura modo de jogo do windows ecra"),
         }, "niveis otimizar"),
 
         new("S:oc", "DESEMPENHO", "Overclock", "", "Overclock da gráfica e curvas das ventoinhas.", new NavTab[]
@@ -156,7 +153,7 @@ public static class NavCatalog
                 "stress furmark prime carga maxima estabilidade"),
             new("FF:peripherals", "Periféricos", "", "Rato, teclado e ecrã: polling, cliques, teclas e píxeis.",
                 "Taxa de polling do rato, duplo clique avariado, botões e roda, teclas ao mesmo tempo (ghosting), píxeis mortos, rasto de movimento e refresh real do ecrã.",
-                "rato teclado ecra polling hz duplo clique pixeis mortos ghosting"),
+                "rato teclado ecra polling hz duplo clique pixeis mortos ghosting mouse botoes roda rasto refresh real"),
         }, "testes testar"),
 
         new("S:drivers", "O MEU PC", "Drivers e RGB", "", "Drivers atualizados e as luzes do PC num só sítio.", new NavTab[]
@@ -183,7 +180,7 @@ public static class NavCatalog
         {
             new("FF:undo", "Central Desfazer", "", "Tudo o que o HyperCore mudou, para desfazer com um clique.",
                 "Lista tudo o que o HyperCore mudou e ainda está mudado (ajustes, nível aplicado, arranque, prioridades, overclock, DNS, serviços), com data, 'Desfazer' por item e 'Desfazer tudo'.",
-                "desfazer reverter repor voltar atras restaurar backup undo"),
+                "desfazer reverter repor voltar atras restaurar backup undo alteracoes mudancas historico"),
         }, "desfazer reverter"),
 
         new("S:help", Footer, "Ajuda", "", "Dicas que dão mesmo FPS e as palavras técnicas explicadas.", new NavTab[]
@@ -203,6 +200,6 @@ public static class NavCatalog
 
     public static NavSection? Section(string id) => Sections.FirstOrDefault(s => s.Id == id);
 
-    /// <summary>Secções que contêm este tag (um tag pode estar em duas, ex.: "PageDash" no Início e em O meu PC).</summary>
+    /// <summary>Secções que contêm este tag (um tag pode estar em mais do que uma).</summary>
     public static IEnumerable<NavSection> SectionsWith(string tag) => Sections.Where(s => s.Tabs.Any(t => t.Tag == tag));
 }

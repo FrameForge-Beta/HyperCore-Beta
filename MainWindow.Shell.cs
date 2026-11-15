@@ -86,7 +86,7 @@ public partial class MainWindow
         else
         {
             wantedTab = tag;
-            // Um tag pode estar em duas secções (ex.: PageDash no Início e em O meu PC): fica na atual se a tiver,
+            // Um tag pode estar em mais do que uma secção: fica na atual se a tiver,
             // senão vai para a secção "dona" (a que tem mais abas)
             s = _section != null && _section.Tabs.Any(t => t.Tag == tag)
                 ? _section

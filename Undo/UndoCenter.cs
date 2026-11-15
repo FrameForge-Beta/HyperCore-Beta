@@ -160,7 +160,7 @@ public static class UndoCenter
         string k = kind.ToLowerInvariant();
         if (k.StartsWith("dns") || k.StartsWith("net")) return (UndoCategory.Network, "FF:netgame");
         if (k.StartsWith("gamemode") || k.StartsWith("modo-jogo")) return (UndoCategory.GameMode, "FF:gamemode");
-        string[] setup = { "display", "hz", "hags", "shader", "gamedvr", "game-dvr", "dvr", "mpo", "vrr", "fso", "windowed", "gamebar", "wingamemode", "win-gamemode", "gamersetup" };
+        string[] setup = { "display", "hz", "hags", "shader", "gamedvr", "game-dvr", "dvr", "mpo", "vrr", "win-vrr", "fso", "windowed", "gamebar", "wingamemode", "win-gamemode", "gamersetup" };
         if (setup.Any(k.StartsWith)) return (UndoCategory.GamerSetup, "FF:gamersetup");
         return (UndoCategory.Other, null);
     }
