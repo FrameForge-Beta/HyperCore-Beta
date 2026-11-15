@@ -1,0 +1,3937 @@
+{
+ "versao": 1,
+ "atualizado": "2026-11",
+ "fonte": "Índices próprios aproximados, calibrados à mão por médias de análises publicadas (ex.: Tom's Hardware GPU/CPU Hierarchy e médias de reviews); não são tabelas copiadas. Preços: faixa típica de preço novo em lojas portuguesas, em euros, revista à mão.",
+ "baseGpu": "RTX 4070 = 100 em cada resolução (raster)",
+ "baseCpu": "Ryzen 7 7700X = 100 (jogos e multi-thread)",
+ "nota": "precoMinEur/precoMaxEur = null quando o modelo já não se vende novo em Portugal.",
+ "aviso": "Estimativas com base em análises publicadas (atualizado em novembro de 2026). Os preços mudam todos os dias: confirma na loja.",
+ "lojas": [
+  {
+   "nome": "KuantoKusta",
+   "url": "https://www.kuantokusta.pt/search?q={q}"
+  },
+  {
+   "nome": "PCDiga",
+   "url": "https://www.pcdiga.com/search?q={q}"
+  },
+  {
+   "nome": "Globaldata",
+   "url": "https://www.globaldata.pt/catalogsearch/result/?q={q}"
+  },
+  {
+   "nome": "PcComponentes",
+   "url": "https://www.pccomponentes.pt/buscar/?query={q}"
+  }
+ ],
+ "gpus": [
+  {
+   "nome": "GTX 1050",
+   "marca": "NVIDIA",
+   "aliases": [
+    "GTX 1050"
+   ],
+   "indice1080": 23,
+   "indice1440": 15,
+   "indice4k": 7,
+   "vram": 2,
+   "tdp": 75,
+   "psuW": 500,
+   "conector": "nenhum",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2016-10",
+   "tecnologia": "sem DLSS"
+  },
+  {
+   "nome": "GTX 1050 Ti",
+   "marca": "NVIDIA",
+   "aliases": [
+    "GTX 1050 Ti"
+   ],
+   "indice1080": 27,
+   "indice1440": 20,
+   "indice4k": 12,
+   "vram": 4,
+   "tdp": 75,
+   "psuW": 500,
+   "conector": "nenhum",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2016-10",
+   "tecnologia": "sem DLSS"
+  },
+  {
+   "nome": "GTX 1060 6 GB",
+   "marca": "NVIDIA",
+   "aliases": [
+    "GTX 1060 6 GB",
+    "GTX 1060"
+   ],
+   "indice1080": 38,
+   "indice1440": 33,
+   "indice4k": 24,
+   "vram": 6,
+   "tdp": 120,
+   "psuW": 550,
+   "conector": "6 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2016-07",
+   "tecnologia": "sem DLSS"
+  },
+  {
+   "nome": "GTX 1060 3 GB",
+   "marca": "NVIDIA",
+   "aliases": [
+    "GTX 1060 3 GB",
+    "GTX 1060"
+   ],
+   "indice1080": 36,
+   "indice1440": 28,
+   "indice4k": 20,
+   "vram": 3,
+   "tdp": 120,
+   "psuW": 550,
+   "conector": "6 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2016-08",
+   "tecnologia": "sem DLSS"
+  },
+  {
+   "nome": "GTX 1070",
+   "marca": "NVIDIA",
+   "aliases": [
+    "GTX 1070"
+   ],
+   "indice1080": 47,
+   "indice1440": 42,
+   "indice4k": 35,
+   "vram": 8,
+   "tdp": 150,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2016-06",
+   "tecnologia": "sem DLSS"
+  },
+  {
+   "nome": "GTX 1070 Ti",
+   "marca": "NVIDIA",
+   "aliases": [
+    "GTX 1070 Ti"
+   ],
+   "indice1080": 51,
+   "indice1440": 47,
+   "indice4k": 40,
+   "vram": 8,
+   "tdp": 180,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2017-11",
+   "tecnologia": "sem DLSS"
+  },
+  {
+   "nome": "GTX 1080",
+   "marca": "NVIDIA",
+   "aliases": [
+    "GTX 1080"
+   ],
+   "indice1080": 55,
+   "indice1440": 51,
+   "indice4k": 44,
+   "vram": 8,
+   "tdp": 180,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2016-05",
+   "tecnologia": "sem DLSS"
+  },
+  {
+   "nome": "GTX 1080 Ti",
+   "marca": "NVIDIA",
+   "aliases": [
+    "GTX 1080 Ti"
+   ],
+   "indice1080": 67,
+   "indice1440": 64,
+   "indice4k": 61,
+   "vram": 11,
+   "tdp": 250,
+   "psuW": 700,
+   "conector": "8+6 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2017-03",
+   "tecnologia": "sem DLSS"
+  },
+  {
+   "nome": "GTX 1650",
+   "marca": "NVIDIA",
+   "aliases": [
+    "GTX 1650"
+   ],
+   "indice1080": 32,
+   "indice1440": 24,
+   "indice4k": 16,
+   "vram": 4,
+   "tdp": 75,
+   "psuW": 500,
+   "conector": "nenhum",
+   "pcie": "3.0 x16",
+   "precoMinEur": 179,
+   "precoMaxEur": 219,
+   "lancamento": "2019-04",
+   "tecnologia": "sem DLSS"
+  },
+  {
+   "nome": "GTX 1650 SUPER",
+   "marca": "NVIDIA",
+   "aliases": [
+    "GTX 1650 SUPER"
+   ],
+   "indice1080": 38,
+   "indice1440": 31,
+   "indice4k": 22,
+   "vram": 4,
+   "tdp": 100,
+   "psuW": 550,
+   "conector": "6 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2019-11",
+   "tecnologia": "sem DLSS"
+  },
+  {
+   "nome": "GTX 1660",
+   "marca": "NVIDIA",
+   "aliases": [
+    "GTX 1660"
+   ],
+   "indice1080": 42,
+   "indice1440": 37,
+   "indice4k": 27,
+   "vram": 6,
+   "tdp": 120,
+   "psuW": 550,
+   "conector": "8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2019-03",
+   "tecnologia": "sem DLSS"
+  },
+  {
+   "nome": "GTX 1660 SUPER",
+   "marca": "NVIDIA",
+   "aliases": [
+    "GTX 1660 SUPER"
+   ],
+   "indice1080": 46,
+   "indice1440": 41,
+   "indice4k": 31,
+   "vram": 6,
+   "tdp": 125,
+   "psuW": 550,
+   "conector": "8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2019-10",
+   "tecnologia": "sem DLSS"
+  },
+  {
+   "nome": "GTX 1660 Ti",
+   "marca": "NVIDIA",
+   "aliases": [
+    "GTX 1660 Ti"
+   ],
+   "indice1080": 46,
+   "indice1440": 41,
+   "indice4k": 31,
+   "vram": 6,
+   "tdp": 120,
+   "psuW": 550,
+   "conector": "8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2019-02",
+   "tecnologia": "sem DLSS"
+  },
+  {
+   "nome": "RTX 2060",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 2060"
+   ],
+   "indice1080": 51,
+   "indice1440": 47,
+   "indice4k": 37,
+   "vram": 6,
+   "tdp": 160,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2019-01",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 2060 12 GB",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 2060 12 GB",
+    "RTX 2060"
+   ],
+   "indice1080": 53,
+   "indice1440": 49,
+   "indice4k": 45,
+   "vram": 12,
+   "tdp": 185,
+   "psuW": 650,
+   "conector": "8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2021-12",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 2060 SUPER",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 2060 SUPER"
+   ],
+   "indice1080": 59,
+   "indice1440": 55,
+   "indice4k": 48,
+   "vram": 8,
+   "tdp": 175,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2019-07",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 2070",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 2070"
+   ],
+   "indice1080": 61,
+   "indice1440": 58,
+   "indice4k": 51,
+   "vram": 8,
+   "tdp": 175,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2018-10",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 2070 SUPER",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 2070 SUPER"
+   ],
+   "indice1080": 67,
+   "indice1440": 64,
+   "indice4k": 57,
+   "vram": 8,
+   "tdp": 215,
+   "psuW": 650,
+   "conector": "8+6 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2019-07",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 2080",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 2080"
+   ],
+   "indice1080": 71,
+   "indice1440": 68,
+   "indice4k": 61,
+   "vram": 8,
+   "tdp": 215,
+   "psuW": 650,
+   "conector": "8+6 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2018-09",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 2080 SUPER",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 2080 SUPER"
+   ],
+   "indice1080": 73,
+   "indice1440": 71,
+   "indice4k": 64,
+   "vram": 8,
+   "tdp": 250,
+   "psuW": 700,
+   "conector": "8+6 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2019-07",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 2080 Ti",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 2080 Ti"
+   ],
+   "indice1080": 84,
+   "indice1440": 83,
+   "indice4k": 82,
+   "vram": 11,
+   "tdp": 250,
+   "psuW": 700,
+   "conector": "2x 8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2018-09",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 3050 8 GB",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 3050 8 GB",
+    "RTX 3050"
+   ],
+   "indice1080": 45,
+   "indice1440": 40,
+   "indice4k": 33,
+   "vram": 8,
+   "tdp": 130,
+   "psuW": 550,
+   "conector": "8 pinos",
+   "pcie": "4.0 x8",
+   "precoMinEur": 259,
+   "precoMaxEur": 299,
+   "lancamento": "2022-01",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 3050 6 GB",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 3050 6 GB",
+    "RTX 3050"
+   ],
+   "indice1080": 37,
+   "indice1440": 32,
+   "indice4k": 23,
+   "vram": 6,
+   "tdp": 70,
+   "psuW": 500,
+   "conector": "nenhum",
+   "pcie": "4.0 x8",
+   "precoMinEur": 219,
+   "precoMaxEur": 259,
+   "lancamento": "2024-02",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 3060 12 GB",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 3060 12 GB",
+    "RTX 3060"
+   ],
+   "indice1080": 60,
+   "indice1440": 56,
+   "indice4k": 52,
+   "vram": 12,
+   "tdp": 170,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": 319,
+   "precoMaxEur": 379,
+   "lancamento": "2021-02",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 3060 8 GB",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 3060 8 GB",
+    "RTX 3060"
+   ],
+   "indice1080": 54,
+   "indice1440": 50,
+   "indice4k": 43,
+   "vram": 8,
+   "tdp": 170,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-10",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 3060 Ti",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 3060 Ti"
+   ],
+   "indice1080": 76,
+   "indice1440": 74,
+   "indice4k": 67,
+   "vram": 8,
+   "tdp": 200,
+   "psuW": 650,
+   "conector": "8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2020-12",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 3070",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 3070"
+   ],
+   "indice1080": 83,
+   "indice1440": 81,
+   "indice4k": 74,
+   "vram": 8,
+   "tdp": 220,
+   "psuW": 650,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2020-10",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 3070 Ti",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 3070 Ti"
+   ],
+   "indice1080": 87,
+   "indice1440": 86,
+   "indice4k": 79,
+   "vram": 8,
+   "tdp": 290,
+   "psuW": 750,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2021-06",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 3080 10 GB",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 3080 10 GB",
+    "RTX 3080"
+   ],
+   "indice1080": 102,
+   "indice1440": 102,
+   "indice4k": 102,
+   "vram": 10,
+   "tdp": 320,
+   "psuW": 750,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2020-09",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 3080 12 GB",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 3080 12 GB",
+    "RTX 3080"
+   ],
+   "indice1080": 105,
+   "indice1440": 106,
+   "indice4k": 107,
+   "vram": 12,
+   "tdp": 350,
+   "psuW": 800,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-01",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 3080 Ti",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 3080 Ti"
+   ],
+   "indice1080": 109,
+   "indice1440": 112,
+   "indice4k": 114,
+   "vram": 12,
+   "tdp": 350,
+   "psuW": 800,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2021-06",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 3090",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 3090"
+   ],
+   "indice1080": 112,
+   "indice1440": 116,
+   "indice4k": 118,
+   "vram": 24,
+   "tdp": 350,
+   "psuW": 800,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2020-09",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 3090 Ti",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 3090 Ti"
+   ],
+   "indice1080": 120,
+   "indice1440": 125,
+   "indice4k": 129,
+   "vram": 24,
+   "tdp": 450,
+   "psuW": 900,
+   "conector": "12VHPWR",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-03",
+   "tecnologia": "DLSS 4 (sem geração de frames)"
+  },
+  {
+   "nome": "RTX 4060",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 4060"
+   ],
+   "indice1080": 69,
+   "indice1440": 66,
+   "indice4k": 59,
+   "vram": 8,
+   "tdp": 115,
+   "psuW": 550,
+   "conector": "8 pinos",
+   "pcie": "4.0 x8",
+   "precoMinEur": 329,
+   "precoMaxEur": 379,
+   "lancamento": "2023-06",
+   "tecnologia": "DLSS 4 com geração de frames"
+  },
+  {
+   "nome": "RTX 4060 Ti 8 GB",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 4060 Ti 8 GB",
+    "RTX 4060 Ti"
+   ],
+   "indice1080": 80,
+   "indice1440": 78,
+   "indice4k": 71,
+   "vram": 8,
+   "tdp": 160,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "4.0 x8",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2023-05",
+   "tecnologia": "DLSS 4 com geração de frames"
+  },
+  {
+   "nome": "RTX 4060 Ti 16 GB",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 4060 Ti 16 GB",
+    "RTX 4060 Ti"
+   ],
+   "indice1080": 81,
+   "indice1440": 79,
+   "indice4k": 77,
+   "vram": 16,
+   "tdp": 165,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "4.0 x8",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2023-07",
+   "tecnologia": "DLSS 4 com geração de frames"
+  },
+  {
+   "nome": "RTX 4070",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 4070"
+   ],
+   "indice1080": 100,
+   "indice1440": 100,
+   "indice4k": 100,
+   "vram": 12,
+   "tdp": 200,
+   "psuW": 650,
+   "conector": "8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2023-04",
+   "tecnologia": "DLSS 4 com geração de frames"
+  },
+  {
+   "nome": "RTX 4070 SUPER",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 4070 SUPER"
+   ],
+   "indice1080": 111,
+   "indice1440": 114,
+   "indice4k": 116,
+   "vram": 12,
+   "tdp": 220,
+   "psuW": 650,
+   "conector": "12VHPWR",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2024-01",
+   "tecnologia": "DLSS 4 com geração de frames"
+  },
+  {
+   "nome": "RTX 4070 Ti",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 4070 Ti"
+   ],
+   "indice1080": 117,
+   "indice1440": 122,
+   "indice4k": 125,
+   "vram": 12,
+   "tdp": 285,
+   "psuW": 750,
+   "conector": "12VHPWR",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2023-01",
+   "tecnologia": "DLSS 4 com geração de frames"
+  },
+  {
+   "nome": "RTX 4070 Ti SUPER",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 4070 Ti SUPER"
+   ],
+   "indice1080": 126,
+   "indice1440": 133,
+   "indice4k": 138,
+   "vram": 16,
+   "tdp": 285,
+   "psuW": 750,
+   "conector": "12VHPWR",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2024-01",
+   "tecnologia": "DLSS 4 com geração de frames"
+  },
+  {
+   "nome": "RTX 4080",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 4080"
+   ],
+   "indice1080": 143,
+   "indice1440": 155,
+   "indice4k": 163,
+   "vram": 16,
+   "tdp": 320,
+   "psuW": 750,
+   "conector": "12VHPWR",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-11",
+   "tecnologia": "DLSS 4 com geração de frames"
+  },
+  {
+   "nome": "RTX 4080 SUPER",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 4080 SUPER"
+   ],
+   "indice1080": 145,
+   "indice1440": 158,
+   "indice4k": 167,
+   "vram": 16,
+   "tdp": 320,
+   "psuW": 750,
+   "conector": "12VHPWR",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2024-01",
+   "tecnologia": "DLSS 4 com geração de frames"
+  },
+  {
+   "nome": "RTX 4090",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 4090"
+   ],
+   "indice1080": 178,
+   "indice1440": 200,
+   "indice4k": 215,
+   "vram": 24,
+   "tdp": 450,
+   "psuW": 900,
+   "conector": "12VHPWR",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-10",
+   "tecnologia": "DLSS 4 com geração de frames"
+  },
+  {
+   "nome": "RTX 5050",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 5050"
+   ],
+   "indice1080": 63,
+   "indice1440": 60,
+   "indice4k": 53,
+   "vram": 8,
+   "tdp": 130,
+   "psuW": 550,
+   "conector": "8 pinos",
+   "pcie": "5.0 x8",
+   "precoMinEur": 299,
+   "precoMaxEur": 349,
+   "lancamento": "2025-07",
+   "tecnologia": "DLSS 4 com geração múltipla de frames"
+  },
+  {
+   "nome": "RTX 5060",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 5060"
+   ],
+   "indice1080": 82,
+   "indice1440": 80,
+   "indice4k": 73,
+   "vram": 8,
+   "tdp": 145,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "5.0 x8",
+   "precoMinEur": 379,
+   "precoMaxEur": 439,
+   "lancamento": "2025-05",
+   "tecnologia": "DLSS 4 com geração múltipla de frames"
+  },
+  {
+   "nome": "RTX 5060 Ti 16 GB",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 5060 Ti 16 GB",
+    "RTX 5060 Ti"
+   ],
+   "indice1080": 92,
+   "indice1440": 91,
+   "indice4k": 90,
+   "vram": 16,
+   "tdp": 180,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "5.0 x8",
+   "precoMinEur": 649,
+   "precoMaxEur": 749,
+   "lancamento": "2025-04",
+   "tecnologia": "DLSS 4 com geração múltipla de frames"
+  },
+  {
+   "nome": "RTX 5060 Ti 8 GB",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 5060 Ti 8 GB",
+    "RTX 5060 Ti"
+   ],
+   "indice1080": 90,
+   "indice1440": 89,
+   "indice4k": 82,
+   "vram": 8,
+   "tdp": 180,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "5.0 x8",
+   "precoMinEur": 449,
+   "precoMaxEur": 509,
+   "lancamento": "2025-04",
+   "tecnologia": "DLSS 4 com geração múltipla de frames"
+  },
+  {
+   "nome": "RTX 5070",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 5070"
+   ],
+   "indice1080": 114,
+   "indice1440": 118,
+   "indice4k": 121,
+   "vram": 12,
+   "tdp": 250,
+   "psuW": 700,
+   "conector": "12V-2x6",
+   "pcie": "5.0 x16",
+   "precoMinEur": 699,
+   "precoMaxEur": 799,
+   "lancamento": "2025-03",
+   "tecnologia": "DLSS 4 com geração múltipla de frames"
+  },
+  {
+   "nome": "RTX 5070 Ti",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 5070 Ti"
+   ],
+   "indice1080": 139,
+   "indice1440": 150,
+   "indice4k": 158,
+   "vram": 16,
+   "tdp": 300,
+   "psuW": 750,
+   "conector": "12V-2x6",
+   "pcie": "5.0 x16",
+   "precoMinEur": 1149,
+   "precoMaxEur": 1299,
+   "lancamento": "2025-02",
+   "tecnologia": "DLSS 4 com geração múltipla de frames"
+  },
+  {
+   "nome": "RTX 5080",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 5080"
+   ],
+   "indice1080": 156,
+   "indice1440": 172,
+   "indice4k": 183,
+   "vram": 16,
+   "tdp": 360,
+   "psuW": 800,
+   "conector": "12V-2x6",
+   "pcie": "5.0 x16",
+   "precoMinEur": 1599,
+   "precoMaxEur": 1849,
+   "lancamento": "2025-01",
+   "tecnologia": "DLSS 4 com geração múltipla de frames"
+  },
+  {
+   "nome": "RTX 5090",
+   "marca": "NVIDIA",
+   "aliases": [
+    "RTX 5090"
+   ],
+   "indice1080": 208,
+   "indice1440": 238,
+   "indice4k": 259,
+   "vram": 32,
+   "tdp": 575,
+   "psuW": 1000,
+   "conector": "12V-2x6",
+   "pcie": "5.0 x16",
+   "precoMinEur": 5499,
+   "precoMaxEur": 6799,
+   "lancamento": "2025-01",
+   "tecnologia": "DLSS 4 com geração múltipla de frames"
+  },
+  {
+   "nome": "RX 570",
+   "marca": "AMD",
+   "aliases": [
+    "RX 570"
+   ],
+   "indice1080": 36,
+   "indice1440": 30,
+   "indice4k": 23,
+   "vram": 8,
+   "tdp": 150,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2017-04",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 580",
+   "marca": "AMD",
+   "aliases": [
+    "RX 580"
+   ],
+   "indice1080": 40,
+   "indice1440": 35,
+   "indice4k": 28,
+   "vram": 8,
+   "tdp": 185,
+   "psuW": 650,
+   "conector": "8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2017-04",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 590",
+   "marca": "AMD",
+   "aliases": [
+    "RX 590"
+   ],
+   "indice1080": 43,
+   "indice1440": 38,
+   "indice4k": 31,
+   "vram": 8,
+   "tdp": 225,
+   "psuW": 650,
+   "conector": "8+6 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2018-11",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX Vega 56",
+   "marca": "AMD",
+   "aliases": [
+    "RX Vega 56",
+    "Vega 56",
+    "RX Vega"
+   ],
+   "indice1080": 49,
+   "indice1440": 45,
+   "indice4k": 38,
+   "vram": 8,
+   "tdp": 210,
+   "psuW": 650,
+   "conector": "2x 8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2017-08",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX Vega 64",
+   "marca": "AMD",
+   "aliases": [
+    "RX Vega 64",
+    "Vega 64"
+   ],
+   "indice1080": 54,
+   "indice1440": 50,
+   "indice4k": 43,
+   "vram": 8,
+   "tdp": 295,
+   "psuW": 750,
+   "conector": "2x 8 pinos",
+   "pcie": "3.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2017-08",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 5500 XT 8 GB",
+   "marca": "AMD",
+   "aliases": [
+    "RX 5500 XT 8 GB",
+    "RX 5500 XT"
+   ],
+   "indice1080": 40,
+   "indice1440": 35,
+   "indice4k": 28,
+   "vram": 8,
+   "tdp": 130,
+   "psuW": 550,
+   "conector": "8 pinos",
+   "pcie": "4.0 x8",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2019-12",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 5500 XT 4 GB",
+   "marca": "AMD",
+   "aliases": [
+    "RX 5500 XT 4 GB",
+    "RX 5500 XT"
+   ],
+   "indice1080": 37,
+   "indice1440": 29,
+   "indice4k": 20,
+   "vram": 4,
+   "tdp": 130,
+   "psuW": 550,
+   "conector": "8 pinos",
+   "pcie": "4.0 x8",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2019-12",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 5600 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 5600 XT"
+   ],
+   "indice1080": 54,
+   "indice1440": 50,
+   "indice4k": 40,
+   "vram": 6,
+   "tdp": 150,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2020-01",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 5700",
+   "marca": "AMD",
+   "aliases": [
+    "RX 5700"
+   ],
+   "indice1080": 58,
+   "indice1440": 54,
+   "indice4k": 47,
+   "vram": 8,
+   "tdp": 180,
+   "psuW": 600,
+   "conector": "8+6 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2019-07",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 5700 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 5700 XT"
+   ],
+   "indice1080": 63,
+   "indice1440": 60,
+   "indice4k": 53,
+   "vram": 8,
+   "tdp": 225,
+   "psuW": 650,
+   "conector": "8+6 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2019-07",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 6400",
+   "marca": "AMD",
+   "aliases": [
+    "RX 6400"
+   ],
+   "indice1080": 28,
+   "indice1440": 21,
+   "indice4k": 13,
+   "vram": 4,
+   "tdp": 53,
+   "psuW": 500,
+   "conector": "nenhum",
+   "pcie": "4.0 x4",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-01",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 6500 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 6500 XT"
+   ],
+   "indice1080": 32,
+   "indice1440": 24,
+   "indice4k": 16,
+   "vram": 4,
+   "tdp": 107,
+   "psuW": 550,
+   "conector": "6 pinos",
+   "pcie": "4.0 x4",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-01",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 6600",
+   "marca": "AMD",
+   "aliases": [
+    "RX 6600"
+   ],
+   "indice1080": 60,
+   "indice1440": 56,
+   "indice4k": 49,
+   "vram": 8,
+   "tdp": 132,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "4.0 x8",
+   "precoMinEur": 239,
+   "precoMaxEur": 279,
+   "lancamento": "2021-10",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 6600 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 6600 XT"
+   ],
+   "indice1080": 66,
+   "indice1440": 63,
+   "indice4k": 56,
+   "vram": 8,
+   "tdp": 160,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "4.0 x8",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2021-08",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 6650 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 6650 XT"
+   ],
+   "indice1080": 69,
+   "indice1440": 66,
+   "indice4k": 59,
+   "vram": 8,
+   "tdp": 180,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "4.0 x8",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-05",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 6700",
+   "marca": "AMD",
+   "aliases": [
+    "RX 6700"
+   ],
+   "indice1080": 73,
+   "indice1440": 71,
+   "indice4k": 69,
+   "vram": 10,
+   "tdp": 175,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-06",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 6700 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 6700 XT"
+   ],
+   "indice1080": 80,
+   "indice1440": 78,
+   "indice4k": 76,
+   "vram": 12,
+   "tdp": 230,
+   "psuW": 650,
+   "conector": "8+6 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2021-03",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 6750 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 6750 XT"
+   ],
+   "indice1080": 83,
+   "indice1440": 82,
+   "indice4k": 81,
+   "vram": 12,
+   "tdp": 250,
+   "psuW": 700,
+   "conector": "8+6 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-05",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 6800",
+   "marca": "AMD",
+   "aliases": [
+    "RX 6800"
+   ],
+   "indice1080": 93,
+   "indice1440": 92,
+   "indice4k": 91,
+   "vram": 16,
+   "tdp": 250,
+   "psuW": 700,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2020-11",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 6800 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 6800 XT"
+   ],
+   "indice1080": 103,
+   "indice1440": 104,
+   "indice4k": 105,
+   "vram": 16,
+   "tdp": 300,
+   "psuW": 750,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2020-11",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 6900 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 6900 XT"
+   ],
+   "indice1080": 108,
+   "indice1440": 110,
+   "indice4k": 112,
+   "vram": 16,
+   "tdp": 300,
+   "psuW": 750,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2020-12",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 6950 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 6950 XT"
+   ],
+   "indice1080": 113,
+   "indice1440": 117,
+   "indice4k": 120,
+   "vram": 16,
+   "tdp": 335,
+   "psuW": 800,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-05",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 7600",
+   "marca": "AMD",
+   "aliases": [
+    "RX 7600"
+   ],
+   "indice1080": 71,
+   "indice1440": 68,
+   "indice4k": 61,
+   "vram": 8,
+   "tdp": 165,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "4.0 x8",
+   "precoMinEur": 289,
+   "precoMaxEur": 329,
+   "lancamento": "2023-05",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 7600 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 7600 XT"
+   ],
+   "indice1080": 74,
+   "indice1440": 72,
+   "indice4k": 70,
+   "vram": 16,
+   "tdp": 190,
+   "psuW": 650,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x8",
+   "precoMinEur": 369,
+   "precoMaxEur": 419,
+   "lancamento": "2024-01",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 7700 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 7700 XT"
+   ],
+   "indice1080": 94,
+   "indice1440": 93,
+   "indice4k": 92,
+   "vram": 12,
+   "tdp": 245,
+   "psuW": 700,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": 469,
+   "precoMaxEur": 529,
+   "lancamento": "2023-09",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 7800 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 7800 XT"
+   ],
+   "indice1080": 105,
+   "indice1440": 106,
+   "indice4k": 107,
+   "vram": 16,
+   "tdp": 263,
+   "psuW": 700,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": 569,
+   "precoMaxEur": 649,
+   "lancamento": "2023-09",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 7900 GRE",
+   "marca": "AMD",
+   "aliases": [
+    "RX 7900 GRE"
+   ],
+   "indice1080": 112,
+   "indice1440": 116,
+   "indice4k": 118,
+   "vram": 16,
+   "tdp": 260,
+   "psuW": 700,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2024-02",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 7900 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 7900 XT"
+   ],
+   "indice1080": 127,
+   "indice1440": 135,
+   "indice4k": 140,
+   "vram": 20,
+   "tdp": 315,
+   "psuW": 750,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-12",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 7900 XTX",
+   "marca": "AMD",
+   "aliases": [
+    "RX 7900 XTX"
+   ],
+   "indice1080": 143,
+   "indice1440": 155,
+   "indice4k": 163,
+   "vram": 24,
+   "tdp": 355,
+   "psuW": 800,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-12",
+   "tecnologia": "FSR 3"
+  },
+  {
+   "nome": "RX 9060 XT 16 GB",
+   "marca": "AMD",
+   "aliases": [
+    "RX 9060 XT 16 GB",
+    "RX 9060 XT"
+   ],
+   "indice1080": 89,
+   "indice1440": 88,
+   "indice4k": 87,
+   "vram": 16,
+   "tdp": 160,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "5.0 x16",
+   "precoMinEur": 499,
+   "precoMaxEur": 569,
+   "lancamento": "2025-06",
+   "tecnologia": "FSR 4"
+  },
+  {
+   "nome": "RX 9060 XT 8 GB",
+   "marca": "AMD",
+   "aliases": [
+    "RX 9060 XT 8 GB",
+    "RX 9060 XT"
+   ],
+   "indice1080": 86,
+   "indice1440": 85,
+   "indice4k": 78,
+   "vram": 8,
+   "tdp": 150,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "5.0 x16",
+   "precoMinEur": 349,
+   "precoMaxEur": 399,
+   "lancamento": "2025-06",
+   "tecnologia": "FSR 4"
+  },
+  {
+   "nome": "RX 9070",
+   "marca": "AMD",
+   "aliases": [
+    "RX 9070"
+   ],
+   "indice1080": 125,
+   "indice1440": 132,
+   "indice4k": 137,
+   "vram": 16,
+   "tdp": 220,
+   "psuW": 650,
+   "conector": "2x 8 pinos",
+   "pcie": "5.0 x16",
+   "precoMinEur": 689,
+   "precoMaxEur": 769,
+   "lancamento": "2025-03",
+   "tecnologia": "FSR 4"
+  },
+  {
+   "nome": "RX 9070 XT",
+   "marca": "AMD",
+   "aliases": [
+    "RX 9070 XT"
+   ],
+   "indice1080": 137,
+   "indice1440": 148,
+   "indice4k": 155,
+   "vram": 16,
+   "tdp": 304,
+   "psuW": 750,
+   "conector": "2x 8 pinos",
+   "pcie": "5.0 x16",
+   "precoMinEur": 789,
+   "precoMaxEur": 879,
+   "lancamento": "2025-03",
+   "tecnologia": "FSR 4"
+  },
+  {
+   "nome": "Arc A310",
+   "marca": "Intel",
+   "aliases": [
+    "Arc A310"
+   ],
+   "indice1080": 25,
+   "indice1440": 17,
+   "indice4k": 9,
+   "vram": 4,
+   "tdp": 75,
+   "psuW": 500,
+   "conector": "nenhum",
+   "pcie": "4.0 x8",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-10",
+   "tecnologia": "XeSS 2"
+  },
+  {
+   "nome": "Arc A380",
+   "marca": "Intel",
+   "aliases": [
+    "Arc A380"
+   ],
+   "indice1080": 30,
+   "indice1440": 24,
+   "indice4k": 15,
+   "vram": 6,
+   "tdp": 75,
+   "psuW": 500,
+   "conector": "8 pinos",
+   "pcie": "4.0 x8",
+   "precoMinEur": 139,
+   "precoMaxEur": 159,
+   "lancamento": "2022-06",
+   "tecnologia": "XeSS 2"
+  },
+  {
+   "nome": "Arc A580",
+   "marca": "Intel",
+   "aliases": [
+    "Arc A580"
+   ],
+   "indice1080": 56,
+   "indice1440": 52,
+   "indice4k": 45,
+   "vram": 8,
+   "tdp": 185,
+   "psuW": 650,
+   "conector": "2x 8 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2023-10",
+   "tecnologia": "XeSS 2"
+  },
+  {
+   "nome": "Arc A750",
+   "marca": "Intel",
+   "aliases": [
+    "Arc A750"
+   ],
+   "indice1080": 61,
+   "indice1440": 58,
+   "indice4k": 51,
+   "vram": 8,
+   "tdp": 225,
+   "psuW": 650,
+   "conector": "8+6 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": 219,
+   "precoMaxEur": 249,
+   "lancamento": "2022-10",
+   "tecnologia": "XeSS 2"
+  },
+  {
+   "nome": "Arc A770 16 GB",
+   "marca": "Intel",
+   "aliases": [
+    "Arc A770 16 GB",
+    "Arc A770"
+   ],
+   "indice1080": 67,
+   "indice1440": 64,
+   "indice4k": 61,
+   "vram": 16,
+   "tdp": 225,
+   "psuW": 650,
+   "conector": "8+6 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-10",
+   "tecnologia": "XeSS 2"
+  },
+  {
+   "nome": "Arc A770 8 GB",
+   "marca": "Intel",
+   "aliases": [
+    "Arc A770 8 GB",
+    "Arc A770"
+   ],
+   "indice1080": 65,
+   "indice1440": 62,
+   "indice4k": 55,
+   "vram": 8,
+   "tdp": 225,
+   "psuW": 650,
+   "conector": "8+6 pinos",
+   "pcie": "4.0 x16",
+   "precoMinEur": null,
+   "precoMaxEur": null,
+   "lancamento": "2022-10",
+   "tecnologia": "XeSS 2"
+  },
+  {
+   "nome": "Arc B570",
+   "marca": "Intel",
+   "aliases": [
+    "Arc B570"
+   ],
+   "indice1080": 71,
+   "indice1440": 68,
+   "indice4k": 65,
+   "vram": 10,
+   "tdp": 150,
+   "psuW": 600,
+   "conector": "8 pinos",
+   "pcie": "4.0 x8",
+   "precoMinEur": 259,
+   "precoMaxEur": 299,
+   "lancamento": "2025-01",
+   "tecnologia": "XeSS 2 com geração de frames"
+  },
+  {
+   "nome": "Arc B580",
+   "marca": "Intel",
+   "aliases": [
+    "Arc B580"
+   ],
+   "indice1080": 78,
+   "indice1440": 76,
+   "indice4k": 74,
+   "vram": 12,
+   "tdp": 190,
+   "psuW": 650,
+   "conector": "8 pinos",
+   "pcie": "4.0 x8",
+   "precoMinEur": 309,
+   "precoMaxEur": 359,
+   "lancamento": "2024-12",
+   "tecnologia": "XeSS 2 com geração de frames"
+  }
+ ],
+ "cpus": [
+  {
+   "nome": "Ryzen 3 1200",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 3 1200"
+   ],
+   "indiceJogo": 42,
+   "indiceMulti": 16,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "4/4",
+   "serie": "zen1",
+   "lancamento": "2017-07",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 5 1400",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 1400"
+   ],
+   "indiceJogo": 45,
+   "indiceMulti": 23,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "4/8",
+   "serie": "zen1",
+   "lancamento": "2017-04",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 5 1600",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 1600"
+   ],
+   "indiceJogo": 50,
+   "indiceMulti": 31,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "zen1",
+   "lancamento": "2017-04",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 5 1600X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 1600X"
+   ],
+   "indiceJogo": 52,
+   "indiceMulti": 33,
+   "socket": "AM4",
+   "tdp": 95,
+   "nucleos": "6/12",
+   "serie": "zen1",
+   "lancamento": "2017-04",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 7 1700",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 1700"
+   ],
+   "indiceJogo": 52,
+   "indiceMulti": 38,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "8/16",
+   "serie": "zen1",
+   "lancamento": "2017-03",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 7 1700X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 1700X"
+   ],
+   "indiceJogo": 54,
+   "indiceMulti": 41,
+   "socket": "AM4",
+   "tdp": 95,
+   "nucleos": "8/16",
+   "serie": "zen1",
+   "lancamento": "2017-03",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 7 1800X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 1800X"
+   ],
+   "indiceJogo": 55,
+   "indiceMulti": 43,
+   "socket": "AM4",
+   "tdp": 95,
+   "nucleos": "8/16",
+   "serie": "zen1",
+   "lancamento": "2017-03",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 3 2200G",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 3 2200G"
+   ],
+   "indiceJogo": 45,
+   "indiceMulti": 18,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "4/4",
+   "serie": "zen1apu",
+   "lancamento": "2018-02",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 5 2400G",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 2400G"
+   ],
+   "indiceJogo": 50,
+   "indiceMulti": 23,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "4/8",
+   "serie": "zen1apu",
+   "lancamento": "2018-02",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 5 2600",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 2600"
+   ],
+   "indiceJogo": 56,
+   "indiceMulti": 35,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "zenplus",
+   "lancamento": "2018-04",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 5 2600X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 2600X"
+   ],
+   "indiceJogo": 58,
+   "indiceMulti": 37,
+   "socket": "AM4",
+   "tdp": 95,
+   "nucleos": "6/12",
+   "serie": "zenplus",
+   "lancamento": "2018-04",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 7 2700",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 2700"
+   ],
+   "indiceJogo": 57,
+   "indiceMulti": 45,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "8/16",
+   "serie": "zenplus",
+   "lancamento": "2018-04",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 7 2700X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 2700X"
+   ],
+   "indiceJogo": 60,
+   "indiceMulti": 48,
+   "socket": "AM4",
+   "tdp": 105,
+   "nucleos": "8/16",
+   "serie": "zenplus",
+   "lancamento": "2018-04",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 3 3100",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 3 3100"
+   ],
+   "indiceJogo": 58,
+   "indiceMulti": 28,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "4/8",
+   "serie": "zen2",
+   "lancamento": "2020-05",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 3 3300X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 3 3300X"
+   ],
+   "indiceJogo": 63,
+   "indiceMulti": 32,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "4/8",
+   "serie": "zen2",
+   "lancamento": "2020-05",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 5 3400G",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 3400G"
+   ],
+   "indiceJogo": 52,
+   "indiceMulti": 27,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "4/8",
+   "serie": "zenplusapu",
+   "lancamento": "2019-07",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 5 3600",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 3600"
+   ],
+   "indiceJogo": 65,
+   "indiceMulti": 45,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "zen2",
+   "lancamento": "2019-07",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 5 3600X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 3600X"
+   ],
+   "indiceJogo": 66,
+   "indiceMulti": 47,
+   "socket": "AM4",
+   "tdp": 95,
+   "nucleos": "6/12",
+   "serie": "zen2",
+   "lancamento": "2019-07",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 7 3700X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 3700X"
+   ],
+   "indiceJogo": 67,
+   "indiceMulti": 61,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "8/16",
+   "serie": "zen2",
+   "lancamento": "2019-07",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 7 3800X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 3800X"
+   ],
+   "indiceJogo": 68,
+   "indiceMulti": 63,
+   "socket": "AM4",
+   "tdp": 105,
+   "nucleos": "8/16",
+   "serie": "zen2",
+   "lancamento": "2019-07",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 9 3900X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 9 3900X"
+   ],
+   "indiceJogo": 68,
+   "indiceMulti": 91,
+   "socket": "AM4",
+   "tdp": 105,
+   "nucleos": "12/24",
+   "serie": "zen2",
+   "lancamento": "2019-07",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 9 3950X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 9 3950X"
+   ],
+   "indiceJogo": 69,
+   "indiceMulti": 119,
+   "socket": "AM4",
+   "tdp": 105,
+   "nucleos": "16/32",
+   "serie": "zen2",
+   "lancamento": "2019-11",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 5 5500",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 5500"
+   ],
+   "indiceJogo": 68,
+   "indiceMulti": 49,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "zen3b",
+   "lancamento": "2022-04",
+   "precoMinEur": 79,
+   "precoMaxEur": 99
+  },
+  {
+   "nome": "Ryzen 5 5600",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 5600"
+   ],
+   "indiceJogo": 73,
+   "indiceMulti": 54,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "zen3b",
+   "lancamento": "2022-04",
+   "precoMinEur": 99,
+   "precoMaxEur": 119
+  },
+  {
+   "nome": "Ryzen 5 5600X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 5600X"
+   ],
+   "indiceJogo": 76,
+   "indiceMulti": 56,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "zen3",
+   "lancamento": "2020-11",
+   "precoMinEur": 119,
+   "precoMaxEur": 139
+  },
+  {
+   "nome": "Ryzen 5 5600G",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 5600G"
+   ],
+   "indiceJogo": 68,
+   "indiceMulti": 51,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "zen3apu",
+   "lancamento": "2021-08",
+   "precoMinEur": 109,
+   "precoMaxEur": 129
+  },
+  {
+   "nome": "Ryzen 7 5700G",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 5700G"
+   ],
+   "indiceJogo": 71,
+   "indiceMulti": 68,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "8/16",
+   "serie": "zen3apu",
+   "lancamento": "2021-08",
+   "precoMinEur": 149,
+   "precoMaxEur": 179
+  },
+  {
+   "nome": "Ryzen 7 5700",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 5700"
+   ],
+   "indiceJogo": 72,
+   "indiceMulti": 67,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "8/16",
+   "serie": "zen3b",
+   "lancamento": "2022-04",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 7 5700X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 5700X"
+   ],
+   "indiceJogo": 77,
+   "indiceMulti": 71,
+   "socket": "AM4",
+   "tdp": 65,
+   "nucleos": "8/16",
+   "serie": "zen3b",
+   "lancamento": "2022-04",
+   "precoMinEur": 139,
+   "precoMaxEur": 169
+  },
+  {
+   "nome": "Ryzen 7 5800X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 5800X"
+   ],
+   "indiceJogo": 80,
+   "indiceMulti": 76,
+   "socket": "AM4",
+   "tdp": 105,
+   "nucleos": "8/16",
+   "serie": "zen3",
+   "lancamento": "2020-11",
+   "precoMinEur": 169,
+   "precoMaxEur": 199
+  },
+  {
+   "nome": "Ryzen 9 5900X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 9 5900X"
+   ],
+   "indiceJogo": 81,
+   "indiceMulti": 106,
+   "socket": "AM4",
+   "tdp": 105,
+   "nucleos": "12/24",
+   "serie": "zen3",
+   "lancamento": "2020-11",
+   "precoMinEur": 239,
+   "precoMaxEur": 279
+  },
+  {
+   "nome": "Ryzen 9 5950X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 9 5950X"
+   ],
+   "indiceJogo": 82,
+   "indiceMulti": 131,
+   "socket": "AM4",
+   "tdp": 105,
+   "nucleos": "16/32",
+   "serie": "zen3",
+   "lancamento": "2020-11",
+   "precoMinEur": 329,
+   "precoMaxEur": 379
+  },
+  {
+   "nome": "Ryzen 5 5500X3D",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 5500X3D"
+   ],
+   "indiceJogo": 82,
+   "indiceMulti": 48,
+   "socket": "AM4",
+   "tdp": 105,
+   "nucleos": "6/12",
+   "serie": "zen3x3d",
+   "lancamento": "2025-06",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 5 5600X3D",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 5600X3D"
+   ],
+   "indiceJogo": 86,
+   "indiceMulti": 53,
+   "socket": "AM4",
+   "tdp": 105,
+   "nucleos": "6/12",
+   "serie": "zen3x3d",
+   "lancamento": "2023-07",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 7 5700X3D",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 5700X3D"
+   ],
+   "indiceJogo": 90,
+   "indiceMulti": 66,
+   "socket": "AM4",
+   "tdp": 105,
+   "nucleos": "8/16",
+   "serie": "zen3x3d",
+   "lancamento": "2024-01",
+   "precoMinEur": 229,
+   "precoMaxEur": 269
+  },
+  {
+   "nome": "Ryzen 7 5800X3D",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 5800X3D"
+   ],
+   "indiceJogo": 95,
+   "indiceMulti": 70,
+   "socket": "AM4",
+   "tdp": 105,
+   "nucleos": "8/16",
+   "serie": "zen3x3d",
+   "lancamento": "2022-04",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Ryzen 5 7500F",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 7500F"
+   ],
+   "indiceJogo": 92,
+   "indiceMulti": 70,
+   "socket": "AM5",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "zen4",
+   "lancamento": "2023-07",
+   "precoMinEur": 129,
+   "precoMaxEur": 149
+  },
+  {
+   "nome": "Ryzen 5 7600",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 7600"
+   ],
+   "indiceJogo": 93,
+   "indiceMulti": 72,
+   "socket": "AM5",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "zen4",
+   "lancamento": "2023-01",
+   "precoMinEur": 169,
+   "precoMaxEur": 199
+  },
+  {
+   "nome": "Ryzen 5 7600X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 7600X"
+   ],
+   "indiceJogo": 96,
+   "indiceMulti": 76,
+   "socket": "AM5",
+   "tdp": 105,
+   "nucleos": "6/12",
+   "serie": "zen4",
+   "lancamento": "2022-09",
+   "precoMinEur": 179,
+   "precoMaxEur": 209
+  },
+  {
+   "nome": "Ryzen 7 7700",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 7700"
+   ],
+   "indiceJogo": 97,
+   "indiceMulti": 97,
+   "socket": "AM5",
+   "tdp": 65,
+   "nucleos": "8/16",
+   "serie": "zen4",
+   "lancamento": "2023-01",
+   "precoMinEur": 229,
+   "precoMaxEur": 259
+  },
+  {
+   "nome": "Ryzen 7 7700X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 7700X"
+   ],
+   "indiceJogo": 100,
+   "indiceMulti": 100,
+   "socket": "AM5",
+   "tdp": 105,
+   "nucleos": "8/16",
+   "serie": "zen4",
+   "lancamento": "2022-09",
+   "precoMinEur": 239,
+   "precoMaxEur": 269
+  },
+  {
+   "nome": "Ryzen 9 7900",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 9 7900"
+   ],
+   "indiceJogo": 98,
+   "indiceMulti": 136,
+   "socket": "AM5",
+   "tdp": 65,
+   "nucleos": "12/24",
+   "serie": "zen4",
+   "lancamento": "2023-01",
+   "precoMinEur": 319,
+   "precoMaxEur": 359
+  },
+  {
+   "nome": "Ryzen 9 7900X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 9 7900X"
+   ],
+   "indiceJogo": 102,
+   "indiceMulti": 146,
+   "socket": "AM5",
+   "tdp": 170,
+   "nucleos": "12/24",
+   "serie": "zen4",
+   "lancamento": "2022-09",
+   "precoMinEur": 329,
+   "precoMaxEur": 369
+  },
+  {
+   "nome": "Ryzen 9 7950X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 9 7950X"
+   ],
+   "indiceJogo": 104,
+   "indiceMulti": 192,
+   "socket": "AM5",
+   "tdp": 170,
+   "nucleos": "16/32",
+   "serie": "zen4",
+   "lancamento": "2022-09",
+   "precoMinEur": 469,
+   "precoMaxEur": 529
+  },
+  {
+   "nome": "Ryzen 7 7800X3D",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 7800X3D"
+   ],
+   "indiceJogo": 128,
+   "indiceMulti": 91,
+   "socket": "AM5",
+   "tdp": 120,
+   "nucleos": "8/16",
+   "serie": "zen4",
+   "lancamento": "2023-04",
+   "precoMinEur": 329,
+   "precoMaxEur": 379
+  },
+  {
+   "nome": "Ryzen 9 7900X3D",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 9 7900X3D"
+   ],
+   "indiceJogo": 120,
+   "indiceMulti": 136,
+   "socket": "AM5",
+   "tdp": 120,
+   "nucleos": "12/24",
+   "serie": "zen4",
+   "lancamento": "2023-02",
+   "precoMinEur": 399,
+   "precoMaxEur": 449
+  },
+  {
+   "nome": "Ryzen 9 7950X3D",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 9 7950X3D"
+   ],
+   "indiceJogo": 126,
+   "indiceMulti": 179,
+   "socket": "AM5",
+   "tdp": 120,
+   "nucleos": "16/32",
+   "serie": "zen4",
+   "lancamento": "2023-02",
+   "precoMinEur": 549,
+   "precoMaxEur": 619
+  },
+  {
+   "nome": "Ryzen 5 8500G",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 8500G"
+   ],
+   "indiceJogo": 72,
+   "indiceMulti": 56,
+   "socket": "AM5",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "zen4apu",
+   "lancamento": "2024-01",
+   "precoMinEur": 129,
+   "precoMaxEur": 149
+  },
+  {
+   "nome": "Ryzen 5 8600G",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 8600G"
+   ],
+   "indiceJogo": 82,
+   "indiceMulti": 68,
+   "socket": "AM5",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "zen4apu",
+   "lancamento": "2024-01",
+   "precoMinEur": 179,
+   "precoMaxEur": 209
+  },
+  {
+   "nome": "Ryzen 7 8700G",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 8700G"
+   ],
+   "indiceJogo": 85,
+   "indiceMulti": 86,
+   "socket": "AM5",
+   "tdp": 65,
+   "nucleos": "8/16",
+   "serie": "zen4apu",
+   "lancamento": "2024-01",
+   "precoMinEur": 259,
+   "precoMaxEur": 299
+  },
+  {
+   "nome": "Ryzen 5 9600",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 9600"
+   ],
+   "indiceJogo": 101,
+   "indiceMulti": 81,
+   "socket": "AM5",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "zen5",
+   "lancamento": "2025-01",
+   "precoMinEur": 179,
+   "precoMaxEur": 209
+  },
+  {
+   "nome": "Ryzen 5 9600X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 5 9600X"
+   ],
+   "indiceJogo": 104,
+   "indiceMulti": 85,
+   "socket": "AM5",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "zen5",
+   "lancamento": "2024-08",
+   "precoMinEur": 199,
+   "precoMaxEur": 229
+  },
+  {
+   "nome": "Ryzen 7 9700X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 9700X"
+   ],
+   "indiceJogo": 106,
+   "indiceMulti": 104,
+   "socket": "AM5",
+   "tdp": 65,
+   "nucleos": "8/16",
+   "serie": "zen5",
+   "lancamento": "2024-08",
+   "precoMinEur": 269,
+   "precoMaxEur": 309
+  },
+  {
+   "nome": "Ryzen 9 9900X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 9 9900X"
+   ],
+   "indiceJogo": 107,
+   "indiceMulti": 167,
+   "socket": "AM5",
+   "tdp": 120,
+   "nucleos": "12/24",
+   "serie": "zen5",
+   "lancamento": "2024-08",
+   "precoMinEur": 349,
+   "precoMaxEur": 399
+  },
+  {
+   "nome": "Ryzen 9 9950X",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 9 9950X"
+   ],
+   "indiceJogo": 110,
+   "indiceMulti": 215,
+   "socket": "AM5",
+   "tdp": 170,
+   "nucleos": "16/32",
+   "serie": "zen5",
+   "lancamento": "2024-08",
+   "precoMinEur": 529,
+   "precoMaxEur": 599
+  },
+  {
+   "nome": "Ryzen 7 9800X3D",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 9800X3D"
+   ],
+   "indiceJogo": 140,
+   "indiceMulti": 116,
+   "socket": "AM5",
+   "tdp": 120,
+   "nucleos": "8/16",
+   "serie": "zen5x3d",
+   "lancamento": "2024-11",
+   "precoMinEur": 439,
+   "precoMaxEur": 489
+  },
+  {
+   "nome": "Ryzen 7 9850X3D",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 7 9850X3D"
+   ],
+   "indiceJogo": 144,
+   "indiceMulti": 121,
+   "socket": "AM5",
+   "tdp": 120,
+   "nucleos": "8/16",
+   "serie": "zen5x3d",
+   "lancamento": "2026-01",
+   "precoMinEur": 499,
+   "precoMaxEur": 559
+  },
+  {
+   "nome": "Ryzen 9 9900X3D",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 9 9900X3D"
+   ],
+   "indiceJogo": 128,
+   "indiceMulti": 162,
+   "socket": "AM5",
+   "tdp": 120,
+   "nucleos": "12/24",
+   "serie": "zen5x3d",
+   "lancamento": "2025-03",
+   "precoMinEur": 549,
+   "precoMaxEur": 619
+  },
+  {
+   "nome": "Ryzen 9 9950X3D",
+   "marca": "AMD",
+   "aliases": [
+    "Ryzen 9 9950X3D"
+   ],
+   "indiceJogo": 142,
+   "indiceMulti": 210,
+   "socket": "AM5",
+   "tdp": 170,
+   "nucleos": "16/32",
+   "serie": "zen5x3d",
+   "lancamento": "2025-03",
+   "precoMinEur": 649,
+   "precoMaxEur": 729
+  },
+  {
+   "nome": "Core i3-8100",
+   "marca": "Intel",
+   "aliases": [
+    "Core i3-8100",
+    "i3-8100F",
+    "i3-8100"
+   ],
+   "indiceJogo": 48,
+   "indiceMulti": 18,
+   "socket": "LGA1151v2",
+   "tdp": 65,
+   "nucleos": "4/4",
+   "serie": "cfl8",
+   "lancamento": "2017-10",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i5-8400",
+   "marca": "Intel",
+   "aliases": [
+    "Core i5-8400",
+    "i5-8400"
+   ],
+   "indiceJogo": 55,
+   "indiceMulti": 28,
+   "socket": "LGA1151v2",
+   "tdp": 65,
+   "nucleos": "6/6",
+   "serie": "cfl8",
+   "lancamento": "2017-10",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i5-8600K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i5-8600K",
+    "i5-8600KF",
+    "i5-8600K"
+   ],
+   "indiceJogo": 60,
+   "indiceMulti": 32,
+   "socket": "LGA1151v2",
+   "tdp": 95,
+   "nucleos": "6/6",
+   "serie": "cfl8",
+   "lancamento": "2017-10",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i7-8700",
+   "marca": "Intel",
+   "aliases": [
+    "Core i7-8700",
+    "i7-8700F",
+    "i7-8700"
+   ],
+   "indiceJogo": 63,
+   "indiceMulti": 45,
+   "socket": "LGA1151v2",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "cfl8",
+   "lancamento": "2017-10",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i7-8700K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i7-8700K",
+    "i7-8700KF",
+    "i7-8700K"
+   ],
+   "indiceJogo": 65,
+   "indiceMulti": 47,
+   "socket": "LGA1151v2",
+   "tdp": 95,
+   "nucleos": "6/12",
+   "serie": "cfl8",
+   "lancamento": "2017-10",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i3-9100F",
+   "marca": "Intel",
+   "aliases": [
+    "Core i3-9100F",
+    "i3-9100F",
+    "i3-9100"
+   ],
+   "indiceJogo": 50,
+   "indiceMulti": 20,
+   "socket": "LGA1151v2",
+   "tdp": 65,
+   "nucleos": "4/4",
+   "serie": "cfl9",
+   "lancamento": "2019-04",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i5-9400F",
+   "marca": "Intel",
+   "aliases": [
+    "Core i5-9400F",
+    "i5-9400F",
+    "i5-9400"
+   ],
+   "indiceJogo": 57,
+   "indiceMulti": 30,
+   "socket": "LGA1151v2",
+   "tdp": 65,
+   "nucleos": "6/6",
+   "serie": "cfl9",
+   "lancamento": "2019-01",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i5-9600K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i5-9600K",
+    "i5-9600KF",
+    "i5-9600K"
+   ],
+   "indiceJogo": 62,
+   "indiceMulti": 33,
+   "socket": "LGA1151v2",
+   "tdp": 95,
+   "nucleos": "6/6",
+   "serie": "cfl9",
+   "lancamento": "2018-10",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i7-9700K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i7-9700K",
+    "i7-9700KF",
+    "i7-9700K"
+   ],
+   "indiceJogo": 68,
+   "indiceMulti": 49,
+   "socket": "LGA1151v2",
+   "tdp": 95,
+   "nucleos": "8/8",
+   "serie": "cfl9",
+   "lancamento": "2018-10",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i9-9900K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i9-9900K",
+    "i9-9900KF",
+    "i9-9900K"
+   ],
+   "indiceJogo": 70,
+   "indiceMulti": 63,
+   "socket": "LGA1151v2",
+   "tdp": 95,
+   "nucleos": "8/16",
+   "serie": "cfl9",
+   "lancamento": "2018-10",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i3-10100F",
+   "marca": "Intel",
+   "aliases": [
+    "Core i3-10100F",
+    "i3-10100F",
+    "i3-10100"
+   ],
+   "indiceJogo": 55,
+   "indiceMulti": 29,
+   "socket": "LGA1200",
+   "tdp": 65,
+   "nucleos": "4/8",
+   "serie": "cml",
+   "lancamento": "2020-10",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i5-10400F",
+   "marca": "Intel",
+   "aliases": [
+    "Core i5-10400F",
+    "i5-10400F",
+    "i5-10400"
+   ],
+   "indiceJogo": 63,
+   "indiceMulti": 43,
+   "socket": "LGA1200",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "cml",
+   "lancamento": "2020-04",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i5-10600K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i5-10600K",
+    "i5-10600KF",
+    "i5-10600K"
+   ],
+   "indiceJogo": 68,
+   "indiceMulti": 53,
+   "socket": "LGA1200",
+   "tdp": 125,
+   "nucleos": "6/12",
+   "serie": "cml",
+   "lancamento": "2020-05",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i7-10700K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i7-10700K",
+    "i7-10700KF",
+    "i7-10700K"
+   ],
+   "indiceJogo": 72,
+   "indiceMulti": 68,
+   "socket": "LGA1200",
+   "tdp": 125,
+   "nucleos": "8/16",
+   "serie": "cml",
+   "lancamento": "2020-05",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i9-10900K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i9-10900K",
+    "i9-10900KF",
+    "i9-10900K"
+   ],
+   "indiceJogo": 74,
+   "indiceMulti": 78,
+   "socket": "LGA1200",
+   "tdp": 125,
+   "nucleos": "10/20",
+   "serie": "cml",
+   "lancamento": "2020-05",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i5-11400F",
+   "marca": "Intel",
+   "aliases": [
+    "Core i5-11400F",
+    "i5-11400F",
+    "i5-11400"
+   ],
+   "indiceJogo": 70,
+   "indiceMulti": 53,
+   "socket": "LGA1200",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "rkl",
+   "lancamento": "2021-03",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i5-11600K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i5-11600K",
+    "i5-11600KF",
+    "i5-11600K"
+   ],
+   "indiceJogo": 74,
+   "indiceMulti": 58,
+   "socket": "LGA1200",
+   "tdp": 125,
+   "nucleos": "6/12",
+   "serie": "rkl",
+   "lancamento": "2021-03",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i7-11700K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i7-11700K",
+    "i7-11700KF",
+    "i7-11700K"
+   ],
+   "indiceJogo": 76,
+   "indiceMulti": 76,
+   "socket": "LGA1200",
+   "tdp": 125,
+   "nucleos": "8/16",
+   "serie": "rkl",
+   "lancamento": "2021-03",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i9-11900K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i9-11900K",
+    "i9-11900KF",
+    "i9-11900K"
+   ],
+   "indiceJogo": 77,
+   "indiceMulti": 80,
+   "socket": "LGA1200",
+   "tdp": 125,
+   "nucleos": "8/16",
+   "serie": "rkl",
+   "lancamento": "2021-03",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i3-12100F",
+   "marca": "Intel",
+   "aliases": [
+    "Core i3-12100F",
+    "i3-12100F",
+    "i3-12100"
+   ],
+   "indiceJogo": 70,
+   "indiceMulti": 43,
+   "socket": "LGA1700",
+   "tdp": 58,
+   "nucleos": "4/8",
+   "serie": "adl",
+   "lancamento": "2022-01",
+   "precoMinEur": 79,
+   "precoMaxEur": 99
+  },
+  {
+   "nome": "Core i5-12400F",
+   "marca": "Intel",
+   "aliases": [
+    "Core i5-12400F",
+    "i5-12400F",
+    "i5-12400"
+   ],
+   "indiceJogo": 78,
+   "indiceMulti": 62,
+   "socket": "LGA1700",
+   "tdp": 65,
+   "nucleos": "6/12",
+   "serie": "adl",
+   "lancamento": "2022-01",
+   "precoMinEur": 109,
+   "precoMaxEur": 129
+  },
+  {
+   "nome": "Core i5-12600K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i5-12600K",
+    "i5-12600KF",
+    "i5-12600K"
+   ],
+   "indiceJogo": 90,
+   "indiceMulti": 88,
+   "socket": "LGA1700",
+   "tdp": 125,
+   "nucleos": "10/16",
+   "serie": "adl",
+   "lancamento": "2021-11",
+   "precoMinEur": 169,
+   "precoMaxEur": 199
+  },
+  {
+   "nome": "Core i7-12700K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i7-12700K",
+    "i7-12700KF",
+    "i7-12700K"
+   ],
+   "indiceJogo": 95,
+   "indiceMulti": 114,
+   "socket": "LGA1700",
+   "tdp": 125,
+   "nucleos": "12/20",
+   "serie": "adl",
+   "lancamento": "2021-11",
+   "precoMinEur": 229,
+   "precoMaxEur": 269
+  },
+  {
+   "nome": "Core i9-12900K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i9-12900K",
+    "i9-12900KF",
+    "i9-12900K"
+   ],
+   "indiceJogo": 98,
+   "indiceMulti": 136,
+   "socket": "LGA1700",
+   "tdp": 125,
+   "nucleos": "16/24",
+   "serie": "adl",
+   "lancamento": "2021-11",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i5-13400F",
+   "marca": "Intel",
+   "aliases": [
+    "Core i5-13400F",
+    "i5-13400F",
+    "i5-13400"
+   ],
+   "indiceJogo": 84,
+   "indiceMulti": 81,
+   "socket": "LGA1700",
+   "tdp": 65,
+   "nucleos": "10/16",
+   "serie": "rpl",
+   "lancamento": "2023-01",
+   "precoMinEur": 159,
+   "precoMaxEur": 189
+  },
+  {
+   "nome": "Core i5-13600K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i5-13600K",
+    "i5-13600KF",
+    "i5-13600K"
+   ],
+   "indiceJogo": 101,
+   "indiceMulti": 121,
+   "socket": "LGA1700",
+   "tdp": 125,
+   "nucleos": "14/20",
+   "serie": "rpl",
+   "lancamento": "2022-10",
+   "precoMinEur": 239,
+   "precoMaxEur": 269
+  },
+  {
+   "nome": "Core i7-13700K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i7-13700K",
+    "i7-13700KF",
+    "i7-13700K"
+   ],
+   "indiceJogo": 108,
+   "indiceMulti": 154,
+   "socket": "LGA1700",
+   "tdp": 125,
+   "nucleos": "16/24",
+   "serie": "rpl",
+   "lancamento": "2022-10",
+   "precoMinEur": 329,
+   "precoMaxEur": 379
+  },
+  {
+   "nome": "Core i9-13900K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i9-13900K",
+    "i9-13900KF",
+    "i9-13900K"
+   ],
+   "indiceJogo": 113,
+   "indiceMulti": 197,
+   "socket": "LGA1700",
+   "tdp": 125,
+   "nucleos": "24/32",
+   "serie": "rpl",
+   "lancamento": "2022-10",
+   "precoMinEur": null,
+   "precoMaxEur": null
+  },
+  {
+   "nome": "Core i5-14400F",
+   "marca": "Intel",
+   "aliases": [
+    "Core i5-14400F",
+    "i5-14400F",
+    "i5-14400"
+   ],
+   "indiceJogo": 86,
+   "indiceMulti": 85,
+   "socket": "LGA1700",
+   "tdp": 65,
+   "nucleos": "10/16",
+   "serie": "rpl",
+   "lancamento": "2024-01",
+   "precoMinEur": 169,
+   "precoMaxEur": 199
+  },
+  {
+   "nome": "Core i5-14600K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i5-14600K",
+    "i5-14600KF",
+    "i5-14600K"
+   ],
+   "indiceJogo": 104,
+   "indiceMulti": 124,
+   "socket": "LGA1700",
+   "tdp": 125,
+   "nucleos": "14/20",
+   "serie": "rpl",
+   "lancamento": "2023-10",
+   "precoMinEur": 229,
+   "precoMaxEur": 269
+  },
+  {
+   "nome": "Core i7-14700K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i7-14700K",
+    "i7-14700KF",
+    "i7-14700K"
+   ],
+   "indiceJogo": 112,
+   "indiceMulti": 177,
+   "socket": "LGA1700",
+   "tdp": 125,
+   "nucleos": "20/28",
+   "serie": "rpl",
+   "lancamento": "2023-10",
+   "precoMinEur": 319,
+   "precoMaxEur": 369
+  },
+  {
+   "nome": "Core i9-14900K",
+   "marca": "Intel",
+   "aliases": [
+    "Core i9-14900K",
+    "i9-14900KF",
+    "i9-14900K"
+   ],
+   "indiceJogo": 116,
+   "indiceMulti": 199,
+   "socket": "LGA1700",
+   "tdp": 125,
+   "nucleos": "24/32",
+   "serie": "rpl",
+   "lancamento": "2023-10",
+   "precoMinEur": 449,
+   "precoMaxEur": 519
+  },
+  {
+   "nome": "Core Ultra 5 225F",
+   "marca": "Intel",
+   "aliases": [
+    "Core Ultra 5 225F",
+    "Ultra 5 225F",
+    "Ultra 5 225"
+   ],
+   "indiceJogo": 90,
+   "indiceMulti": 101,
+   "socket": "LGA1851",
+   "tdp": 65,
+   "nucleos": "10/10",
+   "serie": "arl",
+   "lancamento": "2025-01",
+   "precoMinEur": 169,
+   "precoMaxEur": 199
+  },
+  {
+   "nome": "Core Ultra 5 245K",
+   "marca": "Intel",
+   "aliases": [
+    "Core Ultra 5 245K",
+    "Ultra 5 245KF",
+    "Ultra 5 245K"
+   ],
+   "indiceJogo": 98,
+   "indiceMulti": 126,
+   "socket": "LGA1851",
+   "tdp": 125,
+   "nucleos": "14/14",
+   "serie": "arl",
+   "lancamento": "2024-10",
+   "precoMinEur": 229,
+   "precoMaxEur": 269
+  },
+  {
+   "nome": "Core Ultra 7 265K",
+   "marca": "Intel",
+   "aliases": [
+    "Core Ultra 7 265K",
+    "Ultra 7 265KF",
+    "Ultra 7 265K"
+   ],
+   "indiceJogo": 105,
+   "indiceMulti": 182,
+   "socket": "LGA1851",
+   "tdp": 125,
+   "nucleos": "20/20",
+   "serie": "arl",
+   "lancamento": "2024-10",
+   "precoMinEur": 289,
+   "precoMaxEur": 339
+  },
+  {
+   "nome": "Core Ultra 9 285K",
+   "marca": "Intel",
+   "aliases": [
+    "Core Ultra 9 285K",
+    "Ultra 9 285KF",
+    "Ultra 9 285K"
+   ],
+   "indiceJogo": 108,
+   "indiceMulti": 215,
+   "socket": "LGA1851",
+   "tdp": 125,
+   "nucleos": "24/24",
+   "serie": "arl",
+   "lancamento": "2024-10",
+   "precoMinEur": 529,
+   "precoMaxEur": 599
+  }
+ ],
+ "plataformas": {
+  "AM4": {
+   "memoria": "DDR4",
+   "regexPlaca": "\\b(A320|B350|X370|B450|X470|A520|B550|X570)",
+   "chipsets": [
+    "A320",
+    "B350",
+    "X370",
+    "B450",
+    "X470",
+    "A520",
+    "B550",
+    "X570"
+   ],
+   "fimDeVida": true,
+   "nota": "Plataforma terminada: o melhor para jogos é o Ryzen 7 5700X3D/5800X3D."
+  },
+  "AM5": {
+   "memoria": "DDR5",
+   "regexPlaca": "\\b(A620|B650E?|X670E?|B840|B850|X870E?)",
+   "chipsets": [
+    "A620",
+    "B650",
+    "B650E",
+    "X670",
+    "X670E",
+    "B840",
+    "B850",
+    "X870",
+    "X870E"
+   ],
+   "fimDeVida": false,
+   "custoPlacaMinEur": 139,
+   "custoPlacaMaxEur": 209,
+   "custoRamMinEur": 399,
+   "custoRamMaxEur": 529,
+   "nota": "Mudar para AM5 exige placa-mãe e RAM DDR5 novas (32 GB DDR5 estão caros desde 2026)."
+  },
+  "LGA1151v2": {
+   "memoria": "DDR4",
+   "regexPlaca": "\\b(H310|B360|B365|H370|Q370|Z370|Z390)",
+   "chipsets": [
+    "H310",
+    "B360",
+    "B365",
+    "H370",
+    "Z370",
+    "Z390"
+   ],
+   "fimDeVida": true,
+   "nota": "Plataforma terminada (8.ª/9.ª geração Intel)."
+  },
+  "LGA1200": {
+   "memoria": "DDR4",
+   "regexPlaca": "\\b(H410|B460|H470|Z490|H510|B560|H570|Z590)",
+   "chipsets": [
+    "H410",
+    "B460",
+    "H470",
+    "Z490",
+    "H510",
+    "B560",
+    "H570",
+    "Z590"
+   ],
+   "fimDeVida": true,
+   "nota": "Plataforma terminada (10.ª/11.ª geração Intel)."
+  },
+  "LGA1700": {
+   "memoria": "DDR4 ou DDR5 (depende da placa)",
+   "regexPlaca": "\\b(H610|B660|H670|Z690|B760|H770|Z790)",
+   "chipsets": [
+    "H610",
+    "B660",
+    "H670",
+    "Z690",
+    "B760",
+    "H770",
+    "Z790"
+   ],
+   "fimDeVida": true,
+   "nota": "Plataforma terminada (12.ª–14.ª geração). Nos 13.ª/14.ª usa a BIOS com microcódigo 0x12B ou mais recente."
+  },
+  "LGA1851": {
+   "memoria": "DDR5",
+   "regexPlaca": "\\b(H810|B860|Z890)",
+   "chipsets": [
+    "H810",
+    "B860",
+    "Z890"
+   ],
+   "fimDeVida": false,
+   "custoPlacaMinEur": 159,
+   "custoPlacaMaxEur": 239,
+   "custoRamMinEur": 399,
+   "custoRamMaxEur": 529,
+   "nota": "Core Ultra 200S. Mudar para esta plataforma exige placa-mãe e RAM DDR5 novas."
+  }
+ },
+ "compatibilidade": [
+  {
+   "socket": "AM4",
+   "series": [
+    "zen1",
+    "zen1apu",
+    "zenplus",
+    "zenplusapu"
+   ],
+   "chipsets": [
+    "A320",
+    "B350",
+    "X370",
+    "B450",
+    "X470"
+   ],
+   "suporte": "nativo"
+  },
+  {
+   "socket": "AM4",
+   "series": [
+    "zenplus",
+    "zenplusapu"
+   ],
+   "chipsets": [
+    "X570"
+   ],
+   "suporte": "nativo"
+  },
+  {
+   "socket": "AM4",
+   "series": [
+    "zen1",
+    "zen1apu",
+    "zenplus",
+    "zenplusapu"
+   ],
+   "chipsets": [
+    "A520",
+    "B550"
+   ],
+   "suporte": "nao"
+  },
+  {
+   "socket": "AM4",
+   "series": [
+    "zen1",
+    "zen1apu"
+   ],
+   "chipsets": [
+    "X570"
+   ],
+   "suporte": "nao"
+  },
+  {
+   "socket": "AM4",
+   "series": [
+    "zen2"
+   ],
+   "chipsets": [
+    "A320",
+    "B350",
+    "X370",
+    "B450",
+    "X470"
+   ],
+   "suporte": "bios",
+   "bios": "AGESA 1.0.0.1 ou mais recente"
+  },
+  {
+   "socket": "AM4",
+   "series": [
+    "zen2"
+   ],
+   "chipsets": [
+    "A520",
+    "B550",
+    "X570"
+   ],
+   "suporte": "nativo"
+  },
+  {
+   "socket": "AM4",
+   "series": [
+    "zen3",
+    "zen3apu"
+   ],
+   "chipsets": [
+    "A320",
+    "B350",
+    "X370"
+   ],
+   "suporte": "bios",
+   "bios": "AGESA 1.2.0.7 ou mais recente (nem todas as placas 300 receberam)"
+  },
+  {
+   "socket": "AM4",
+   "series": [
+    "zen3",
+    "zen3apu"
+   ],
+   "chipsets": [
+    "B450",
+    "X470",
+    "A520",
+    "B550",
+    "X570"
+   ],
+   "suporte": "bios",
+   "bios": "AGESA 1.1.0.0 ou mais recente"
+  },
+  {
+   "socket": "AM4",
+   "series": [
+    "zen3b"
+   ],
+   "chipsets": [
+    "A320",
+    "B350",
+    "X370",
+    "B450",
+    "X470",
+    "A520",
+    "B550",
+    "X570"
+   ],
+   "suporte": "bios",
+   "bios": "AGESA 1.2.0.6b ou mais recente"
+  },
+  {
+   "socket": "AM4",
+   "series": [
+    "zen3x3d"
+   ],
+   "chipsets": [
+    "A320",
+    "B350",
+    "X370",
+    "B450",
+    "X470",
+    "A520",
+    "B550",
+    "X570"
+   ],
+   "suporte": "bios",
+   "bios": "AGESA 1.2.0.7 ou mais recente (5700X3D/5600X3D); confirma na página de suporte da tua placa"
+  },
+  {
+   "socket": "AM5",
+   "series": [
+    "zen4"
+   ],
+   "chipsets": [
+    "A620",
+    "B650",
+    "B650E",
+    "X670",
+    "X670E",
+    "B840",
+    "B850",
+    "X870",
+    "X870E"
+   ],
+   "suporte": "nativo"
+  },
+  {
+   "socket": "AM5",
+   "series": [
+    "zen4apu"
+   ],
+   "chipsets": [
+    "A620",
+    "B650",
+    "B650E",
+    "X670",
+    "X670E"
+   ],
+   "suporte": "bios",
+   "bios": "AGESA 1.1.0.0 ou mais recente"
+  },
+  {
+   "socket": "AM5",
+   "series": [
+    "zen4apu"
+   ],
+   "chipsets": [
+    "B840",
+    "B850",
+    "X870",
+    "X870E"
+   ],
+   "suporte": "nativo"
+  },
+  {
+   "socket": "AM5",
+   "series": [
+    "zen5"
+   ],
+   "chipsets": [
+    "A620",
+    "B650",
+    "B650E",
+    "X670",
+    "X670E"
+   ],
+   "suporte": "bios",
+   "bios": "AGESA 1.2.0.0 ou mais recente"
+  },
+  {
+   "socket": "AM5",
+   "series": [
+    "zen5x3d"
+   ],
+   "chipsets": [
+    "A620",
+    "B650",
+    "B650E",
+    "X670",
+    "X670E"
+   ],
+   "suporte": "bios",
+   "bios": "AGESA 1.2.0.2 ou mais recente (9850X3D: usa a BIOS mais recente)"
+  },
+  {
+   "socket": "AM5",
+   "series": [
+    "zen5",
+    "zen5x3d"
+   ],
+   "chipsets": [
+    "B840",
+    "B850",
+    "X870",
+    "X870E"
+   ],
+   "suporte": "nativo"
+  },
+  {
+   "socket": "LGA1151v2",
+   "series": [
+    "cfl8"
+   ],
+   "chipsets": [
+    "H310",
+    "B360",
+    "B365",
+    "H370",
+    "Z370",
+    "Z390"
+   ],
+   "suporte": "nativo"
+  },
+  {
+   "socket": "LGA1151v2",
+   "series": [
+    "cfl9"
+   ],
+   "chipsets": [
+    "B365",
+    "Z390"
+   ],
+   "suporte": "nativo"
+  },
+  {
+   "socket": "LGA1151v2",
+   "series": [
+    "cfl9"
+   ],
+   "chipsets": [
+    "H310",
+    "B360",
+    "H370",
+    "Z370"
+   ],
+   "suporte": "bios",
+   "bios": "BIOS com suporte à 9.ª geração"
+  },
+  {
+   "socket": "LGA1200",
+   "series": [
+    "cml"
+   ],
+   "chipsets": [
+    "H410",
+    "B460",
+    "H470",
+    "Z490",
+    "H510",
+    "B560",
+    "H570",
+    "Z590"
+   ],
+   "suporte": "nativo"
+  },
+  {
+   "socket": "LGA1200",
+   "series": [
+    "rkl"
+   ],
+   "chipsets": [
+    "H510",
+    "B560",
+    "H570",
+    "Z590"
+   ],
+   "suporte": "nativo"
+  },
+  {
+   "socket": "LGA1200",
+   "series": [
+    "rkl"
+   ],
+   "chipsets": [
+    "H470",
+    "Z490"
+   ],
+   "suporte": "bios",
+   "bios": "BIOS com suporte à 11.ª geração"
+  },
+  {
+   "socket": "LGA1200",
+   "series": [
+    "rkl"
+   ],
+   "chipsets": [
+    "H410",
+    "B460"
+   ],
+   "suporte": "nao"
+  },
+  {
+   "socket": "LGA1700",
+   "series": [
+    "adl"
+   ],
+   "chipsets": [
+    "H610",
+    "B660",
+    "H670",
+    "Z690",
+    "B760",
+    "H770",
+    "Z790"
+   ],
+   "suporte": "nativo"
+  },
+  {
+   "socket": "LGA1700",
+   "series": [
+    "rpl"
+   ],
+   "chipsets": [
+    "H610",
+    "B660",
+    "H670",
+    "Z690"
+   ],
+   "suporte": "bios",
+   "bios": "BIOS com microcódigo 0x12B ou mais recente"
+  },
+  {
+   "socket": "LGA1700",
+   "series": [
+    "rpl"
+   ],
+   "chipsets": [
+    "B760",
+    "H770",
+    "Z790"
+   ],
+   "suporte": "bios",
+   "bios": "BIOS com microcódigo 0x12B ou mais recente (correção de estabilidade da 13.ª/14.ª)"
+  },
+  {
+   "socket": "LGA1851",
+   "series": [
+    "arl"
+   ],
+   "chipsets": [
+    "H810",
+    "B860",
+    "Z890"
+   ],
+   "suporte": "nativo"
+  }
+ ],
+ "memorias": [
+  {
+   "nome": "32 GB DDR4 (2×16 GB) 3600 MHz CL16",
+   "pesquisa": "32GB DDR4 3600 CL16 2x16",
+   "tipo": "DDR4",
+   "gb": 32,
+   "precoMinEur": 229,
+   "precoMaxEur": 299
+  },
+  {
+   "nome": "16 GB DDR4 (2×8 GB) 3200 MHz CL16",
+   "pesquisa": "16GB DDR4 3200 CL16 2x8",
+   "tipo": "DDR4",
+   "gb": 16,
+   "precoMinEur": 119,
+   "precoMaxEur": 159
+  },
+  {
+   "nome": "32 GB DDR5 (2×16 GB) 6000 MHz CL30",
+   "pesquisa": "32GB DDR5 6000 CL30 2x16",
+   "tipo": "DDR5",
+   "gb": 32,
+   "precoMinEur": 399,
+   "precoMaxEur": 529
+  },
+  {
+   "nome": "64 GB DDR5 (2×32 GB) 6000 MHz CL30",
+   "pesquisa": "64GB DDR5 6000 CL30 2x32",
+   "tipo": "DDR5",
+   "gb": 64,
+   "precoMinEur": 799,
+   "precoMaxEur": 999
+  }
+ ],
+ "discos": [
+  {
+   "nome": "SSD NVMe 1 TB (PCIe 4.0)",
+   "pesquisa": "SSD NVMe 1TB PCIe 4.0",
+   "tipo": "NVMe",
+   "gb": 1000,
+   "precoMinEur": 109,
+   "precoMaxEur": 139
+  },
+  {
+   "nome": "SSD NVMe 2 TB (PCIe 4.0)",
+   "pesquisa": "SSD NVMe 2TB PCIe 4.0",
+   "tipo": "NVMe",
+   "gb": 2000,
+   "precoMinEur": 189,
+   "precoMaxEur": 239
+  },
+  {
+   "nome": "SSD SATA 1 TB",
+   "pesquisa": "SSD SATA 1TB 2.5",
+   "tipo": "SATA",
+   "gb": 1000,
+   "precoMinEur": 89,
+   "precoMaxEur": 115
+  }
+ ]
+}

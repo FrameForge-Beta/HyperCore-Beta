@@ -38,6 +38,7 @@ public partial class MainWindow
             "optimize" => new OptimizePage(),
             "maintenance" => new MaintenancePage(),
             "oc" => new OverclockPage(),
+            "scan" => new ScanPage(),
             "tips" => new TipsPage(),
             "settings" => new SettingsPage(SetTrayMode),
             _ => new DashboardPage(),
@@ -59,6 +60,7 @@ public partial class MainWindow
         ["PageOverlay"] = ("Overlay clássico", "O overlay original (lista simples de itens). Para escolher qualquer sensor, posição e cor, usa o Overlay (editor)."),
         ["PageLauncher"] = ("Biblioteca clássica", "O launcher original, com menu de gráficos e gravação das opções de arranque da Steam. Para relatórios de quebras usa 'Jogar e gravar'."),
         ["FF:optimize"] = ("Níveis de desempenho", "Escolhe um nível e carrega em Aplicar; fica guardado e nada mexe na segurança do Windows."),
+        ["FF:scan"] = ("Scan e afinação automática", "Mede CPU, gráfica, RAM e discos, encontra sozinho o overclock estável da gráfica e diz-te o que corrigir ou comprar."),
         ["FF:priorities"] = ("Prioridade dos programas", "Escolhe que programas passam à frente na fila do processador — como no Gestor de Tarefas → Detalhes → Definir prioridade, mas fica gravado: o Windows aplica sozinho sempre que o programa abre, mesmo depois de reiniciar. Não precisa de reiniciar o PC: basta fechar e abrir o programa."),
         ["FF:maintenance"] = ("Manutenção do PC", "Limpa ficheiros temporários antigos, abre a ferramenta nativa de limpeza do Windows, desfragmenta apenas HDDs e em sequência, e calcula o espaço ocupado por pastas. SSDs e discos não identificados são sempre excluídos da desfragmentação."),
         ["PageOptimize"] = ("Limpeza rápida", "Liberta memória e fecha programas de fundo antes de jogar. Não mexe em jogos abertos."),
@@ -120,7 +122,7 @@ public partial class MainWindow
             ("FF:sessions", "Sessões e relatórios", ""), ("FF:overlay", "Overlay de jogo", ""),
             ("PageOverlay", "Overlay simples", ""), ("PageBottleneck", "Gargalo ao vivo", ""),
             ("PageGames", "Os meus resultados", ""));
-        AddNavigationGroup("GANHAR DESEMPENHO", ("FF:optimize", "Níveis de desempenho", ""),
+        AddNavigationGroup("GANHAR DESEMPENHO", ("FF:scan", "Scan e afinação automática", ""), ("FF:optimize", "Níveis de desempenho", ""),
             ("FF:priorities", "Prioridade dos programas", ""), ("FF:maintenance", "Manutenção do PC", ""),
             ("PageOptimize", "Limpeza rápida", ""), ("FF:fans", "Ventoinhas", ""),
             ("FF:oc", "Overclock da gráfica", ""), ("PageOc", "Teste de estabilidade", ""));
