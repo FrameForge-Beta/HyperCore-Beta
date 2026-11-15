@@ -10,7 +10,7 @@ public static class GameTips
         ("valorant", new[]
         {
             "Usa as estatísticas oficiais do próprio jogo: Definições → Vídeo → Estatísticas → 'FPS do cliente', 'Tempo de frame da CPU/GPU' e 'Perda de pacotes' em Texto+Gráfico.",
-            "Se quiseres o overlay externo do FrameForge, põe o jogo em 'Ecrã inteiro em janela' (em ecrã inteiro exclusivo nenhuma janela externa aparece por cima).",
+            "Se quiseres o overlay externo do HyperCore, põe o jogo em 'Ecrã inteiro em janela' (em ecrã inteiro exclusivo nenhuma janela externa aparece por cima).",
             "NVIDIA Reflex: 'Ligado + Boost'. Limita o FPS (Definições → Geral → Limitar FPS) a um valor que o PC mantém estável — frametime regular sente-se melhor que picos altos.",
             "Gráficos que pesam pouco e ajudam a ver: Qualidade de material/textura/detalhe = Baixa; MSAA 2x ou 4x; Filtragem anisotrópica 4x; Melhorar nitidez = Ligado; 'Bloom', 'Distorção' e 'Sombras' = Desligado.",
             "Valorant é muito dependente da CPU (thread principal): se o relatório disser 'CPU no limite', RAM com XMP/EXPO e um CPU X3D são os maiores ganhos.",

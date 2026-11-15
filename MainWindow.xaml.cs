@@ -117,7 +117,7 @@ public partial class MainWindow : Window
                     SetTrayMode(false);
                     MessageBox.Show(this,
                         $"Não foi possível ativar a área de notificação. A janela será aberta normalmente.\n\n{ex.Message}",
-                        "FrameForge", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        "HyperCore", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         };
@@ -142,8 +142,8 @@ public partial class MainWindow : Window
         RefreshDrives();
         TitlePage.Text = "Início";
         // Versão do programa mostrada no rodapé da barra lateral (vém do <Version> do csproj).
-        string appVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.3.41";
-        SideVersion.Text = $"FrameForge v{appVersion} · ferramentas para o teu PC";
+        string appVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.4.0";
+        SideVersion.Text = $"HyperCore v{appVersion} · ferramentas para o teu PC";
         UpdateDashboard();
 
         // A janela aparece já; as coletas pesadas (WMI, sensores, GPU) rodam em paralelo fora da thread da janela.
@@ -322,7 +322,7 @@ public partial class MainWindow : Window
         string why = SensorMonitor.Explain(p);
         if (p != SensorMonitor.CpuSensorProblem.PawnIOMissing)
         {
-            MessageBox.Show(why, "FrameForge", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(why, "HyperCore", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 
@@ -334,17 +334,17 @@ public partial class MainWindow : Window
             MessageBox.Show(why + "\n\nO instalador de pacotes do Windows (winget) não foi encontrado neste PC. " +
                             "Atualize o \"Instalador de Aplicativo\" pela Microsoft Store e use o botão de novo, " +
                             "ou instale o PawnIO (autor: namazso) manualmente.",
-                            "FrameForge", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            "HyperCore", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
         var r = MessageBox.Show(why + "\n\nInstalar o PawnIO agora? Vai abrir uma janela com o instalador do Windows (winget). " +
-                                "Quando terminar, feche o FrameForge e abra de novo.",
-                                "FrameForge", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                                "Quando terminar, feche o HyperCore e abra de novo.",
+                                "HyperCore", MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (r != MessageBoxResult.Yes) return;
         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("cmd.exe",
             "/k winget install --id namazso.PawnIO -e --accept-package-agreements --accept-source-agreements" +
-            " && echo. && echo Pronto! Feche esta janela e reabra o FrameForge.")
+            " && echo. && echo Pronto! Feche esta janela e reabra o HyperCore.")
         { UseShellExecute = true });
     }
 
@@ -377,7 +377,7 @@ public partial class MainWindow : Window
         {
             if (_trayEnabled) return;
             _trayEnabled = true;
-            _trayOpenItem = new MenuItem { Header = "Abrir o FrameForge" };
+            _trayOpenItem = new MenuItem { Header = "Abrir o HyperCore" };
             _trayOpenItem.Click += (_, _) => ShowFromTray();
             _trayExitItem = new MenuItem { Header = "Sair" };
             _trayExitItem.Click += (_, _) =>
@@ -426,11 +426,11 @@ public partial class MainWindow : Window
     {
         if (_trayIconHandle != IntPtr.Zero) return;
         string executable = Environment.ProcessPath
-            ?? throw new InvalidOperationException("Não foi possível localizar o ícone do FrameForge.");
+            ?? throw new InvalidOperationException("Não foi possível localizar o ícone do HyperCore.");
         ExtractIconEx(executable, 0, out IntPtr largeIcon, out IntPtr smallIcon, 1);
         _trayIconHandle = smallIcon != IntPtr.Zero ? smallIcon : largeIcon;
         if (_trayIconHandle == IntPtr.Zero)
-            throw new InvalidOperationException("Não foi possível carregar o ícone do FrameForge.");
+            throw new InvalidOperationException("Não foi possível carregar o ícone do HyperCore.");
         if (smallIcon != IntPtr.Zero && largeIcon != IntPtr.Zero)
             DestroyIcon(largeIcon);
 
@@ -462,7 +462,7 @@ public partial class MainWindow : Window
         uFlags = NifMessage | NifIcon | NifTip,
         uCallbackMessage = TrayMessage,
         hIcon = icon,
-        szTip = "FrameForge",
+        szTip = "HyperCore",
         szInfo = "",
         szInfoTitle = "",
     };
@@ -1276,7 +1276,7 @@ public partial class MainWindow : Window
     private bool RequireAdmin()
     {
         if (SensorMonitor.IsElevated) return true;
-        MessageBox.Show("Esta ação precisa do FrameForge aberto como administrador.", "FrameForge",
+        MessageBox.Show("Esta ação precisa do HyperCore aberto como administrador.", "HyperCore",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
         return false;
     }
@@ -1757,17 +1757,17 @@ public partial class MainWindow : Window
             string why = SensorMonitor.IsPawnIOInstalled
                 ? ""
                 : "\n\nCausa provável: o driver PawnIO não está instalado. Instale com:\n" +
-                  "winget install namazso.PawnIO\ne reabra o FrameForge.";
+                  "winget install namazso.PawnIO\ne reabra o HyperCore.";
             var r = MessageBox.Show("Nenhum sensor de temperatura da CPU foi encontrado, então o corte automático " +
                                     "por temperatura da CPU NÃO funcionará. Continuar mesmo assim?" + why,
-                                    "FrameForge", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                                    "HyperCore", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (r != MessageBoxResult.Yes) return;
         }
         if (gpu && MainGpuTemp() == null)
         {
             var r = MessageBox.Show("Nenhum sensor de temperatura da GPU foi encontrado, então o corte automático " +
                                     "por temperatura da GPU NÃO funcionará. Continuar mesmo assim?",
-                                    "FrameForge", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                                    "HyperCore", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (r != MessageBoxResult.Yes) return;
         }
 

@@ -34,8 +34,8 @@ public sealed class HomePage : UserControl
         heroGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
         heroGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         var intro = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
-        intro.Children.Add(Ui.T("FRAMEFORGE  /  CENTRO DE CONTROLO", "Label", 11, Ui.Res("Accent2"), FontWeights.Bold));
-        intro.Children.Add(Ui.T("O teu PC. Mais claro.", "H1", 30));
+        intro.Children.Add(Ui.T("HYPERCORE  /  CENTRO DE CONTROLO", "Label", 11, Ui.Res("Accent2"), FontWeights.Bold));
+        intro.Children.Add(Ui.T("Cada núcleo no máximo.", "H1", 30));
         var description = Ui.T("Diagnostica, mede e ajusta o desempenho sem perder tempo à procura das ferramentas.", "MutedText", 14);
         description.Margin = new Thickness(0, 6, 20, 0);
         intro.Children.Add(description);

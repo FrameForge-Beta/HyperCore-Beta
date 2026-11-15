@@ -115,7 +115,7 @@ public static class RestartNotice
     {
         try
         {
-            using var p = Process.Start(new ProcessStartInfo("shutdown.exe", "/r /t 15 /c \"FrameForge: a reiniciar para aplicar os ajustes. Guarda o teu trabalho.\"")
+            using var p = Process.Start(new ProcessStartInfo("shutdown.exe", "/r /t 15 /c \"HyperCore: a reiniciar para aplicar os ajustes. Guarda o teu trabalho.\"")
             { CreateNoWindow = true, UseShellExecute = false })!;
             p.WaitForExit(5000);
             int code = p.HasExited ? p.ExitCode : -1;

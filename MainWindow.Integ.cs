@@ -133,8 +133,8 @@ public partial class MainWindow
             BtnLightSdk.Visibility = dllProblem != null ? Visibility.Visible : Visibility.Collapsed;
             if (dllProblem != null)
             {
-                LightStatus.Text = "O SDK da Corsair (iCUESDK.x64_2019.dll) ainda não está instalado. Clique em BAIXAR O SDK DA CORSAIR: "
-                                   + "o programa baixa só essa DLL do repositório oficial da Corsair e a instala para você.";
+                LightStatus.Text = "O SDK da Corsair (iCUESDK.x64_2019.dll) ainda não está instalado. Carrega em DESCARREGAR O SDK DA CORSAIR: "
+                                   + "a app descarrega só essa DLL do repositório oficial da Corsair e instala-a por ti.";
                 return;
             }
 
@@ -150,8 +150,8 @@ public partial class MainWindow
                 _cue.StateChanged -= OnState;
                 if (_cue.State != 6)
                 {
-                    LightStatus.Text = "Não consegui conectar ao iCUE (" + (err != 0 ? CorsairSdk.ErrorText(err) : CorsairSdk.StateText(_cue.State)) + "). " +
-                        "Abra o iCUE, vá em Configurações e ative o SDK (Enable SDK). Se o iCUE estiver em outra conta do Windows ou com permissão maior que a do FrameForge, a conexão também falha.";
+                    LightStatus.Text = "Não consegui ligar ao iCUE (" + (err != 0 ? CorsairSdk.ErrorText(err) : CorsairSdk.StateText(_cue.State)) + "). " +
+                        "Abre o iCUE, vai a Definições e ativa o SDK (Enable SDK). Se o iCUE estiver noutra conta do Windows ou com permissões acima das do HyperCore, a ligação também falha.";
                     return;
                 }
             }
@@ -273,9 +273,9 @@ public partial class MainWindow
     {
         if (_lightBusy) return;
         var ok = MessageBox.Show(this,
-            "O FrameForge vai baixar o SDK oficial da Corsair (github.com/CorsairOfficial/cue-sdk), extrair somente o arquivo " +
-            "iCUESDK.x64_2019.dll para a pasta\n" + CorsairSdkInstaller.TargetPath + "\ne conferir a assinatura digital dele.\n\nContinuar?",
-            "FrameForge · SDK da Corsair", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            "O HyperCore vai descarregar o SDK oficial da Corsair (github.com/CorsairOfficial/cue-sdk), extrair apenas o ficheiro " +
+            "iCUESDK.x64_2019.dll para a pasta\n" + CorsairSdkInstaller.TargetPath + "\ne verificar a assinatura digital.\n\nContinuar?",
+            "HyperCore · SDK da Corsair", MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (ok != MessageBoxResult.Yes) return;
 
         _lightBusy = true;

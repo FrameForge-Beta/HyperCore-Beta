@@ -193,6 +193,7 @@ public sealed class SystemSampler : IDisposable
     }
 
     private static readonly Regex GpuEngine = new(@"pid_(\d+)_.*engtype_(\w+)", RegexOptions.Compiled);
+    private static readonly string SelfName = Process.GetCurrentProcess().ProcessName;   // a própria app (HyperCore)
     private static readonly HashSet<string> IgnoredProcs = new(StringComparer.OrdinalIgnoreCase) { "_Total", "Idle", "System", "Memory Compression", "Registry" };
 
     private void ReadProcesses()
@@ -207,7 +208,7 @@ public sealed class SystemSampler : IDisposable
         foreach (var (inst, cpu) in _procs.Values("pcpu"))
         {
             string name = inst.Split('#')[0];
-            if (IgnoredProcs.Contains(name) || name.Equals("FrameForge", StringComparison.OrdinalIgnoreCase)) continue;
+            if (IgnoredProcs.Contains(name) || name.Equals(SelfName, StringComparison.OrdinalIgnoreCase)) continue;
             int pid = pids.GetValueOrDefault(inst);
             if (pid == game && game != 0) { gameCpu += (float)cpu; continue; }
             if (cpu > top.Cpu) top = (name, (float)cpu);

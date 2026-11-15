@@ -98,7 +98,7 @@ public partial class GamesPage : UserControl
             var sp = new StackPanel();
             sp.Children.Add(Ui.T($"🛡 Anti-cheat: {ac.Name}" + (ac.Kernel ? " (kernel)" : ""), "H2"));
             sp.Children.Add(Ui.T(ac.Notes, "Body", color: Ui.Res("Muted")));
-            sp.Children.Add(Ui.T("O FrameForge com este jogo: mede frames por ETW (o Windows conta-os, como o PresentMon), lê sensores pelo driver e pelos contadores do sistema, " +
+            sp.Children.Add(Ui.T("O HyperCore com este jogo: mede frames por ETW (o Windows conta-os, como o PresentMon), lê sensores pelo driver e pelos contadores do sistema, " +
                                  "e o overlay é uma janela à parte. Não injeta DLLs, não abre o processo do jogo, não lê memória. O overclock é feito no driver, fora do jogo." +
                                  (ac.Kernel ? " Mantém os 'Sensores avançados da CPU' desligados com este jogo (usam um driver de kernel que alguns anti-cheats rejeitam)." : ""), "Body"));
             Detail.Children.Add(Ui.Card(sp, Ui.Res("Good")));

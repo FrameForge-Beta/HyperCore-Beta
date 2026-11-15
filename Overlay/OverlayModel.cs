@@ -102,7 +102,7 @@ public sealed class OverlayStoreData
     public uint HotkeyVirtualKey { get; set; } = 0x4F; // O
 }
 
-/// <summary>Guarda os overlays em %AppData%\FrameForge\overlays.json e cria os modelos de origem.</summary>
+/// <summary>Guarda os overlays em %AppData%\HyperCore\overlays.json e cria os modelos de origem.</summary>
 public static class OverlayStore
 {
     internal static readonly JsonSerializerOptions Json = new() { WriteIndented = true, Converters = { new JsonStringEnumConverter() } };

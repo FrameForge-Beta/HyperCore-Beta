@@ -33,7 +33,7 @@ public sealed class TuningState
     public ScanReport? Parcial { get; set; }
 }
 
-/// <summary>Ficheiros do scan em %AppData%\FrameForge\scan (ultimo.json, historico\*.json, estado-afinacao.json).</summary>
+/// <summary>Ficheiros do scan em %AppData%\HyperCore\scan (ultimo.json, historico\*.json, estado-afinacao.json).</summary>
 public static class ScanStore
 {
     public static string Folder => Ensure(Path.Combine(AppPaths.Root, "scan"));

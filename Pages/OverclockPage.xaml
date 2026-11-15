@@ -2,7 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
-        <ResourceDictionary Source="/FrameForge;component/FfTheme.xaml"/>
+        <ResourceDictionary Source="/HyperCore;component/FfTheme.xaml"/>
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="28,24,28,40">
@@ -48,7 +48,7 @@
                             <Button Content="Guardar como perfil" Style="{StaticResource Btn}" Click="Save_Click"/>
                             <Button Content="Apagar perfil" Style="{StaticResource Btn}" Click="Delete_Click"/>
                         </StackPanel>
-                        <CheckBox x:Name="OnStart" Content="Aplicar este perfil quando o FrameForge abrir" Margin="0,12,0,0" Click="OnStart_Click"/>
+                        <CheckBox x:Name="OnStart" Content="Aplicar este perfil quando o HyperCore abrir" Margin="0,12,0,0" Click="OnStart_Click"/>
                         <CheckBox x:Name="Guard" Content="Guarda de crash: se o driver de vídeo for abaixo, voltar a Stock e marcar o perfil como instável" Click="Guard_Click"/>
                         <TextBlock x:Name="Log" Style="{StaticResource Body}" Margin="0,12,0,0"/>
                         </StackPanel>
@@ -58,7 +58,7 @@
                             <TextBlock Text="Apenas leitura nesta placa" Style="{StaticResource H2}"/>
                             <TextBlock x:Name="ReadOnlyGpu" Style="{StaticResource Body}" Foreground="{DynamicResource Muted}"/>
                             <TextBlock Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,10,0,0"
-                                       Text="O FrameForge lê os sensores pelo driver e mostra clocks, temperatura, consumo e ventoinha em tempo real. Não altera nada na gráfica, porque a escrita de offsets, energia e ventoinha só existe em NVIDIA (NVAPI/NVML)."/>
+                                       Text="O HyperCore lê os sensores pelo driver e mostra clocks, temperatura, consumo e ventoinha em tempo real. Não altera nada na gráfica, porque a escrita de offsets, energia e ventoinha só existe em NVIDIA (NVAPI/NVML)."/>
                             <TextBlock Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,8,0,0"
                                        Text="Para alterar clocks, limite de energia ou ventoinha usa o painel oficial do fabricante: em AMD, Adrenalin → Desempenho → Afinação; em Intel, o Intel Graphics Software. O guia abaixo continua a valer — aplica lá os valores que ele indica."/>
                         </StackPanel>

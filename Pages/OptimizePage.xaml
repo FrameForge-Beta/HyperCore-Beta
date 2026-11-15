@@ -4,7 +4,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/FrameForge;component/FfTheme.xaml"/>
+                <ResourceDictionary Source="/HyperCore;component/FfTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Cartão de nível: um RadioButton (clicável e com teclado) com aspeto de cartão -->

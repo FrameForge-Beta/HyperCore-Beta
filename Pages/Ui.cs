@@ -9,8 +9,8 @@ namespace FrameForge.Pages;
 /// <summary>Pequenos construtores de interface para as listas geradas em código (cartões, textos, etiquetas).</summary>
 internal static class Ui
 {
-    /// <summary>Tema das páginas do FrameForge, incluindo estilos e cores de destaque.</summary>
-    public static readonly ResourceDictionary Theme = new() { Source = new Uri("/FrameForge;component/FfTheme.xaml", UriKind.Relative) };
+    /// <summary>Tema das páginas do HyperCore, incluindo estilos e cores de destaque.</summary>
+    public static readonly ResourceDictionary Theme = new() { Source = new Uri("/HyperCore;component/FfTheme.xaml", UriKind.Relative) };
 
     private static object Find(string key) => Theme.Contains(key) ? Theme[key] : Application.Current.Resources[key];
     private static Style S(string key) => (Style)Find(key);
@@ -23,9 +23,9 @@ internal static class Ui
         return (Brush)Find(key);
     }
 
-    /// <summary>Carrega o tema do FrameForge numa página (estilos implícitos de ComboBox, ScrollBar, etc. só valem lá dentro).</summary>
+    /// <summary>Carrega o tema do HyperCore numa página (estilos implícitos de ComboBox, ScrollBar, etc. só valem lá dentro).</summary>
     public static void UseTheme(FrameworkElement page) =>
-        page.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/FrameForge;component/FfTheme.xaml", UriKind.Relative) });
+        page.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/HyperCore;component/FfTheme.xaml", UriKind.Relative) });
 
     public static TextBlock T(string text, string style = "Body", double? size = null, Brush? color = null, FontWeight? weight = null)
     {

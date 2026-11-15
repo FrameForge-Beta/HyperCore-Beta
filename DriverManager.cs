@@ -73,11 +73,11 @@ public static class DriverManager
     private static HttpClient CreateClient()
     {
         var c = new HttpClient { Timeout = TimeSpan.FromMinutes(30) };
-        c.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) FrameForge");
+        c.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) HyperCore");
         return c;
     }
 
-    public static string DownloadFolder => Path.Combine(Path.GetTempPath(), "FrameForge", "drivers");
+    public static string DownloadFolder => Path.Combine(Path.GetTempPath(), "HyperCore", "drivers");
 
     // ------------------------------------------------------------------ WMI
 
@@ -351,7 +351,7 @@ public static class DriverManager
         try
         {
             var psi = new ProcessStartInfo("powershell.exe",
-                "-NoProfile -NonInteractive -Command \"Checkpoint-Computer -Description 'FrameForge - antes do driver' -RestorePointType MODIFY_SETTINGS -ErrorAction Stop\"")
+                "-NoProfile -NonInteractive -Command \"Checkpoint-Computer -Description 'HyperCore - antes do driver' -RestorePointType MODIFY_SETTINGS -ErrorAction Stop\"")
             { UseShellExecute = false, CreateNoWindow = true, RedirectStandardError = true, RedirectStandardOutput = true };
             using var p = Process.Start(psi)!;
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60));
@@ -439,7 +439,7 @@ public static class DriverManager
     public static async Task<string> BackupAsync(Action<string> progress, CancellationToken ct)
     {
         string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                                  "FrameForge-Drivers", DateTime.Now.ToString("yyyyMMdd-HHmm"));
+                                  "HyperCore-Drivers", DateTime.Now.ToString("yyyyMMdd-HHmm"));
         Directory.CreateDirectory(dir);
         var psi = new ProcessStartInfo("pnputil.exe", $"/export-driver * \"{dir}\"")
         { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true };

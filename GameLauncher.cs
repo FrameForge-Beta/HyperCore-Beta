@@ -119,7 +119,7 @@ public static class GameLauncher
             bool keep = false;
             try
             {
-                // FrameForge: caminho pelo QueryFullProcessImageName com acesso mínimo (como o Gestor de Tarefas),
+                // HyperCore: caminho pelo QueryFullProcessImageName com acesso mínimo (como o Gestor de Tarefas),
                 // em vez de MainModule, que abre o processo com leitura de memória — o que anti-cheats vigiam.
                 string? path = ImagePath(pr.Id);
                 if (found == null && path != null &&
@@ -233,7 +233,7 @@ public static class GameLauncher
                     string? real = ImagePath(game.Id);
                     if (real != null) { learnedExe(real); }
                     // Prioridade só se foi pedida e o jogo não tem anti-cheat (abrir o processo para isto é o que eles vigiam)
-                    // e não por cima de uma prioridade gravada no Windows (FrameForge → Prioridade dos programas)
+                    // e não por cima de uma prioridade gravada no Windows (HyperCore → Prioridade dos programas)
                     if (p.Priority != "normal" && !HasAntiCheat(g) && (real == null || FrameForge.Optimize.ProcessPriority.Read(real) == null))
                         game.PriorityClass = p.Priority == "high" ? ProcessPriorityClass.High : ProcessPriorityClass.AboveNormal;
                 }

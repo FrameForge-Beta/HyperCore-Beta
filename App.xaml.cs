@@ -6,7 +6,7 @@ namespace ResetExplode;
 
 public partial class App : Application
 {
-    // Uma única instância: abrir o FrameForge de novo só traz a janela que já está aberta para a frente.
+    // Uma única instância: abrir o HyperCore de novo só traz a janela que já está aberta para a frente.
     private static Mutex? _single;
 
     private const uint SmtoAbortIfHung = 0x0002;
@@ -48,7 +48,7 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         bool first;
-        try { _single = new Mutex(true, @"Local\FrameForge.SingleInstance", out first); }
+        try { _single = new Mutex(true, @"Local\HyperCore.SingleInstance", out first); }
         catch (UnauthorizedAccessException) { first = false; } // criado por outra instância com outro nível de permissão
 
         if (!first)
@@ -60,12 +60,15 @@ public partial class App : Application
             return;
         }
         base.OnStartup(e);
+        // Antes de tudo o resto: cria %AppData%\HyperCore e, no 1.º arranque, copia para lá os dados do FrameForge
+        // (definições e backups têm de ser lidos já da pasta nova). O inicializador de AppPaths.Root faz a migração.
+        _ = FrameForge.Core.AppPaths.Root;
         DispatcherUnhandledException += (_, ex) =>
         {
             try { System.IO.File.AppendAllText(System.IO.Path.Combine(FrameForge.Core.AppPaths.Root, "erros.log"), $"[{DateTime.Now}] {ex.Exception}\n\n"); } catch { }
             // Scan a correr: pára e devolve a gráfica a Stock antes de mostrar o erro
             try { FrameForge.Tuning.ScanService.Instance.OnUnhandledException(ex.Exception, fatal: false); } catch { }
-            MessageBox.Show(ex.Exception.Message, "FrameForge — erro", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(ex.Exception.Message, "HyperCore — erro", MessageBoxButton.OK, MessageBoxImage.Warning);
             ex.Handled = true;
         };
         // Erro fatal fora do thread da interface / fim de sessão do Windows: Stock na gráfica se o scan estiver a afinar
@@ -73,17 +76,26 @@ public partial class App : Application
         {
             try { FrameForge.Tuning.ScanService.Instance.OnUnhandledException(ex.ExceptionObject as Exception, fatal: ex.IsTerminating); } catch { }
         };
-        SessionEnding += (_, _) => { try { FrameForge.Tuning.ScanService.Instance.OnAppExit(); } catch { } };
+        SessionEnding += (_, _) =>
+        {
+            try { FrameForge.Tuning.ScanService.Instance.OnAppExit(); } catch { }
+            FrameForge.Core.AppServices.ClearOcStartMark(); // desligar/reiniciar o Windows não é o OC de arranque a deitar o PC abaixo
+        };
 
         // Scan interrompido (bloqueio/reinício/crash a meio da afinação)? Tem de ser visto ANTES de o AppServices aplicar o perfil de arranque.
         FrameForge.Tuning.RecoveryInfo? recovery = null;
         try { recovery = FrameForge.Tuning.ScanService.Instance.CheckRecoveryOnStartup(); } catch { }
 
-        FrameForge.Core.AppServices.Start();
+        // Recuperação nova: a gráfica fica nos valores de fábrica neste arranque (o perfil de arranque não é aplicado por cima)
+        bool recovered = recovery is { Novo: true };
+        var s = FrameForge.Core.AppServices.Settings;
+        string? skippedOc = recovered && s.OcApplyOnStart is string ocp && !s.UnstableOcProfiles.Contains(ocp) ? ocp : null;
+        FrameForge.Core.AppServices.Start(skipOcOnStart: recovered);
         var window = new MainWindow();
         window.Show();
-        if (recovery is { Novo: true } && recovery.Mensagem.Length > 0)
-            window.Dispatcher.BeginInvoke(() => FrameForge.Core.AppServices.Toast(recovery.Mensagem),
+        if (recovered && recovery!.Mensagem.Length > 0)
+            window.Dispatcher.BeginInvoke(() => FrameForge.Core.AppServices.Toast(recovery.Mensagem +
+                                              (skippedOc != null ? $" Desta vez não apliquei o perfil de arranque '{skippedOc}'." : "")),
                                           System.Windows.Threading.DispatcherPriority.ApplicationIdle);
         if (FrameForge.Core.AppServices.Settings.StartMinimizedToTray &&
             FrameForge.Core.WindowsStartupRegistration.IsStartupLaunch(e.Args))

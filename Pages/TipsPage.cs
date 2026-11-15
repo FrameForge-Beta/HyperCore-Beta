@@ -11,16 +11,16 @@ public sealed class TipsPage : UserControl
         ("Porque é que esta app não dá ban", "ANTI-CHEAT", new[]
         {
             "Os anti-cheats (Vanguard, EAC, BattlEye, FACEIT, Ricochet) procuram programas que MEXEM no jogo: injetar DLLs, ler/escrever a memória do jogo, hooks no DirectX, drivers vulneráveis.",
-            "O FrameForge não faz nada disso: os frames vêm de eventos ETW que o próprio Windows emite (é o método do PresentMon/CapFrameX, usado em reviews com Valorant), os sensores vêm do driver da NVIDIA e dos contadores do Windows, e o processo do jogo nunca é aberto — nem para mudar a prioridade.",
+            "O HyperCore não faz nada disso: os frames vêm de eventos ETW que o próprio Windows emite (é o método do PresentMon/CapFrameX, usado em reviews com Valorant), os sensores vêm do driver da NVIDIA e dos contadores do Windows, e o processo do jogo nunca é aberto — nem para mudar a prioridade.",
             "O overclock é aplicado no driver da placa, fora do jogo (igual ao Afterburner sem o RTSS). Os anti-cheats não se importam com isso.",
-            "O overlay do FrameForge é uma janela própria transparente por cima do jogo. Só aparece em modo 'janela sem bordas'; em ecrã inteiro exclusivo o Windows não deixa nenhuma janela por cima.",
+            "O overlay do HyperCore é uma janela própria transparente por cima do jogo. Só aparece em modo 'janela sem bordas'; em ecrã inteiro exclusivo o Windows não deixa nenhuma janela por cima.",
             "Exceção a ter cuidado: os 'Sensores avançados da CPU' usam o driver PawnIO. É assinado e moderno, mas alguns anti-cheats de kernel recusam drivers deste tipo. Por isso está desligado por omissão.",
             "Nenhum programa externo pode garantir 100% que nunca terás problemas — a regra de ouro é: nada que injete, leia memória ou automatize input.",
         }),
         ("Valorant: estatísticas e overlay", "VALORANT", new[]
         {
             "Para ver FPS no Valorant usa: Definições → Vídeo → Estatísticas (FPS do cliente, tempo de frame CPU/GPU, latência de rede, perda de pacotes). É a fonte mais fiável e é oficial.",
-            "O overlay externo do FrameForge requer 'janela sem bordas'; não aparece sobre ecrã inteiro exclusivo.",
+            "O overlay externo do HyperCore requer 'janela sem bordas'; não aparece sobre ecrã inteiro exclusivo.",
             "Para saber DE ONDE vêm as quebras, joga com 'gravar sessão' (botão JOGAR) e abre o relatório: cada quebra aparece no minuto em que aconteceu com a causa (VRAM, RAM, drivers, programa em segundo plano, CPU, GPU, rede ou o próprio jogo).",
             "O Valorant depende muito da CPU e da RAM: XMP/EXPO ligado e poucos programas em segundo plano valem mais do que qualquer tweak do Windows.",
         }),

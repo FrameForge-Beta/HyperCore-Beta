@@ -82,7 +82,7 @@ public static class ReportHtml
         var sb = new StringBuilder();
         sb.Append("<!doctype html><html lang=\"pt\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">");
         sb.Append($"<title>Relatório — {E(d.Game)}</title><style>{Css}</style></head><body><main>");
-        sb.Append($"<header><div class=\"brand\">FRAMEFORGE · RELATÓRIO DE SESSÃO</div><h1>{E(d.Game)}</h1>");
+        sb.Append($"<header><div class=\"brand\">HYPERCORE · RELATÓRIO DE SESSÃO</div><h1>{E(d.Game)}</h1>");
         sb.Append($"<p class=\"muted\">{d.Start:dd/MM/yyyy HH:mm} · {F(r.DurationS / 60, "0.0")} min · monitor {d.MonitorHz} Hz");
         if (d.AntiCheat != null) sb.Append($" · anti-cheat: {E(d.AntiCheat)} (medição via ETW, sem injeção)");
         if (d.OcProfile != null) sb.Append($" · OC: {E(d.OcProfile)}");
@@ -161,7 +161,7 @@ public static class ReportHtml
         if (d.GameDriveMedia != null) sb.Append($"<li><b>Disco do jogo</b> {E(d.GameDriveMedia)}</li>");
         sb.Append("</ul></section>");
 
-        sb.Append("<footer>Gerado pelo FrameForge. Frames medidos por ETW (eventos Present do Windows, como o PresentMon) — nada é injetado no jogo. " +
+        sb.Append("<footer>Gerado pelo HyperCore. Frames medidos por ETW (eventos Present do Windows, como o PresentMon) — nada é injetado no jogo. " +
                   "Uma quebra é um frame com mais do dobro do tempo normal e pelo menos 8 ms a mais; a causa é o sensor anormal no mesmo instante.</footer>");
         sb.Append("</main></body></html>");
         return sb.ToString();

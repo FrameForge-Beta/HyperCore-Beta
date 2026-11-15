@@ -1,17 +1,20 @@
-# FrameForge — guia da aplicação
+# HyperCore — guia da aplicação
+
+**v0.4.0**
+- Novo nome: o FrameForge passa a chamar-se **HyperCore** (novo ícone). No primeiro arranque, os dados de `%AppData%\\FrameForge` são copiados para `%AppData%\\HyperCore` (a pasta antiga não é apagada) e a tarefa de arranque com o Windows passa a chamar-se "HyperCore".
 
 **v0.3.24**
 - Corrigida a leitura de RAM no overlay: percentagem e GB usam agora a memória física disponível reportada pelo Windows, como o Gestor de Tarefas.
 
 ## 1. Visão geral
 
-O FrameForge é uma aplicação Windows para desempenho em jogos e diagnóstico de quebras. Combina captura de frames, sensores e relatórios para ajudar a identificar causas prováveis e sugerir próximos passos.
+O HyperCore (antigo FrameForge) é uma aplicação Windows para desempenho em jogos e diagnóstico de quebras. Combina captura de frames, sensores e relatórios para ajudar a identificar causas prováveis e sugerir próximos passos.
 
 ## 2. Como funciona
 
 | Módulo | Como funciona | Limitação |
 |---|---|---|
-| FPS / overlay | ETW: eventos `Present` do DXGI (id 42) e D3D9 (id 1). O overlay do FrameForge é uma janela WPF transparente externa. | Calcula FPS e 1% low ao vivo; não guarda a sessão frame a frame por si só. O overlay externo não aparece sobre jogos em ecrã inteiro exclusivo. |
+| FPS / overlay | ETW: eventos `Present` do DXGI (id 42) e D3D9 (id 1). O overlay do HyperCore é uma janela WPF transparente externa. | Calcula FPS e 1% low ao vivo; não guarda a sessão frame a frame por si só. O overlay externo não aparece sobre jogos em ecrã inteiro exclusivo. |
 | Gargalo | Amostras periódicas e regras simples para estimar se o limite está na GPU, CPU, VRAM, temperatura ou RAM. | Não identifica necessariamente a causa de cada quebra e não mede todos os fatores possíveis, como drivers DPC, disco, aplicações em fundo ou rede. |
 | Sensores | LibreHardwareMonitorLib, PawnIO opcional e NVML. | O PawnIO é um driver de kernel; pode ter implicações de compatibilidade com software de segurança. |
 | Overclock | Ajustes de GPU através de NVAPI/NVML, quando suportados pelo driver. | A compatibilidade varia conforme a GPU e o driver; os ajustes devem ser testados com cuidado. |
@@ -19,7 +22,7 @@ O FrameForge é uma aplicação Windows para desempenho em jogos e diagnóstico 
 | Jogos | Deteção de bibliotecas e executáveis, com perfis por jogo. | Nem todos os launchers e jogos podem ser detetados automaticamente. |
 | Outras ferramentas | Benchmarks, testes de esforço, discos, rede, RGB e ferramentas Maker. | Os resultados dependem do hardware, dos drivers e das permissões disponíveis. |
 
-## 3. O FrameForge
+## 3. O HyperCore
 
 Código em C#/.NET 8/WPF, focado em desempenho em jogos e diagnóstico de quebras. Desenvolvido por TheKillerMRM & MychTgvs.
 
@@ -52,13 +55,13 @@ Para mostrar FPS em ecrã inteiro exclusivo, usa as estatísticas ou o overlay i
 
 ## 5. Como usar
 
-1. Instala `artifacts\\installer\\FrameForge-Setup.exe` ou abre `publicar\\FrameForge.exe`. A publicação autónoma não requer instalar o .NET 8 Desktop Runtime. A aplicação pode pedir administrador para ETW, overclock e ajustes do sistema.
+1. Instala `artifacts\\installer\\HyperCore-Setup-0.4.0.exe` ou abre `publicar\\HyperCore.exe`. A publicação autónoma não requer instalar o .NET 8 Desktop Runtime. A aplicação pode pedir administrador para ETW, overclock e ajustes do sistema.
 2. No **Painel**, verifica os avisos importantes.
 3. Em **Jogos**, escolhe um jogo e ativa a gravação da sessão; ou usa **Sessões e relatórios** para gravar um jogo já aberto com **Ctrl+Alt+R**.
-4. Joga durante 10–20 minutos e consulta o relatório em `%AppData%\\FrameForge\\Relatorios`.
+4. Joga durante 10–20 minutos e consulta o relatório em `%AppData%\\HyperCore\\Relatorios`.
 5. Aplica as correções adequadas e compara outra sessão. Para overclock, começa com valores conservadores e usa Stock se algo correr mal.
 
-Compilar: `dotnet build -c Release` dentro de `FrameForge\\`. Gerar a publicação autónoma: `dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publicar`. Para gerar o instalador, compila `installer\\FrameForge.iss` com o Inno Setup a partir da pasta `FrameForge\\installer\\`.
+Compilar: `dotnet build -c Release` na pasta do projeto (`HyperCore.csproj`). Gerar a publicação autónoma: `dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publicar`. Para gerar o instalador, compila `installer\\HyperCore.iss` com o Inno Setup a partir da pasta `installer\\` (alternativa NSIS: `installer\\HyperCore.nsi`).
 
 ## 6. Estado dos testes
 

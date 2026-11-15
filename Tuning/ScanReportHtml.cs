@@ -10,7 +10,7 @@ public static class ScanReportHtml
 {
     private static readonly CultureInfo Pt = CultureInfo.GetCultureInfo("pt-PT");
 
-    /// <summary>Grava em %AppData%\FrameForge\scan\relatorios e devolve o caminho do ficheiro.</summary>
+    /// <summary>Grava em %AppData%\HyperCore\scan\relatorios e devolve o caminho do ficheiro.</summary>
     public static string Save(ScanReport r, string? folder = null)
     {
         string dir = folder ?? Path.Combine(ScanStore.Folder, "relatorios");
@@ -30,7 +30,7 @@ public static class ScanReportHtml
         var sb = new StringBuilder();
         sb.Append("<!doctype html><html lang=\"pt\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">");
         sb.Append($"<title>Scan — {r.Data:dd/MM/yyyy}</title><style>{Css}</style></head><body><main>");
-        sb.Append("<header><div class=\"brand\">FRAMEFORGE · SCAN E AFINAÇÃO AUTOMÁTICA</div>");
+        sb.Append("<header><div class=\"brand\">HYPERCORE · SCAN E AFINAÇÃO AUTOMÁTICA</div>");
         sb.Append($"<h1>{E(inv.Cpu)} · {E(inv.Gpu)}</h1>");
         sb.Append($"<p class=\"muted\">{r.Data:dd/MM/yyyy HH:mm} · perfil {E(lim.Nome)}" +
                   (r.Fim is DateTime f ? $" · {(f - r.Data).TotalMinutes:0} min" : "") +
@@ -130,7 +130,7 @@ public static class ScanReportHtml
             foreach (var l in r.Registo) sb.Append($"<tr><td>{E(l)}</td></tr>");
             sb.Append("</table>");
         }
-        sb.Append("<footer>Gerado pelo FrameForge. O overclock da gráfica vale só até reiniciar (nada é gravado na placa).</footer></main></body></html>");
+        sb.Append("<footer>Gerado pelo HyperCore. O overclock da gráfica vale só até reiniciar (nada é gravado na placa).</footer></main></body></html>");
         return sb.ToString();
     }
 

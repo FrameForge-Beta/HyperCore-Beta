@@ -10,7 +10,7 @@ using FrameForge.Telemetry;
 namespace ResetExplode;
 
 /// <summary>
-/// Integra as páginas do FrameForge, o atalho de gravação e os avisos quando um relatório de sessão fica pronto.
+/// Integra as páginas do HyperCore, o atalho de gravação e os avisos quando um relatório de sessão fica pronto.
 /// </summary>
 public partial class MainWindow
 {
@@ -84,7 +84,7 @@ public partial class MainWindow
         ["PageMakerDrv"] = ("Drivers seriais", "Diagnóstico e instalação dos drivers CH340, CP210x, FTDI, Prolific e Arduino (incluídos na app, funcionam sem internet)."),
         ["FF:tips"] = ("Dicas e avisos", "O que dá mesmo mais FPS, o que é mito, definições da NVIDIA e da BIOS, e porque é que esta app não dá ban."),
         ["FF:glossary"] = ("Glossário", "Cada palavra técnica explicada de forma simples."),
-        ["FF:settings"] = ("Configurações", "Escolhe se o FrameForge inicia com o Windows e se abre ou fica na área de notificação."),
+        ["FF:settings"] = ("Configurações", "Escolhe se o HyperCore inicia com o Windows e se abre ou fica na área de notificação."),
     };
 
     private void UpdateHelp(string tag)
@@ -206,10 +206,10 @@ public partial class MainWindow
         UpdateRestartBar();
         AppServices.NavigateRequested += tag => Dispatcher.Invoke(() => NavigateTo(tag));
         FrameForge.Overlay.OverlayStore.Changed += () => Dispatcher.BeginInvoke(new Action(ApplyOverlayHotkey));
-        AppServices.Notify += msg => Dispatcher.Invoke(() => Toast("FrameForge", msg, ""));
+        AppServices.Notify += msg => Dispatcher.Invoke(() => Toast("HyperCore", msg, ""));
         AppServices.Recorder.Finished += (r, _) => Dispatcher.Invoke(() =>
         {
-            Toast($"Relatório de {r.Data.Game}: nota {r.Grade}", r.Verdict + " — abre em FRAMEFORGE › Relatórios de quebras.", "");
+            Toast($"Relatório de {r.Data.Game}: nota {r.Grade}", r.Verdict + " — abre em JOGAR › Sessões e relatórios.", "");
             if (_forgePages.TryGetValue("sessions", out var s)) ((SessionsPage)s).Reload();
         });
         SourceInitialized += (_, _) =>
@@ -288,14 +288,14 @@ public partial class MainWindow
         var rec = AppServices.Recorder;
         if (rec.Active)
         {
-            Toast("FrameForge", "A analisar a sessão…", "");
+            Toast("HyperCore", "A analisar a sessão…", "");
             await rec.StopAsync();
             return;
         }
         int pid = SystemSampler.ForegroundPid();
         if (!AppServices.Frames.ActivePresenters().Any(p => p.Pid == pid))
         {
-            Toast("FrameForge", "Ctrl+Alt+R: a janela em primeiro plano não está a desenhar frames.", "");
+            Toast("HyperCore", "Ctrl+Alt+R: a janela em primeiro plano não está a desenhar frames.", "");
             return;
         }
         string name = SystemSampler.ProcessName(pid) ?? $"PID {pid}";

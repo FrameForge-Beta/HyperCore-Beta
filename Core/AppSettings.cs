@@ -4,10 +4,10 @@ using System.Text.Json.Serialization;
 
 namespace FrameForge.Core;
 
-/// <summary>Pastas da app em %AppData%\FrameForge.</summary>
+/// <summary>Pastas da app em %AppData%\HyperCore (no 1.º arranque copia os dados de %AppData%\FrameForge, ver LegacyMigration).</summary>
 public static class AppPaths
 {
-    public static string Root { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FrameForge");
+    public static string Root { get; } = LegacyMigration.PrepareDataRoot();
     public static string Reports => Ensure(Path.Combine(Root, "Relatorios"));
     public static string SettingsFile => Path.Combine(Ensure(Root), "definicoes.json");
     public static string BackupFile => Path.Combine(Ensure(Root), "backup-ajustes.json");

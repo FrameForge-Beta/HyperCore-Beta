@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Cores de destaque e paleta de interface do FrameForge. -->
+    <!-- Cores de destaque e paleta de interface do HyperCore. -->
     <SolidColorBrush x:Key="Accent" Color="#A78BFA"/>
     <SolidColorBrush x:Key="Accent2" Color="#C084FC"/>
     <SolidColorBrush x:Key="AccentSoft" Color="#35264A"/>

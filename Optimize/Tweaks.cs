@@ -153,6 +153,8 @@ public sealed class Tweak : INotifyPropertyChanged
     internal Func<string>? Describe { get; init; }                                // detalhe extra (ex.: plano ativo)
     internal Action<TweakTarget> Apply { get; init; } = _ => { };
     internal Action Revert { get; init; } = () => { };
+    /// <summary>"Repor Windows original": volta ao valor guardado tal como estava (null = igual ao Revert).</summary>
+    internal Action? RevertOriginal { get; init; }
     /// <summary>Fotografia do valor bruto atual (para o JOGAR repor exatamente o que estava). null = não se consegue fotografar.</summary>
     internal Func<string?>? Capture { get; init; }
     internal Action<string>? Restore { get; init; }
@@ -208,14 +210,14 @@ public sealed class Tweak : INotifyPropertyChanged
     /// <summary>
     /// Liga ou desliga (desligar = voltar ao valor original guardado). Depois de ligar, volta a ler: se o Windows não ficou com o valor,
     /// devolve erro e NÃO conta como ligado. quiet = não escreve o Status do cartão (usado pelo JOGAR e pelo arranque).
-    /// Devolve a mensagem de erro, ou null se correu bem.
+    /// Devolve a mensagem de erro, ou null se correu bem. exact = ao desligar, repõe o original tal como estava ("Repor Windows original").
     /// </summary>
-    public string? Set(bool on, TweakTarget target, bool quiet = false)
+    public string? Set(bool on, TweakTarget target, bool quiet = false, bool exact = false)
     {
         try
         {
             bool hadOriginal = Touched;
-            if (on) Apply(target); else Revert();
+            if (on) Apply(target); else if (exact && RevertOriginal != null) RevertOriginal(); else Revert();
             ReadState();
             if (on && !Satisfied(target))
                 throw new InvalidOperationException(State == null ? "Não consegui confirmar se o Windows aceitou a mudança." : "O Windows não aceitou a mudança.");
@@ -323,6 +325,13 @@ public static class TweakCatalog
                 string prev = TweakBackup.Get("plan") ?? Balanced;
                 // Se o original já era um dos planos que a app ativa (ou deixou de existir), "desligar" volta ao Equilibrado
                 if (prev is HighPerf or Ultimate || !SchemeExists(prev)) prev = Balanced;
+                PowerCfg($"/setactive {prev}");
+            },
+            // "Repor Windows original": o plano que o utilizador tinha, mesmo que fosse o Alto desempenho (só cai no Equilibrado se já não existir)
+            RevertOriginal = () =>
+            {
+                string prev = TweakBackup.Get("plan") ?? Balanced;
+                if (!SchemeExists(prev)) prev = Balanced;
                 PowerCfg($"/setactive {prev}");
             },
             Capture = () => ActivePlan()?.Guid,

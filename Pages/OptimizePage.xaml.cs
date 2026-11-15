@@ -92,6 +92,8 @@ public partial class OptimizePage : UserControl
     private static void AdoptEarlierLevel(SystemProbe p)
     {
         if (S.LegacyLevelChecked) return;
+        // Com um JOGAR a correr, os ajustes temporários do jogo parecem um nível aplicado: adia-se para a próxima abertura
+        if (FrameForge.Games.GameRunner.TemporaryTweaksActive) return;
         TweakBackup.MigrateLegacy(); // os originais do cartão antigo contam como "mudado pela app" (o arranque pode ainda não o ter feito)
         S.LegacyLevelChecked = true;
         if (S.AppliedOptimizeLevel == 0 && S.TweakOverrides.Count == 0 && All.Any(t => t.Touched))
@@ -551,8 +553,8 @@ public partial class OptimizePage : UserControl
                 {
                     t.Refresh(probe);
                     bool was = t.IsOn;
-                    // Set(false) volta ao valor original guardado e, se correu bem, esquece-o (TweakBackup.Forget)
-                    if (t.Set(false, tg) is string err) { fails.Add($"{t.Title} ({err})"); continue; }
+                    // Set(false) volta ao valor original guardado (tal como estava, exact) e, se correu bem, esquece-o (TweakBackup.Forget)
+                    if (t.Set(false, tg, exact: true) is string err) { fails.Add($"{t.Title} ({err})"); continue; }
                     ok++;
                     if (t.RestartToFinish && was != t.IsOn) restart.Add((t.Title, t.IsOn));
                 }

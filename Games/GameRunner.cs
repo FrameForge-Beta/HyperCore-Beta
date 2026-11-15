@@ -11,16 +11,25 @@ namespace FrameForge.Games;
 ///
 /// Regras anti-cheat (valem para TODOS os jogos, não só os com anti-cheat):
 /// - nunca abre o processo do jogo (nem para mudar prioridade): segue-o só pela lista de processos do Windows;
-/// - o FrameForge nunca injeta, nunca lê memória do jogo, não faz hooks;
+/// - o HyperCore nunca injeta, nunca lê memória do jogo, não faz hooks;
 /// - frames via ETW (Windows) e sensores via driver/contadores do sistema;
-/// - o overlay FrameForge é uma janela própria, fora do processo do jogo.
+/// - o overlay HyperCore é uma janela própria, fora do processo do jogo.
 /// </summary>
 public sealed class GameRunner
 {
+    private static int _tempTweakRuns;
+
+    /// <summary>
+    /// Há um JOGAR com ajustes temporários ligados (os originais estão guardados como se a app os tivesse mudado de vez).
+    /// A página dos níveis não deve ler esse estado como "nível aplicado".
+    /// </summary>
+    public static bool TemporaryTweaksActive => Volatile.Read(ref _tempTweakRuns) > 0;
+
     public static async Task RunAsync(LibGame g, GameProfile p, Action<string> status, CancellationToken ct)
     {
         // Fotografia do valor bruto de cada ajuste que o JOGAR mexe: no fim repõe-se exatamente isto (não o "original de fábrica")
         var snapshots = new List<(Tweak Tweak, string Snap, bool HadBackup)>();
+        bool tempCounted = false;
         string? planBefore = null;
         OcProfile? ocBefore = AppServices.Tuner.Applied;
         // O perfil temporário de um passo do scan nunca é "o perfil de antes" (reaplicá-lo no fim do jogo deixaria um valor em teste na placa)
@@ -41,6 +50,8 @@ public sealed class GameRunner
             {
                 var probe = await AppServices.Probe;
                 var target = TweakCatalog.Target(p.OptimizeLevel, probe);
+                Interlocked.Increment(ref _tempTweakRuns);
+                tempCounted = true;
                 await Task.Run(() =>
                 {
                     lock (TweakCatalog.Gate)
@@ -154,11 +165,16 @@ public sealed class GameRunner
         finally
         {
             OverlayWindow.HideOverlay();
-            if (AppServices.Recorder.Active)
+            // Uma falha no relatório nunca pode saltar a reposição dos ajustes e do OC que vem a seguir
+            try
             {
-                var r = await AppServices.Recorder.StopAsync();
-                if (r != null) status($"Relatório pronto: nota {r.Value.Report.Grade} — {r.Value.Report.Verdict}");
+                if (AppServices.Recorder.Active)
+                {
+                    var r = await AppServices.Recorder.StopAsync();
+                    if (r != null) status($"Relatório pronto: nota {r.Value.Report.Grade} — {r.Value.Report.Verdict}");
+                }
             }
+            catch (Exception ex) { status("Não consegui fechar o relatório: " + ex.Message); }
             if (snapshots.Count > 0)
                 await Task.Run(() =>
                 {
@@ -166,10 +182,13 @@ public sealed class GameRunner
                         for (int i = snapshots.Count - 1; i >= 0; i--) // ao contrário: as definições de energia antes de trocar o plano de volta
                         {
                             var (t, snap, had) = snapshots[i];
+                            // Escolhido como permanente durante o jogo (nível aplicado ou interruptor ligado): fica, com o original guardado
+                            if (LevelKeeper.Desired(t, AppServices.Settings)) { t.ReadState(); continue; }
                             try { t.Restore!(snap); if (!had) t.ForgetBackup(); } catch { }
                             t.ReadState();
                         }
                 });
+            if (tempCounted) Interlocked.Decrement(ref _tempTweakRuns);
             if (planBefore != null) { try { TweakCatalog.PowerCfg($"/setactive {planBefore}"); } catch { } }
             // Com um scan a correr não se mexe na placa: um Stock a meio de um passo validava um valor que não foi testado.
             // O fim do scan repõe sempre os valores de fábrica.
@@ -205,7 +224,7 @@ public sealed class GameRunner
             Process.Start(new ProcessStartInfo(g.LaunchUri) { UseShellExecute = true });
         else if ((p.ExeOverride ?? g.ExePath) is string exe)
         {
-            // Sem argumentos, abrir pelo Explorer faz o jogo arrancar como utilizador normal (não herda o administrador do FrameForge)
+            // Sem argumentos, abrir pelo Explorer faz o jogo arrancar como utilizador normal (não herda o administrador do HyperCore)
             if (args.Length == 0) Process.Start("explorer.exe", $"\"{exe}\"");
             else Process.Start(new ProcessStartInfo(exe, args) { UseShellExecute = true, WorkingDirectory = Path.GetDirectoryName(exe) ?? "" });
         }

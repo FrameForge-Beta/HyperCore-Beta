@@ -1,17 +1,19 @@
 <div align="center">
 
-# ⚡ FrameForge
+# ⚡ HyperCore
+
+**Cada núcleo no máximo.** _(antigo FrameForge)_
 
 **O ecossistema definitivo para Windows de monitorização em tempo real, telemetria segura para jogos, diagnóstico de hardware e otimização de desempenho.**
 
-[![Versão](https://img.shields.io/badge/Versão-0.3.50_Beta-7928CA?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/FrameForge-Beta/FrameForge-Beta/releases/tag/v0.3.50)
+[![Versão](https://img.shields.io/badge/Versão-0.4.0_Beta-7928CA?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/FrameForge-Beta/FrameForge-Beta/releases/latest)
 [![Plataforma](https://img.shields.io/badge/.NET-8.0_WPF-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Linguagem](https://img.shields.io/badge/Linguagem-C%23_12_%2F_XAML-239120?style=for-the-badge&logo=csharp&logoColor=white)](https://learn.microsoft.com/dotnet/csharp/)
 [![Anti-Cheat Safe](https://img.shields.io/badge/Anti--Cheat-100%25_Seguro_(Sem_Injeção)-00C853?style=for-the-badge&logo=shield&logoColor=white)](#-arquitetura-anti-cheat-segura)
 
 <br/>
 
-<img src="Assets/screenshot-overview.png" alt="FrameForge - Painel de Visão Geral" width="900" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);" />
+<img src="Assets/screenshot-overview.png" alt="HyperCore - Painel de Visão Geral" width="900" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);" />
 
 </div>
 
@@ -19,7 +21,7 @@
 
 ## 📖 Sobre o Projeto
 
-O **FrameForge** é uma suite completa de diagnóstico, telemetria e afinação para entusiastas de PC gaming e utilizadores exigentes. Desenvolvido para oferecer visibilidade total sobre o comportamento do hardware em jogos, o FrameForge combina telemetria de nível de driver e eventos do kernel sem nunca comprometer a integridade do sistema ou acionar proteções anti-cheat.
+O **HyperCore** (antes chamado FrameForge) é uma suite completa de diagnóstico, telemetria e afinação para entusiastas de PC gaming e utilizadores exigentes. Desenvolvido para oferecer visibilidade total sobre o comportamento do hardware em jogos, o HyperCore combina telemetria de nível de driver e eventos do kernel sem nunca comprometer a integridade do sistema ou acionar proteções anti-cheat.
 
 Com uma interface moderna, reativa e focada na usabilidade (Dark Theme com acentos roxos e renderização acelerada por GPU), a aplicação elimina a necessidade de usar múltiplas ferramentas pesadas e dispersas.
 
@@ -73,7 +75,7 @@ Com uma interface moderna, reativa e focada na usabilidade (Dark Theme com acent
 
 ## 🛡️ Arquitetura Anti-Cheat Segura
 
-O FrameForge foi desenhado desde o primeiro dia respeitando as diretrizes dos sistemas anti-cheat modernos:
+O HyperCore foi desenhado desde o primeiro dia respeitando as diretrizes dos sistemas anti-cheat modernos:
 - ❌ **Sem Injeção de DLLs**: Não injeta código no espaço de memória de nenhum jogo.
 - ❌ **Sem Hooks de DirectX/Vulkan**: Não intercepta chamadas gráficas diretamente dentro do processo.
 - ❌ **Sem Abertura Invasiva de Processos**: Não lê buffers nem manipula ponteiros de processos externos.
@@ -85,8 +87,10 @@ O FrameForge foi desenhado desde o primeiro dia respeitando as diretrizes dos si
 
 ### Opção 1: Instalador Oficial (Recomendado)
 1. Acede aos [Releases](https://github.com/FrameForge-Beta/FrameForge-Beta/releases/latest).
-2. Transfere o ficheiro `FrameForge-Setup-0.3.50.exe`.
+2. Transfere o ficheiro `HyperCore-Setup-0.4.0.exe`.
 3. Executa o instalador como Administrador e segue os passos simples do assistente.
+
+> **Vens do FrameForge?** O instalador atualiza por cima (substitui o FrameForge em Programas e Funcionalidades e remove o `FrameForge.exe` e os atalhos antigos). No primeiro arranque, o HyperCore copia as tuas definições, backups e relatórios de `%AppData%\FrameForge` para `%AppData%\HyperCore` (a pasta antiga fica intacta) e troca a tarefa de arranque com o Windows pela nova.
 
 ### Opção 2: Compilar a partir do Código-Fonte
 Certifica-te de ter instalado o [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0).

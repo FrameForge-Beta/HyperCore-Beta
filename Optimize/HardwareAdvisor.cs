@@ -169,7 +169,7 @@ public static class HardwareAdvisor
     {
         if (p.RunningTools.Contains("MSI Afterburner"))
             a.Add(new Advice(2, "Software", "MSI Afterburner aberto",
-                "Se usares o overclock do FrameForge ao mesmo tempo, os dois programas vão escrever valores diferentes na placa e o último a escrever ganha.",
+                "Se usares o overclock do HyperCore ao mesmo tempo, os dois programas vão escrever valores diferentes na placa e o último a escrever ganha.",
                 "Usa só um para o overclock. Se mantiveres o Afterburner só pela curva de ventoinha, não apliques perfis de clock nele."));
         if (p.RunningTools.Contains("Overwolf"))
             a.Add(new Advice(1, "Software", "Overwolf aberto", "O Overwolf injeta overlays e consome RAM/CPU.", "Fecha-o quando não precisas das apps dele."));

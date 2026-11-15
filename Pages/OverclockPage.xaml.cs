@@ -108,7 +108,7 @@ public partial class OverclockPage : UserControl
         var p = FromSliders(name);
         if (p.CoreOffset > 150 || p.MemOffset > 1000)
             if (MessageBox.Show("Valores altos podem causar crash do jogo/driver ou artefactos. Com a guarda de crash ligada, a placa volta a Stock sozinha se o driver for abaixo. Continuar?",
-                    "FrameForge", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
+                    "HyperCore", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
         Log.Text = "A aplicar…";
         var log = await Task.Run(() => AppServices.Tuner.Apply(p));
         Log.Text = string.Join("\n", log) + "\n\nTesta 15–30 min num jogo pesado e vê o relatório da sessão: o FPS tem de SUBIR. Se cair com mais memória, passaste do ponto (a correção de erros da GDDR6 está a trabalhar).";

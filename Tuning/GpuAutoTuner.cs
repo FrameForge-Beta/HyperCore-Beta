@@ -275,6 +275,8 @@ public static class GpuAutoTuner
         if (!lim.TocaMemoria || lim.PassoMemoria <= 0) return;
         var st = await ReadAsync();
         int core = Math.Max(0, oc.NucleoMaxEstavel - lim.MargemNucleo); // a memória testa-se com o núcleo final, para não somar instabilidades
+        // A retomar depois de um bloqueio nesta fase com a memória de fábrica: o culpado foi este núcleo, por isso desce (como na validação)
+        if (ctx.State.NucleoInstavel is int cu && core >= cu) core = Math.Max(0, cu - lim.PassoNucleoFino - lim.MargemNucleo);
         int ceiling = Math.Min(st.MemMax ?? 0, lim.TetoMemoria);
         if (ctx.State.MemoriaInstavel is int bad) ceiling = Math.Min(ceiling, bad - lim.PassoMemoria / 2);
         if (ceiling < lim.PassoMemoria / 2) { ctx.Log("• O driver não deixa subir a memória desta placa"); return; }

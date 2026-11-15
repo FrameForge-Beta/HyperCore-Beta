@@ -160,7 +160,7 @@ public partial class MainWindow
         {
             var plan = SelectedPowerPlan ?? throw new InvalidOperationException("Seleciona um plano.");
             if (MessageBox.Show(this, $"Apagar o plano personalizado '{plan.Name}'? Esta ação não pode ser desfeita.",
-                    "FrameForge · Energia", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
+                    "HyperCore · Energia", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
             await Task.Run(() => PowerPlanService.Delete(plan.Guid));
             RefreshPowerPlans();
             PowerPlanEditorStatus.Text = $"Plano personalizado '{plan.Name}' apagado.";
@@ -293,7 +293,7 @@ public partial class MainWindow
         var answer = MessageBox.Show(this,
             $"Aplicar {provider.Name} ({provider.Primary} e {provider.Secondary}) ao adaptador «{adapter}»?\n\n" +
             "Isto altera a configuração DNS IPv4 do Windows para este adaptador. A autorização de administrador será pedida a seguir.",
-            "FrameForge · Aplicar DNS", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            "HyperCore · Aplicar DNS", MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (answer != MessageBoxResult.Yes) return;
 
         BtnDnsOne.IsEnabled = BtnDnsAll.IsEnabled = BtnDnsApply.IsEnabled = DnsProviderBox.IsEnabled = false;

@@ -46,8 +46,8 @@ public sealed class CustomGame
 /// <summary>Configurações da aplicação. A chave da API é cifrada com DPAPI e só pode ser lida pelo utilizador atual do Windows.</summary>
 public sealed class AppSettings
 {
-    public static string Folder { get; } =
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FrameForge");
+    // Mesma pasta que FrameForge.Core.AppPaths.Root (%AppData%\HyperCore): passa pela migração dos dados antigos.
+    public static string Folder { get; } = FrameForge.Core.AppPaths.Root;
     private static string FilePath => Path.Combine(Folder, "settings.json");
 
     public string? HowManyFpsKeyProtected { get; set; }

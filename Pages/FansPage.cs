@@ -123,7 +123,7 @@ public sealed class FansPage : UserControl
                         or LibreHardwareMonitor.Hardware.HardwareType.GpuAmd or LibreHardwareMonitor.Hardware.HardwareType.GpuIntel);
                     int otherControls = controls.Count - gpuControls;
                     _detectionStatus.Text = $"{controls.Count} controlo(s) gravável(eis) · {readOnlyFans.Count} ventoinha(s) só de leitura · {gpuControls} GPU / {otherControls} outros controladores. " +
-                        "A disponibilidade de escrita depende do hardware, driver e permissões; o FrameForge não instala drivers automaticamente.";
+                        "A disponibilidade de escrita depende do hardware, driver e permissões; o HyperCore não instala drivers automaticamente.";
                     _refreshDetection.IsEnabled = true;
                 });
             }
@@ -169,11 +169,11 @@ public sealed class FansPage : UserControl
         var head = new DockPanel();
         DockPanel.SetDock(sw, Dock.Right);
         head.Children.Add(sw);
-        head.Children.Add(Ui.T("Controlo de ventoinhas pelo FrameForge", "H2"));
+        head.Children.Add(Ui.T("Controlo de ventoinhas pelo HyperCore", "H2"));
         sp.Children.Add(head);
-        sp.Children.Add(Ui.T("DESLIGADO = o FrameForge não escreve velocidades nem mantém um controlador ativo; as ventoinhas ficam sob controlo da BIOS/driver. Ao desligar, qualquer controlo aplicado é libertado imediatamente. A deteção e a leitura de temperaturas/RPM continuam disponíveis.", "MutedText"));
+        sp.Children.Add(Ui.T("DESLIGADO = o HyperCore não escreve velocidades nem mantém um controlador ativo; as ventoinhas ficam sob controlo da BIOS/driver. Ao desligar, qualquer controlo aplicado é libertado imediatamente. A deteção e a leitura de temperaturas/RPM continuam disponíveis.", "MutedText"));
 
-        var onStart = new CheckBox { Content = "Ligar automaticamente sempre que o FrameForge abrir", IsChecked = C.ApplyOnStart, Margin = new Thickness(0, 10, 0, 0) };
+        var onStart = new CheckBox { Content = "Ligar automaticamente sempre que o HyperCore abrir", IsChecked = C.ApplyOnStart, Margin = new Thickness(0, 10, 0, 0) };
         onStart.Click += (_, _) =>
         {
             C.ApplyOnStart = onStart.IsChecked == true;
@@ -469,7 +469,7 @@ public sealed class FansPage : UserControl
         details.Children.Add(StatusPill("Controlo", $"{ctl.MinSoftwareValue:0}–{ctl.MaxSoftwareValue:0}%"));
         details.Children.Add(StatusPill("Velocidade", "A ler…"));
         sp.Children.Add(details);
-        var status = Ui.T("AUTOMÁTICO · FrameForge não escreve na ventoinha", "Label", 10, Ui.Res("Muted"), FontWeights.SemiBold);
+        var status = Ui.T("AUTOMÁTICO · HyperCore não escreve na ventoinha", "Label", 10, Ui.Res("Muted"), FontWeights.SemiBold);
         status.Margin = new Thickness(0, 0, 0, 8);
         sp.Children.Add(status);
         var update = new Action(() =>
@@ -480,7 +480,7 @@ public sealed class FansPage : UserControl
             live.Foreground = o is { Failsafe: true } ? Ui.Res("Bad") : Ui.Res("Accent2");
             live.ToolTip = o is { } x ? $"Alvo {x.Target:0}% · a aplicar {x.Current:0}%" + (x.Failsafe ? " · falha de leitura → 100% por segurança" : "") : "Velocidade real (RPM), quando o sensor está disponível.";
             status.Text = !C.Enabled || !E.IsAttached || cc.Mode == ControlMode.Auto
-                ? "AUTOMÁTICO · FrameForge não escreve na ventoinha"
+                ? "AUTOMÁTICO · HyperCore não escreve na ventoinha"
                 : o is { Failsafe: true } ? "PROTEÇÃO · sem leitura de temperatura; alvo 100%"
                 : cc.Mode == ControlMode.Manual ? "CONTROLO MANUAL ATIVO"
                 : $"CURVA ATIVA · {cc.CurveName ?? "sem curva selecionada"}";
