@@ -48,7 +48,70 @@ public sealed class SettingsPage : UserControl
         _status.Margin = new Thickness(0, 12, 0, 0);
         general.Children.Add(_status);
         content.Children.Add(Ui.Card(general));
+        var updates = UpdatesCard();
+        updates.Margin = new Thickness(0, 14, 0, 0);
+        content.Children.Add(updates);
         Content = new ScrollViewer { Content = content, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
+    }
+
+    /// <summary>Atualizações: versão atual, automático ou perguntar, e procurar agora.</summary>
+    private Border UpdatesCard()
+    {
+        var box = new StackPanel();
+        box.Children.Add(Ui.T("Atualizações", "H2"));
+        var state = Ui.T("", "MutedText", 12);
+        state.Margin = new Thickness(0, 4, 0, 8);
+        box.Children.Add(state);
+        void RefreshState()
+        {
+            var s = AppServices.Settings;
+            string last = s.UpdateLastCheckUtc is DateTime d ? $" · última verificação {d.ToLocalTime():dd/MM HH:mm}" : "";
+            state.Text = Updater.Available is { } a
+                ? $"Tens a v{Updater.Current.ToString(3)} — a v{a.Version.ToString(3)} já está disponível{last}."
+                : $"Tens a v{Updater.Current.ToString(3)}{last}.";
+        }
+        RefreshState();
+        Updater.AvailableChanged += () => state.Dispatcher.BeginInvoke(RefreshState);
+
+        var auto = new RadioButton
+        {
+            Content = "Atualizar sozinho — instala as versões novas e reabre (nunca a meio de um jogo, scan ou Modo Jogo)",
+            GroupName = "upd", Margin = new Thickness(0, 4, 0, 4), IsChecked = AppServices.Settings.UpdateMode == UpdateFlow.ModeAuto,
+        };
+        var manual = new RadioButton
+        {
+            Content = "Perguntar-me antes — avisa quando há uma versão nova e és tu que decides",
+            GroupName = "upd", Margin = new Thickness(0, 4, 0, 4), IsChecked = AppServices.Settings.UpdateMode == UpdateFlow.ModeManual,
+        };
+        void SetMode(string mode)
+        {
+            AppServices.Settings.UpdateMode = mode;
+            try { AppServices.Settings.Save(); } catch { }
+        }
+        auto.Checked += (_, _) => SetMode(UpdateFlow.ModeAuto);
+        manual.Checked += (_, _) => SetMode(UpdateFlow.ModeManual);
+        box.Children.Add(auto);
+        box.Children.Add(manual);
+
+        var check = Ui.Btn("Procurar atualizações agora", (_, _) => { }, "BtnAccent");
+        check.HorizontalAlignment = HorizontalAlignment.Left;
+        check.Margin = new Thickness(0, 12, 0, 0);
+        check.Click += async (_, _) =>
+        {
+            check.IsEnabled = false;
+            check.Content = "A procurar…";
+            try { await UpdateFlow.CheckAsync(userAsked: true, this); }
+            finally
+            {
+                check.IsEnabled = true;
+                check.Content = "Procurar atualizações agora";
+                auto.IsChecked = AppServices.Settings.UpdateMode == UpdateFlow.ModeAuto;
+                manual.IsChecked = AppServices.Settings.UpdateMode == UpdateFlow.ModeManual;
+                RefreshState();
+            }
+        };
+        box.Children.Add(check);
+        return Ui.Card(box);
     }
 
     private void SetStartup(bool enabled)

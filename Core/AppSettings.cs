@@ -60,6 +60,11 @@ public sealed class AppSettings
     public bool LegacyTweakBackupMigrated { get; set; }         // originais do cartão antigo (settings.json) já copiados para backup-ajustes.json
     public bool LegacyLevelChecked { get; set; }                // já se viu (uma vez) se a versão antiga tinha deixado um nível inteiro aplicado
 
+    // Atualizações: null = ainda não se perguntou (a 1.ª versão nova encontrada pergunta); "auto" = instala sozinho; "manual" = avisa e pergunta
+    public string? UpdateMode { get; set; }
+    public string? UpdateNotifiedVersion { get; set; }          // última versão já avisada (o aviso não se repete a cada verificação)
+    public DateTime? UpdateLastCheckUtc { get; set; }
+
     private static readonly JsonSerializerOptions Json = new()
     {
         WriteIndented = true,

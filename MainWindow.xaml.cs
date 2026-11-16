@@ -141,6 +141,7 @@ public partial class MainWindow : Window
         // Versão do programa mostrada no rodapé da barra lateral (vém do <Version> do csproj).
         string appVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.5.0";
         SideVersion.Text = $"HyperCore v{appVersion}";
+        FrameForge.Pages.UpdateFlow.Attach(SideVersion); // vira "Nova versão · atualizar" quando há uma
         UpdateDashboard();
 
         // A janela aparece já; as coletas pesadas (WMI, sensores, GPU) rodam em paralelo fora da thread da janela.

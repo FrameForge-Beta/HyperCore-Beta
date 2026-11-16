@@ -47,6 +47,9 @@ public partial class App : Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        // Aberta pelo atualizador: dá sinal de vida à versão anterior e espera que ela feche (liberta o mutex abaixo)
+        FrameForge.Core.Updater.OnStartupArgs(e.Args);
+
         bool first;
         try { _single = new Mutex(true, @"Local\HyperCore.SingleInstance", out first); }
         catch (UnauthorizedAccessException) { first = false; } // criado por outra instância com outro nível de permissão
@@ -112,6 +115,15 @@ public partial class App : Application
         if (FrameForge.Core.AppServices.Settings.StartMinimizedToTray &&
             FrameForge.Core.WindowsStartupRegistration.IsStartupLaunch(e.Args))
             window.StartInTray();
+
+        // Atualizações: apaga o exe antigo/transferências, avisa se acabou de atualizar, e começa a procurar versões novas
+        var args = e.Args;
+        _ = Task.Run(() => FrameForge.Core.Updater.CleanupAfterStart(args)).ContinueWith(t =>
+        {
+            if (t.Status == TaskStatus.RanToCompletion && t.Result is string from)
+                FrameForge.Core.AppServices.Toast($"HyperCore atualizado: v{from} → v{FrameForge.Core.Updater.Current.ToString(3)}.");
+        }, TaskScheduler.Default);
+        FrameForge.Pages.UpdateFlow.Start(() => !window.IsVisible);
     }
 
     protected override void OnExit(ExitEventArgs e)
