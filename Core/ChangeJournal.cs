@@ -165,22 +165,53 @@ public static class ChangeJournal
 
     // ------------------------------------------------------------------ ficheiro
 
+    /// <summary>true = a leitura do ficheiro falhou por um bloqueio (antivírus, backup): o que está no disco ainda não foi juntado.</summary>
+    private static bool _diskUnread;
+
+    /// <summary>Lê o ficheiro do disco. null = não deu para o ler agora (bloqueado ou sem acesso); estragado = cópia e lista vazia.</summary>
+    private static List<ChangeEntry>? ReadDisk(int attempts)
+    {
+        for (int attempt = 1; ; attempt++)
+        {
+            try
+            {
+                if (!File.Exists(FilePath)) return new();
+                string text = File.ReadAllText(FilePath);
+                try { return JsonSerializer.Deserialize<List<ChangeEntry>>(text) ?? new(); }
+                catch (JsonException)
+                {
+                    // Estragado de facto: guarda uma cópia (nome único, não pisa as anteriores) e começa vazio
+                    try { File.WriteAllText($"{FilePath}.estragado-{DateTime.Now:yyyyMMdd-HHmmss}", text); } catch { }
+                    return new();
+                }
+            }
+            catch when (attempt < attempts) { Thread.Sleep(100); }
+            catch { return null; }
+        }
+    }
+
+    /// <summary>Junta o que está no disco ao que já está em memória (depois de uma leitura bloqueada). Chamar dentro do lock.</summary>
+    private static bool MergeDisk(int attempts)
+    {
+        var disk = ReadDisk(attempts);
+        if (disk == null) return false;
+        var have = _entries!.Select(e => e.Id).ToHashSet();
+        _entries.InsertRange(0, disk.Where(e => !string.IsNullOrEmpty(e.Id) && !have.Contains(e.Id)));
+        _diskUnread = false;
+        return true;
+    }
+
     /// <summary>Lê o ficheiro na primeira utilização. Chamar sempre dentro do lock.</summary>
     private static List<ChangeEntry> Load()
     {
-        if (_entries != null) return _entries;
-        try
+        if (_entries != null)
         {
-            _entries = File.Exists(FilePath)
-                ? JsonSerializer.Deserialize<List<ChangeEntry>>(File.ReadAllText(FilePath)) ?? new()
-                : new();
+            if (_diskUnread) MergeDisk(attempts: 1); // a leitura anterior foi bloqueada: tenta outra vez (sem esperas)
+            return _entries;
         }
-        catch
-        {
-            // Ficheiro estragado: guarda uma cópia para não perder a informação e começa vazio
-            try { File.Copy(FilePath, FilePath + ".estragado", overwrite: true); } catch { }
-            _entries = new();
-        }
+        var disk = ReadDisk(attempts: 5);
+        _diskUnread = disk == null;
+        _entries = disk ?? new();
         _entries.RemoveAll(e => string.IsNullOrEmpty(e.Id));
         return _entries;
     }
@@ -188,6 +219,9 @@ public static class ChangeJournal
     /// <summary>Escreve de forma atómica (ficheiro temporário + troca). Chamar sempre dentro do lock.</summary>
     private static void Save()
     {
+        // Nunca gravar por cima de um ficheiro que ainda não se conseguiu ler (apagava o registo verdadeiro): fica em memória
+        // e a próxima gravação tenta outra vez
+        if (_diskUnread && !MergeDisk(attempts: 5)) return;
         try
         {
             Directory.CreateDirectory(AppPaths.Root);

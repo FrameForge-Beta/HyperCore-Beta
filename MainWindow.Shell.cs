@@ -119,6 +119,9 @@ public partial class MainWindow
 
         string page = tab.Tag;
         if (page.StartsWith("FF:", StringComparison.Ordinal)) { PageFF.Content = ForgePage(page[3..]); page = "PageFF"; }
+        // painel antigo: tira a página FF da árvore (fica na cache) para disparar o Unloaded,
+        // que para os timers, o hook de teclado e o Raw Input dessa página
+        else PageFF.Content = null;
         ShowPage(page);
         OnPageOpened(page);
 

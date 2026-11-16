@@ -19,6 +19,7 @@ public sealed class PeripheralsPage : UserControl
     private readonly Dictionary<string, IPeriphView> _views = new();
     private IPeriphView? _active;
     private bool _loaded;
+    private Window? _window; // guardada no Loaded: no Unloaded a página já saiu da árvore e GetWindow devolve null
     private static string _lastTab = "mouse";
 
     public PeripheralsPage()
@@ -42,8 +43,8 @@ public sealed class PeripheralsPage : UserControl
             if (_loaded) return;
             _loaded = true;
             ComponentDispatcher.ThreadPreprocessMessage += OnPreprocess;
-            var w = Window.GetWindow(this);
-            if (w != null) w.Deactivated += OnDeactivated;
+            _window = Window.GetWindow(this);
+            if (_window != null) _window.Deactivated += OnDeactivated;
             _active?.Activate();
         };
         Unloaded += (_, _) =>
@@ -51,8 +52,8 @@ public sealed class PeripheralsPage : UserControl
             if (!_loaded) return;
             _loaded = false;
             ComponentDispatcher.ThreadPreprocessMessage -= OnPreprocess;
-            var w = Window.GetWindow(this);
-            if (w != null) w.Deactivated -= OnDeactivated;
+            if (_window != null) _window.Deactivated -= OnDeactivated;
+            _window = null;
             _active?.Deactivate();
         };
 
@@ -95,7 +96,7 @@ public sealed class PeripheralsPage : UserControl
 
     private void OnPreprocess(ref MSG msg, ref bool handled)
     {
-        if (handled || _active == null) return;
+        if (handled || _active == null || !IsVisible) return;
         var w = Window.GetWindow(this);
         if (w == null || !w.IsActive) return;
         var main = new WindowInteropHelper(w).Handle;

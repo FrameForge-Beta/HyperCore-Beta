@@ -54,7 +54,7 @@ internal sealed class PeriphScreenView : StackPanel, IPeriphView
         tip.Margin = new Thickness(2, 0, 0, 0);
         Children.Add(tip);
 
-        LoadMonitors();
+        _ = LoadMonitorsAsync();
     }
 
     // =========================================================== IPeriphView
@@ -71,9 +71,14 @@ internal sealed class PeriphScreenView : StackPanel, IPeriphView
 
     // =========================================================== monitores
 
-    private void LoadMonitors()
+    /// <summary>Lê os ecrãs fora do UI thread (percorrer os modos de cada ecrã pode demorar centenas de ms).</summary>
+    private async Task LoadMonitorsAsync()
     {
-        try { _monitors = DisplayProbe.Monitors(); } catch { _monitors = new(); }
+        var list = await Task.Run(() =>
+        {
+            try { return DisplayProbe.Monitors(); } catch { return new List<MonitorInfo>(); }
+        });
+        _monitors = list;
         _target.Items.Clear();
         int i = 1;
         foreach (var m in _monitors)
@@ -83,28 +88,26 @@ internal sealed class PeriphScreenView : StackPanel, IPeriphView
         RenderRows(null);
     }
 
-    private void Measure()
+    private async void Measure()
     {
         _cts?.Cancel();
         _cts = new CancellationTokenSource();
         var ct = _cts.Token;
         _measuredOnce = true;
-        LoadMonitors();
-        var monitors = _monitors;
-        if (monitors.Count == 0) return;
-        var results = new RefreshResult?[monitors.Count];
         _measureBtn.IsEnabled = false;
+        await LoadMonitorsAsync();
+        if (ct.IsCancellationRequested) { _measuredOnce = false; _measureBtn.IsEnabled = true; return; }
+        var monitors = _monitors;
+        if (monitors.Count == 0) { _measureBtn.IsEnabled = true; return; }
+        var results = new RefreshResult?[monitors.Count];
         RenderRows(results, measuring: true);
-        Task.Run(() =>
+        _ = Task.Run(() =>
         {
             // um ecrã de cada vez (medir dois ao mesmo tempo não muda nada, mas assim cada um tem a thread só para si)
             for (int i = 0; i < monitors.Count && !ct.IsCancellationRequested; i++)
             {
                 // com o ecrã desligado/em poupança o vblank pode nunca chegar: não esperamos mais de 4 s por ecrã
-                var dev = monitors[i].Device;
-                var job = Task.Run(() => DisplayProbe.Measure(dev, TimeSpan.FromSeconds(1.6), ct));
-                try { results[i] = job.Wait(TimeSpan.FromSeconds(4)) ? job.Result : new RefreshResult(0, 0, 0, "sem resposta"); }
-                catch { results[i] = new RefreshResult(0, 0, 0, "indisponível"); }
+                results[i] = MeasureWithTimeout(monitors[i].Device, ct);
                 Dispatcher.BeginInvoke(() => { if (!ct.IsCancellationRequested) RenderRows(results, measuring: true); });
             }
         }, ct).ContinueWith(_ => Dispatcher.BeginInvoke(() =>
@@ -113,6 +116,26 @@ internal sealed class PeriphScreenView : StackPanel, IPeriphView
             if (ct.IsCancellationRequested) { _measuredOnce = results.Any(r => r != null); RenderRows(results); return; }
             RenderRows(results);
         }));
+    }
+
+    // Medições que ficaram presas à espera do vblank (ecrã ligado mas sem sinal): no máximo uma por ecrã, numa thread
+    // própria (não do pool). Enquanto essa estiver presa, o mesmo ecrã não é medido outra vez.
+    private static readonly Dictionary<string, Thread> Hung = new(StringComparer.OrdinalIgnoreCase);
+
+    private static RefreshResult MeasureWithTimeout(string device, CancellationToken ct)
+    {
+        var noAnswer = new RefreshResult(0, 0, 0, "sem resposta");
+        lock (Hung) if (Hung.TryGetValue(device, out var old) && old.IsAlive) return noAnswer;
+        RefreshResult? result = null;
+        var t = new Thread(() =>
+        {
+            try { result = DisplayProbe.Measure(device, TimeSpan.FromSeconds(1.6), ct); }
+            catch { result = new RefreshResult(0, 0, 0, "indisponível"); }
+        }) { IsBackground = true, Name = "HyperCore vblank" };
+        t.Start();
+        if (t.Join(TimeSpan.FromSeconds(4))) return result ?? new RefreshResult(0, 0, 0, "indisponível");
+        lock (Hung) Hung[device] = t;
+        return noAnswer;
     }
 
     private void RenderRows(RefreshResult?[]? results, bool measuring = false)
@@ -336,9 +359,9 @@ internal sealed class PeriphScreenView : StackPanel, IPeriphView
         return b;
     }
 
-    private void OpenTest(Func<MonitorInfo, Window> make)
+    private async void OpenTest(Func<MonitorInfo, Window> make)
     {
-        if (_monitors.Count == 0) LoadMonitors();
+        if (_monitors.Count == 0) await LoadMonitorsAsync();
         var m = (_target.SelectedItem as ComboBoxItem)?.Tag as MonitorInfo ?? _monitors.FirstOrDefault();
         if (m == null) return;
         try { _testWindow?.Close(); } catch { }

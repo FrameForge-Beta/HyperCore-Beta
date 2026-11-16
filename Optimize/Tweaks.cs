@@ -398,13 +398,20 @@ public static class TweakCatalog
             // Ausente: no Windows 11 24H2 (26100) ou mais recente já vem ligado por predefinição
             Read = () => DxSettings().TryGetValue("SwapEffectUpgradeEnable", out var v) ? v == "1" : Environment.OSVersion.Version.Build >= 26100,
             Apply = _ => { TweakBackup.Remember("windowed", DxRaw() ?? "<ausente>"); SetDx("SwapEffectUpgradeEnable", "1"); },
+            // Repõe só esta chave como estava na linha guardada (as outras, como o VRR da Configuração gamer, ficam como estão)
             Revert = () =>
             {
-                using var k = Registry.CurrentUser.CreateSubKey(DxPath);
-                if (TweakBackup.Get("windowed") is not string prev || prev == "<ausente>") k.DeleteValue("DirectXUserGlobalSettings", false);
-                else k.SetValue("DirectXUserGlobalSettings", prev);
+                string? prev = TweakBackup.Get("windowed");
+                if (prev != null && prev != "<ausente>" && ParseDx(prev).TryGetValue(DxSwap, out var v)) SetDx(DxSwap, v);
+                else RemoveDx(DxSwap);
             },
-            Capture = CaptureOf(DxValue), Restore = RestoreOf(DxValue),
+            // Só esta chave (não a linha inteira): a Configuração gamer muda outras (VRR) na mesma linha e não podem voltar atrás com o Modo Jogo
+            Capture = () => JsonSerializer.Serialize(DxSettings().TryGetValue(DxSwap, out var v) ? v : null),
+            Restore = snap =>
+            {
+                if (snap.StartsWith('[')) { RestoreOf(DxValue)(snap); return; } // fotografia antiga (linha inteira)
+                if (JsonSerializer.Deserialize<string?>(snap) is string v) SetDx(DxSwap, v); else RemoveDx(DxSwap);
+            },
         },
 
         // ---------------- 2 · EQUILIBRADO ----------------
@@ -694,12 +701,26 @@ public static class TweakCatalog
 
     private static string? DxRaw() { using var k = Registry.CurrentUser.OpenSubKey(DxPath); return k?.GetValue("DirectXUserGlobalSettings") as string; }
 
-    private static Dictionary<string, string> DxSettings()
+    private static Dictionary<string, string> DxSettings() => ParseDx(DxRaw());
+
+    private static Dictionary<string, string> ParseDx(string? raw)
     {
         var d = new Dictionary<string, string>();
-        foreach (var part in (DxRaw() ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries))
+        foreach (var part in (raw ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries))
             if (part.Split('=', 2) is { Length: 2 } kv) d[kv[0].Trim()] = kv[1].Trim();
         return d;
+    }
+
+    private const string DxSwap = "SwapEffectUpgradeEnable";
+
+    /// <summary>Tira uma chave da linha DirectXUserGlobalSettings (se ficar vazia, apaga o valor: volta a "ausente").</summary>
+    private static void RemoveDx(string key)
+    {
+        var d = DxSettings();
+        if (!d.Remove(key)) return;
+        using var k = Registry.CurrentUser.CreateSubKey(DxPath);
+        if (d.Count == 0) k.DeleteValue("DirectXUserGlobalSettings", false);
+        else k.SetValue("DirectXUserGlobalSettings", string.Concat(d.Select(kv => $"{kv.Key}={kv.Value};")));
     }
 
     private static void SetDx(string key, string value)

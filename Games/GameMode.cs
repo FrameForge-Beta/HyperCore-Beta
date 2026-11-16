@@ -342,6 +342,22 @@ public static class GameMode
     public static Task Stop() => Task.Run(() => { StopCore(); });
 
     /// <summary>
+    /// O HyperCore vai fechar (ou o Windows está a terminar a sessão): repõe já, no thread que chama, sem avisos.
+    /// Chamar no UI thread (os avisos e eventos vão para a fila dele, por isso não há bloqueio). Espera no máximo 10 s
+    /// por um passo a meio; se não der, o arranque seguinte repõe (como depois de um crash).
+    /// </summary>
+    /// <param name="reopenApps">false quando o Windows está a terminar a sessão: não faz sentido voltar a abrir programas.</param>
+    public static void StopForExit(bool reopenApps)
+    {
+        lock (Gate)
+        {
+            if (_session == null) return;
+            if (!reopenApps) _session.Reopen = false;
+        }
+        StopCore(fromStartup: true, waitMs: 10000);
+    }
+
+    /// <summary>
     /// Para o atalho global e a bandeja: liga ou desliga. Antes da primeira confirmação não liga às cegas:
     /// abre a página do Modo Jogo e pede confirmação lá.
     /// </summary>
@@ -444,9 +460,9 @@ public static class GameMode
     }
 
     /// <summary>Repõe tudo pela fotografia da sessão ativa. Devolve true se havia sessão e foi reposta.</summary>
-    private static bool StopCore(bool fromStartup = false)
+    private static bool StopCore(bool fromStartup = false, int? waitMs = null)
     {
-        if (!Op.Wait(fromStartup ? 30000 : 0)) return false;
+        if (!Op.Wait(waitMs ?? (fromStartup ? 30000 : 0))) return false;
         GameModeSession? s;
         try
         {
@@ -525,7 +541,7 @@ public static class GameMode
             {
                 try
                 {
-                    if (games.Contains(p.Id)) continue;
+                    if (p.SessionId != MySession || games.Contains(p.Id)) continue; // só os desta sessão do Windows
                     path ??= ImagePath(p.Id);
                     if (p.MainWindowHandle != IntPtr.Zero) p.CloseMainWindow();
                 }
@@ -545,7 +561,7 @@ public static class GameMode
             {
                 foreach (var p in Process.GetProcessesByName(app.Process))
                 {
-                    try { if (!games.Contains(p.Id)) p.Kill(); } catch { }
+                    try { if (p.SessionId == MySession && !games.Contains(p.Id)) p.Kill(); } catch { }
                     finally { p.Dispose(); }
                 }
                 var w = Stopwatch.StartNew();
@@ -903,11 +919,20 @@ public static class GameMode
         return set;
     }
 
+    /// <summary>Sessão do Windows deste utilizador: o Modo Jogo nunca mexe em programas de outras contas abertas no PC.</summary>
+    private static readonly int MySession = GetMySession();
+    private static int GetMySession() { using var self = Process.GetCurrentProcess(); return self.SessionId; }
+
+    /// <summary>Há um processo com este nome aberto NESTA sessão do Windows.</summary>
     private static bool Alive(string process)
     {
-        var procs = Process.GetProcessesByName(process);
-        foreach (var p in procs) p.Dispose();
-        return procs.Length > 0;
+        bool alive = false;
+        foreach (var p in Process.GetProcessesByName(process))
+        {
+            try { alive |= p.SessionId == MySession; } catch { }
+            finally { p.Dispose(); }
+        }
+        return alive;
     }
 
     private static DateTime BootTimeUtc()

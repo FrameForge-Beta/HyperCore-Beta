@@ -132,8 +132,8 @@ public partial class MainWindow : Window
         _view = CollectionViewSource.GetDefaultView(_monitor.Rows);
         _view.GroupDescriptions.Add(new PropertyGroupDescription(nameof(SensorRow.Hardware)));
         SensorGrid.ItemsSource = _view;
-        SystemSub.Text = "Lendo informações do sistema…";
-        StatusText.Text = "Detectando o hardware…";
+        SystemSub.Text = "A ler as informações do sistema…";
+        StatusText.Text = "A detetar o hardware…";
 
         InitBench();
         SnapshotUsb();

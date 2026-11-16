@@ -143,7 +143,7 @@ public static class ShaderCache
         var d = JsonSerializer.Deserialize<Data>(e.Data);
         if (d == null) return (false, "Faltam os dados para desfazer.");
         if (!Directory.Exists(d.Root)) return (true, "A cópia já tinha sido apagada; não havia nada para devolver.");
-        int back = 0, kept = 0;
+        int back = 0, kept = 0, failed = 0;
         foreach (var it in d.Items)
         {
             if (!Directory.Exists(it.Copy)) continue;
@@ -157,9 +157,11 @@ public static class ShaderCache
                     File.Move(f.FullName, dest);
                     back++;
                 }
-                catch { kept++; }
+                catch { failed++; } // em uso ou sem acesso: fica na cópia para tentar outra vez
             }
         }
+        if (failed > 0)
+            return (false, $"{failed} ficheiro(s) da cache estão em uso e ficaram na cópia ({back} devolvidos). Fecha os jogos (e o launcher) e tenta de novo.");
         TryDelete(d.Root);
         return (true, kept > 0 ? $"Cache de shaders reposta ({back} ficheiros; {kept} já tinham sido criados de novo)." : "Cache de shaders reposta.");
     }

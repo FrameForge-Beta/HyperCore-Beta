@@ -415,9 +415,15 @@
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
                     <Border x:Name="b" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="10">
-                        <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+                        <Grid>
+                            <TextBlock x:Name="ph" Text="{TemplateBinding Tag}" Foreground="{DynamicResource Faint}"
+                                       Margin="{TemplateBinding Padding}" Padding="2,0,0,0" Visibility="Collapsed"
+                                       VerticalAlignment="Center" IsHitTestVisible="False"/>
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="Text" Value=""><Setter TargetName="ph" Property="Visibility" Value="Visible"/></Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="b" Property="BorderBrush" Value="{StaticResource Accent}"/></Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

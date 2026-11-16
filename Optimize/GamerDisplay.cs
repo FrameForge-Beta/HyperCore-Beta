@@ -270,8 +270,9 @@ public static class GamerDisplay
     }
 
     /// <summary>
-    /// Muda só a taxa de atualização (mantém a resolução). persist=false: mudança dinâmica (não fica gravada; se a app fechar, o Windows
-    /// volta ao modo gravado). persist=true: grava no registo. Devolve null se correu bem, ou a explicação do erro.
+    /// Muda só a taxa de atualização (mantém a resolução). persist=false: mudança dinâmica (não fica gravada no registo, mas continua
+    /// em vigor mesmo que a app feche, até à próxima mudança de modo ou reinício; ver GamerSetup.TryRefresh, que deixa uma marca
+    /// em disco para o arranque seguinte voltar atrás). persist=true: grava no registo. Devolve null se correu bem, ou a explicação do erro.
     /// </summary>
     public static string? SetRefresh(string gdi, int hz, bool persist)
     {

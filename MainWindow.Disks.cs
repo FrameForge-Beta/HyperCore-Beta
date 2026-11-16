@@ -20,7 +20,7 @@ public partial class MainWindow
         if (_diskHealthBusy) return;
         _diskHealthBusy = true;
         BtnDiskRefresh.IsEnabled = false;
-        DiskHealthStatus.Text = "Lendo os discos…";
+        DiskHealthStatus.Text = "A ler os discos…";
         try
         {
             var sensors = _monitor.Rows.ToList();

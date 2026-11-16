@@ -931,7 +931,7 @@
                                 <Border.RenderTransform><ScaleTransform x:Name="DrvProgress" ScaleX="0"/></Border.RenderTransform>
                             </Border>
                         </Grid>
-                        <TextBlock x:Name="DrvStatus" Text="Clique em VERIFICAR TUDO." Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                        <TextBlock x:Name="DrvStatus" Text="Carrega em VERIFICAR TUDO." Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,0,0,16"/>
 
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,0,14">
                             <StackPanel>
@@ -1172,10 +1172,10 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Margin="0,0,0,14">
-                            <TextBlock x:Name="LGameCount" Text="Procurando seus jogos…" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="LGameCount" Text="A procurar os teus jogos…" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
                         </StackPanel>
                         <StackPanel Grid.Row="1" Margin="0,0,0,10">
-                            <TextBox x:Name="LGameSearch" Tag="Buscar jogo…" TextChanged="LGameSearch_Changed" Margin="0,0,0,8"/>
+                            <TextBox x:Name="LGameSearch" Tag="Procurar jogo…" TextChanged="LGameSearch_Changed" Margin="0,0,0,8"/>
                             <WrapPanel>
                                 <Button x:Name="BtnScanGames" Style="{StaticResource OutlineButton}" Content="ATUALIZAR LISTA" Padding="14,8" Margin="0,0,8,0" Click="BtnScanGames_Click"/>
                                 <Button Style="{StaticResource OutlineButton}" Content="+ ADICIONAR .EXE" Padding="14,8" Click="BtnAddExe_Click"/>
@@ -1318,10 +1318,10 @@
                     </Grid.RowDefinitions>
                     <Grid Margin="0,0,0,20">
                         <StackPanel>
-                            <TextBlock x:Name="StatusText" Text="Lendo sensores…" Style="{StaticResource Sub}"/>
+                            <TextBlock x:Name="StatusText" Text="A ler sensores…" Style="{StaticResource Sub}"/>
                         </StackPanel>
                         <TextBox x:Name="SensorSearch" Width="260" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                 Tag="Buscar sensor ou hardware…" TextChanged="SensorSearch_Changed"/>
+                                 Tag="Procurar sensor ou hardware…" TextChanged="SensorSearch_Changed"/>
                     </Grid>
                     <WrapPanel x:Name="CategoryChips" Grid.Row="1" Margin="0,0,0,14"/>
                     <Border Grid.Row="2" Style="{StaticResource CardBorder}" Padding="6,14,6,6">
@@ -1423,7 +1423,7 @@
                     <StackPanel Margin="32,4,32,30">
                         <Grid Margin="0,0,0,18">
                             <StackPanel Margin="0,0,190,0">
-                                <TextBlock x:Name="ResultsSub" Text="FPS medidos nas suas sessões" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="ResultsSub" Text="FPS medidos nas tuas sessões" Style="{StaticResource Sub}" TextWrapping="Wrap"/>
                             </StackPanel>
                             <Button x:Name="BtnResultsRefresh" Style="{StaticResource OutlineButton}" Content="ATUALIZAR" Padding="18,9"
                                     HorizontalAlignment="Right" VerticalAlignment="Top" Click="BtnResultsRefresh_Click"/>
@@ -1521,7 +1521,7 @@
                                 <Grid>
                                     <StackPanel>
                                         <TextBlock Text="ANÁLISE DE SESSÃO" Style="{StaticResource Label}"/>
-                                        <TextBlock Text="Clique em iniciar, abra o jogo e jogue normalmente. Ao final você recebe o diagnóstico."
+                                        <TextBlock Text="Carrega em iniciar, abre o jogo e joga normalmente. No fim recebes o diagnóstico."
                                                    Foreground="{DynamicResource Muted}" TextWrapping="Wrap"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
@@ -2386,7 +2386,7 @@
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,0,14">
                             <StackPanel>
                                 <TextBlock Text="PLACAS E CONVERSORES CONECTADOS" Style="{StaticResource Label}" Margin="0,0,0,6"/>
-                                <TextBlock x:Name="MakerNoDevices" Text="Nenhuma placa ou conversor serial conectado. Plugue a placa e clique em VERIFICAR."
+                                <TextBlock x:Name="MakerNoDevices" Text="Nenhuma placa ou conversor série ligado. Liga a placa e carrega em VERIFICAR."
                                            Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,4,0,0"/>
                                 <ItemsControl x:Name="MakerDevices">
                                     <ItemsControl.ItemTemplate>

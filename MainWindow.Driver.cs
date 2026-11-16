@@ -42,11 +42,11 @@ public partial class MainWindow
         _drvCts = new CancellationTokenSource();
         try
         {
-            DrvSet("Lendo drivers instalados…", 0.1);
+            DrvSet("A ler os drivers instalados…", 0.1);
             var inv = await Task.Run(DriverManager.Inventory);
             DrvList.ItemsSource = inv;
 
-            DrvSet("Lendo placa de vídeo e placa-mãe…", 0.3);
+            DrvSet("A ler a placa gráfica e a placa-mãe…", 0.3);
             _drvGpus = await Task.Run(DriverManager.ReadGpus);
             _drvBoardInfo = await Task.Run(DriverManager.ReadBoard);
             ShowBoard();

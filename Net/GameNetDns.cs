@@ -229,7 +229,7 @@ public static class GameNetDns
         return (true, $"DNS mudado para {provider.Name} em {string.Join(", ", nics.Select(n => "«" + n.Name + "»"))}.");
     }
 
-    /// <summary>Repõe o DNS de cada adaptador como estava. Adaptadores que já não existem são ignorados.</summary>
+    /// <summary>Repõe o DNS de cada adaptador como estava (também os desligados). Adaptadores removidos do PC são ignorados.</summary>
     public static (bool ok, string msg) Restore(DnsChangeData data)
     {
         var failed = new List<string>();
@@ -250,7 +250,19 @@ public static class GameNetDns
     {
         missing = false;
         var nic = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(n => string.Equals(n.Id, a.Id, StringComparison.OrdinalIgnoreCase));
-        if (nic == null) { missing = true; return true; }
+        if (nic == null)
+        {
+            // Desligado ou fora da dock: não aparece na lista, mas a chave do TCP/IP continua lá. Escreve-se o valor
+            // diretamente (vazio = automático) e o Windows usa-o quando o adaptador voltar. Sem chave = foi mesmo removido.
+            try
+            {
+                using var key = Registry.LocalMachine.OpenSubKey($@"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces\{a.Id}", writable: true);
+                if (key == null) { missing = true; return true; }
+                key.SetValue("NameServer", a.WasStatic ? string.Join(",", a.Servers) : "", RegistryValueKind.String);
+                return true;
+            }
+            catch { return false; }
+        }
         int index = IndexOf(nic);
         if (index <= 0) return false;
         if (!a.WasStatic || a.Servers.Count == 0)

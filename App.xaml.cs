@@ -86,6 +86,7 @@ public partial class App : Application
         SessionEnding += (_, _) =>
         {
             try { FrameForge.Tuning.ScanService.Instance.OnAppExit(); } catch { }
+            try { FrameForge.Games.GameMode.StopForExit(reopenApps: false); } catch { } // Modo Jogo ligado: repõe antes de o Windows fechar
             FrameForge.Core.AppServices.ClearOcStartMark(); // desligar/reiniciar o Windows não é o OC de arranque a deitar o PC abaixo
         };
 
@@ -116,6 +117,7 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         try { FrameForge.Tuning.ScanService.Instance.OnAppExit(); } catch { } // scan a meio: Stock na gráfica
+        try { FrameForge.Games.GameMode.StopForExit(reopenApps: true); } catch { } // Modo Jogo ligado: repõe tudo antes de sair
         FrameForge.Core.AppServices.Stop();
         base.OnExit(e);
     }

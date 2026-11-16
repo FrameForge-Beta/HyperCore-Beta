@@ -119,6 +119,52 @@ public static class ProcessPriority
         return list.OrderBy(r => r.Exe, StringComparer.OrdinalIgnoreCase).ToList();
     }
 
+    // ---- regras escritas pelo HyperCore (a Central Desfazer não trata as de outros programas ou do utilizador como "mudadas por nós")
+
+    private static readonly object OwnedGate = new();
+    private static HashSet<string>? _owned;
+    private static string OwnedFile => Path.Combine(FrameForge.Core.AppPaths.Root, "prioridades-hypercore.json");
+
+    private static HashSet<string> Owned()
+    {
+        if (_owned != null) return _owned;
+        var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        try
+        {
+            if (File.Exists(OwnedFile) && System.Text.Json.JsonSerializer.Deserialize<List<string>>(File.ReadAllText(OwnedFile)) is { } list)
+                set.UnionWith(list);
+        }
+        catch { }
+        return _owned = set;
+    }
+
+    private static void SaveOwned()
+    {
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(OwnedFile)!);
+            string tmp = OwnedFile + ".tmp";
+            File.WriteAllText(tmp, System.Text.Json.JsonSerializer.Serialize(_owned!.OrderBy(x => x, StringComparer.OrdinalIgnoreCase).ToList()));
+            File.Move(tmp, OwnedFile, overwrite: true);
+        }
+        catch { }
+    }
+
+    /// <summary>true = esta regra foi gravada pelo HyperCore (desde a 0.5; as mais antigas não têm registo).</summary>
+    public static bool IsOwned(string exe)
+    {
+        lock (OwnedGate) return Owned().Contains(NormalizeExe(exe));
+    }
+
+    private static void MarkOwned(string exe, bool owned)
+    {
+        lock (OwnedGate)
+        {
+            var set = Owned();
+            if (owned ? set.Add(exe) : set.Remove(exe)) SaveOwned();
+        }
+    }
+
     /// <summary>Grava a prioridade de CPU e a de disco (Automático apaga só esse valor). Precisa de administrador.</summary>
     public static void Set(string exe, CpuPrio cpu, IoPrio io)
     {
@@ -140,6 +186,8 @@ public static class ProcessPriority
     {
         exe = NormalizeExe(exe);
         if (exe.Length == 0 || exe.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) throw new ArgumentException("Nome de executável inválido.");
+        if (value != null) MarkOwned(exe, true);
+        else if (Read(exe) is { } before && (name == "CpuPriorityClass" ? before.RawIo : before.RawCpu) == null) MarkOwned(exe, false); // a regra vai ficar vazia
         foreach (var view in Views)
         {
             using var hk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view);

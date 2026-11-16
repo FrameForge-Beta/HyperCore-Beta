@@ -19,7 +19,7 @@ public partial class MainWindow
         if (_energyBusy) return;
         _energyBusy = true;
         BtnEnergyRefresh.IsEnabled = false;
-        EnergyStatus.Text = "Lendo bateria e energia…";
+        EnergyStatus.Text = "A ler a bateria e a energia…";
         try
         {
             var sensors = _monitor.Rows.ToList();

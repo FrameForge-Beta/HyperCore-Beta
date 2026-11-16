@@ -1,3 +1,4 @@
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Windows;
@@ -80,7 +81,7 @@ public static class GamerSetup
         foreach (var k in RegKinds) ChangeJournal.RegisterHandler(k, UndoReg);
         ChangeJournal.RegisterHandler(KindHz, UndoHz);
         ChangeJournal.RegisterHandler(ShaderCache.Kind, ShaderCache.Undo);
-        Task.Run(() => { try { ShaderCache.PurgeExpired(); } catch { } });
+        Task.Run(() => { try { RecoverPendingHz(); } catch { } try { ShaderCache.PurgeExpired(); } catch { } });
     }
 
     // ================================================================== leitura
@@ -472,13 +473,44 @@ public static class GamerSetup
         return null;
     }
 
+    // Marca em disco durante a contagem dos 15 s: a mudança dinâmica fica em vigor mesmo que a app feche ou vá abaixo,
+    // por isso o arranque seguinte volta ao modo gravado se a marca ainda lá estiver (ninguém confirmou).
+    private sealed record PendingHz(string GdiName, string DevicePath, int OldHz);
+    private static string PendingFile => Path.Combine(AppPaths.Root, "hz-pendente.json");
+
+    private static void ClearPendingHz() { try { File.Delete(PendingFile); } catch { } }
+
+    private static void RecoverPendingHz()
+    {
+        if (!File.Exists(PendingFile)) return;
+        // Só marcas de uma execução anterior: uma escrita depois do arranque é uma contagem a decorrer agora
+        using (var self = System.Diagnostics.Process.GetCurrentProcess())
+            if (File.GetLastWriteTimeUtc(PendingFile) >= self.StartTime.ToUniversalTime()) return;
+        PendingHz? p = null;
+        try { p = JsonSerializer.Deserialize<PendingHz>(File.ReadAllText(PendingFile)); } catch { }
+        if (p != null && GamerDisplay.FindGdi(p.DevicePath, p.GdiName) is string gdi
+            && GamerDisplay.Current(gdi) is { } c && c.hz != p.OldHz)
+        {
+            GamerDisplay.RevertToSaved(gdi);
+            if (GamerDisplay.Current(gdi) is { } now && now.hz != p.OldHz) GamerDisplay.SetRefresh(gdi, p.OldHz, persist: false);
+        }
+        ClearPendingHz();
+    }
+
     /// <summary>Passo 1: muda a taxa de forma dinâmica (não gravada). Devolve null se correu bem.</summary>
-    public static string? TryRefresh(GamerMonitor m, int hz) => GamerDisplay.SetRefresh(m.GdiName, hz, persist: false);
+    public static string? TryRefresh(GamerMonitor m, int hz)
+    {
+        try { Directory.CreateDirectory(AppPaths.Root); File.WriteAllText(PendingFile, JsonSerializer.Serialize(new PendingHz(m.GdiName, m.DevicePath, m.CurrentHz))); } catch { }
+        string? err = GamerDisplay.SetRefresh(m.GdiName, hz, persist: false);
+        if (err != null) ClearPendingHz();
+        return err;
+    }
 
     /// <summary>Passo 2a (o utilizador confirmou): grava a nova taxa e regista na Central Desfazer.</summary>
     public static (bool ok, string msg) KeepRefresh(GamerMonitor m, int oldHz, int hz)
     {
         Init();
+        ClearPendingHz();
         string? err = GamerDisplay.SaveRefresh(m.GdiName, hz);
         if (err != null) { RevertRefresh(m, oldHz); return (false, err); }
 
@@ -505,6 +537,7 @@ public static class GamerSetup
     /// <summary>Passo 2b (não confirmou ou o tempo acabou): volta ao modo gravado (o de antes).</summary>
     public static void RevertRefresh(GamerMonitor m, int oldHz)
     {
+        ClearPendingHz();
         GamerDisplay.RevertToSaved(m.GdiName);
         // Se o driver não voltou sozinho, força a taxa antiga (dinâmica)
         if (GamerDisplay.Current(m.GdiName) is { } c && c.hz != oldHz) GamerDisplay.SetRefresh(m.GdiName, oldHz, persist: false);

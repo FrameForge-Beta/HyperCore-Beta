@@ -218,6 +218,9 @@ public static class UndoCenter
         int manual = s.TweakOverrides.Count;
         bool gameRunning = Games.GameRunner.TemporaryTweaksActive;
         string? blocked = gameRunning ? "Há um jogo aberto pelo botão JOGAR: estes ajustes voltam sozinhos quando o fechares." : !Elevated ? NeedAdmin : null;
+        // Ajustes que só estão mudados por causa do Modo Jogo: voltam com ele (a entrada "Modo Jogo ligado"), não aqui
+        var gameModeOwned = (Games.GameMode.Session?.Tweaks ?? new()).Where(x => !x.Had).Select(x => x.Id).ToHashSet();
+        const string GameModeBlocked = "O Modo Jogo está ligado: este ajuste volta sozinho quando o desligares.";
 
         DateTime? earliest = null;
         bool anyApprox = false;
@@ -282,8 +285,8 @@ public static class UndoCenter
                 Tip = string.Join("\n\n", new[] { t.What, t.Gain.Length > 0 ? "Ganho: " + t.Gain : "", $"Faz parte do nível {lvName}." }.Where(x => x.Length > 0)),
                 When = dates[t].When, WhenApprox = dates[t].Approx,
                 NeedsRestart = t.RestartToFinish,
-                Blocked = blocked,
-                OpenTag = "FF:optimize",
+                Blocked = gameModeOwned.Contains(t.Id) && !LevelKeeper.Desired(t, s) ? GameModeBlocked : blocked,
+                OpenTag = gameModeOwned.Contains(t.Id) ? "FF:gamemode" : "FF:optimize",
                 Stage = 4,
                 CoveredBy = hasLevel ? "level" : null,
                 Run = () => RevertTweakAsync(tw),
@@ -305,6 +308,8 @@ public static class UndoCenter
             {
                 t.Refresh(probe);
                 was = t.IsOn;
+                // já sem original guardado (reposto entretanto, ex.: pelo Modo Jogo): escrever agora punha o valor por omissão
+                if (!t.Touched) { now = was; return (string?)null; }
                 var e = t.Set(false, tg, quiet: true, exact: true);
                 now = t.IsOn;
                 return e;
@@ -451,6 +456,8 @@ public static class UndoCenter
             if (r.UnknownIo) parts.Add($"Disco: valor {r.RawIo}");
             else if (r.Io != IoPrio.Auto) parts.Add("Disco: " + ProcessPriority.Name(r.Io));
             bool foreign = r.UnknownCpu || r.UnknownIo;
+            bool ours = ProcessPriority.IsOwned(r.Exe);
+            string raw = string.Join(", ", new[] { r.RawCpu is int rc ? $"CpuPriorityClass={rc}" : "", r.RawIo is int ri ? $"IoPriority={ri}" : "" }.Where(x => x.Length > 0));
             list.Add(new UndoItem
             {
                 Key = "prio:" + r.Exe.ToLowerInvariant(),
@@ -460,14 +467,15 @@ public static class UndoCenter
                 Effect = $"Apaga a regra: {r.Exe} volta a abrir com a prioridade normal do Windows.",
                 Tip = r.UnknownCpu ? null : ProcessPriority.Explain(r.Cpu),
                 When = KeyWriteTime(r.Exe),
-                Caution = foreign ? "Tem um valor que o HyperCore não usa: deve ser de outro programa." : null,
+                Caution = foreign ? "Tem um valor que o HyperCore não usa: deve ser de outro programa."
+                        : !ours ? "O HyperCore não tem registo de ter criado esta regra: pode ser de outro programa ou tua." : null,
                 Blocked = admin ? null : NeedAdmin,
                 OpenTag = "FF:priorities",
                 Stage = 2,
                 Run = async () =>
                 {
                     await Task.Run(() => ProcessPriority.Set(rule.Exe, CpuPrio.Auto, IoPrio.Auto));
-                    return new UndoOutcome(true, $"{rule.Exe}: regra de prioridade apagada. Vale da próxima vez que abrir.");
+                    return new UndoOutcome(true, $"{rule.Exe}: regra de prioridade apagada ({raw}). Vale da próxima vez que abrir.");
                 },
             });
         }
