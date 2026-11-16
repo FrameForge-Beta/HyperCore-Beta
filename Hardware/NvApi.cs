@@ -11,7 +11,7 @@ public static class NvApi
 {
     // IDs públicos usados por várias ferramentas (nvidiaInspector, NvAPIWrapper)
     private const uint IdInitialize = 0x0150E828, IdEnumPhysicalGpus = 0xE5AC921F,
-                       IdGetPstates20 = 0x6FF81213, IdSetPstates20 = 0x0F4DAE6B;
+                       IdGetPstates20 = 0x6FF81213, IdSetPstates20 = 0x0F4DAE6B, IdGetBusId = 0x1BE0B8E5;
 
     public const int DomainGraphics = 0, DomainMemory = 4;
 
@@ -27,13 +27,28 @@ public static class NvApi
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)] private delegate int InitFn();
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)] private delegate int EnumFn([Out] IntPtr[] handles, out int count);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)] private delegate int PstatesFn(IntPtr gpu, IntPtr info);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)] private delegate int BusIdFn(IntPtr gpu, out uint busId);
 
     private static EnumFn? _enum;
     private static PstatesFn? _get, _set;
     private static bool? _ok;
     private static IntPtr _gpu;
+    // A NVAPI não é chamada em paralelo: o mesmo buffer/handle é partilhado por leitura e escrita.
+    private static readonly object Gate = new();
 
-    public static bool Available => _ok ??= Init();
+    public static bool Available { get { lock (Gate) return _ok ??= Init(); } }
+
+    /// <summary>Barramento PCI da GPU escolhida (null se desconhecido).</summary>
+    public static uint? SelectedBus { get; private set; }
+
+    /// <summary>
+    /// Esquece os handles e volta a inicializar no próximo uso. Depois de um crash do driver (TDR) os handles antigos podem ficar
+    /// inválidos; o afinador chama isto depois de cada falha.
+    /// </summary>
+    public static void Reset()
+    {
+        lock (Gate) { _ok = null; _gpu = IntPtr.Zero; }
+    }
 
     private static T? Fn<T>(uint id) where T : Delegate
     {
@@ -54,6 +69,13 @@ public static class NvApi
             var handles = new IntPtr[64];
             if (_enum(handles, out int n) != 0 || n < 1) return false;
             _gpu = handles[0];
+            SelectedBus = null;
+            // Várias GPUs: usa a mesma placa que a NVML escolheu (a dedicada com mais VRAM), comparando o barramento PCI.
+            if (n > 1 && Nvml.FirstDevice() is IntPtr nh && nh != IntPtr.Zero && Nvml.Pci(nh) is Nvml.PciInfo pci && Fn<BusIdFn>(IdGetBusId) is BusIdFn bus)
+            {
+                for (int i = 0; i < Math.Min(n, handles.Length); i++)
+                    if (bus(handles[i], out uint b) == 0 && b == pci.Bus) { _gpu = handles[i]; SelectedBus = b; break; }
+            }
             return true;
         }
         catch (DllNotFoundException) { return false; }
@@ -65,7 +87,18 @@ public static class NvApi
     /// <summary>Lê os offsets atuais do P0 (desempenho máximo) e a faixa que o driver aceita.</summary>
     public static (ClockDelta? Core, ClockDelta? Mem, string? Error) Read()
     {
-        if (!Available || _get == null) return (null, null, "NVAPI indisponível");
+        lock (Gate)
+        {
+            var r = ReadCore();
+            // Handle inválido depois de um reset do driver: reinicializa uma vez e tenta de novo
+            if (r.Error != null && r.Error.StartsWith("GetPstates20", StringComparison.Ordinal)) { _ok = null; r = ReadCore(); }
+            return r;
+        }
+    }
+
+    private static (ClockDelta? Core, ClockDelta? Mem, string? Error) ReadCore()
+    {
+        if (!(_ok ??= Init()) || _get == null) return (null, null, "NVAPI indisponível");
         IntPtr buf = Marshal.AllocHGlobal(SizeV2);
         try
         {
@@ -108,7 +141,18 @@ public static class NvApi
     /// <summary>Aplica um offset (MHz) ao domínio pedido no P0. Devolve null se correu bem, ou o motivo da falha.</summary>
     public static string? SetOffset(int domain, int offsetMHz, int typeId)
     {
-        if (!Available || _set == null) return "NVAPI indisponível";
+        lock (Gate)
+        {
+            var (err, rc) = SetCore(domain, offsetMHz, typeId);
+            // Códigos que não são "valor recusado" (ex.: handle inválido depois de um TDR): reinicializa e tenta uma vez mais
+            if (err != null && rc is not (0 or -5 or -9 or -104)) { _ok = null; (err, _) = SetCore(domain, offsetMHz, typeId); }
+            return err;
+        }
+    }
+
+    private static (string? Error, int Rc) SetCore(int domain, int offsetMHz, int typeId)
+    {
+        if (!(_ok ??= Init()) || _set == null) return ("NVAPI indisponível", 1);
         IntPtr buf = Marshal.AllocHGlobal(SizeV1);
         try
         {
@@ -124,15 +168,15 @@ public static class NvApi
             Marshal.WriteInt32(buf, ce + 4, typeId);
             Marshal.WriteInt32(buf, ce + 12, offsetMHz * 1000);
             int rc = _set(_gpu, buf);
-            return rc == 0 ? null : rc switch
+            return (rc == 0 ? null : rc switch
             {
                 -5 => "o driver recusou o valor (fora da faixa)",
                 -9 => "versão de estrutura incompatível com este driver",
                 -104 => "o driver não permite overclock nesta placa (portátil bloqueado?)",
                 _ => $"SetPstates20 falhou (código {rc})"
-            };
+            }, rc);
         }
-        catch (Exception ex) { return ex.Message; }
+        catch (Exception ex) { return (ex.Message, -1); }
         finally { Marshal.FreeHGlobal(buf); }
     }
 

@@ -17,15 +17,13 @@ public sealed class SettingsPage : UserControl
         _setTrayMode = setTrayMode;
         Ui.UseTheme(this);
 
-        var content = new StackPanel { Margin = new Thickness(28) };
-        content.Children.Add(Ui.T("Configurações", "H1"));
-        content.Children.Add(Ui.T("Preferências da aplicação", "MutedText", 13));
+        var content = new StackPanel { Margin = Ui.PageMargin };
 
-        var general = new StackPanel { Margin = new Thickness(0, 20, 0, 0) };
+        var general = new StackPanel();
         general.Children.Add(Ui.T("Arranque do Windows", "H2"));
         _startup = new CheckBox
         {
-            Content = "Iniciar o FrameForge ao entrar no Windows",
+            Content = "Iniciar o HyperCore ao entrar no Windows",
             IsChecked = AppServices.Settings.StartWithWindows,
             Margin = new Thickness(0, 8, 0, 5),
         };
@@ -43,7 +41,7 @@ public sealed class SettingsPage : UserControl
         _startMinimized.Unchecked += (_, _) => SetStartMinimized(false);
         general.Children.Add(_startMinimized);
         general.Children.Add(Ui.T(
-            "A tarefa de arranque inicia o FrameForge com as permissões necessárias. Com a bandeja ativa, fechar a janela mantém a aplicação na área de notificação; usa o menu do ícone para sair.",
+            "A tarefa de arranque inicia o HyperCore com as permissões necessárias. Com a bandeja ativa, fechar a janela mantém a aplicação na área de notificação; usa o menu do ícone para sair.",
             "MutedText", 12));
 
         _status = Ui.T("", "MutedText", 12);
@@ -64,8 +62,8 @@ public sealed class SettingsPage : UserControl
             AppServices.Settings.SaveOrThrow();
             _startup.IsChecked = enabled;
             _status.Text = enabled
-                ? "O FrameForge iniciará quando entrares no Windows."
-                : "O FrameForge foi removido do arranque do Windows.";
+                ? "O HyperCore iniciará quando entrares no Windows."
+                : "O HyperCore foi removido do arranque do Windows.";
         }
         catch (Exception ex)
         {
@@ -92,8 +90,8 @@ public sealed class SettingsPage : UserControl
                 WindowsStartupRegistration.Update(enabled: true, startMinimized: minimized);
             AppServices.Settings.SaveOrThrow();
             _status.Text = minimized
-                ? "O FrameForge iniciará na área de notificação."
-                : "O FrameForge iniciará com a janela visível.";
+                ? "O HyperCore iniciará na área de notificação."
+                : "O HyperCore iniciará com a janela visível.";
         }
         catch (Exception ex)
         {

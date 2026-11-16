@@ -1,6 +1,6 @@
 # Drivers seriais incluídos
 
-Drivers oficiais, sem modificação, incluídos no FrameForge e instalados pela página
+Drivers oficiais, sem modificação, incluídos no HyperCore e instalados pela página
 **Maker › Drivers seriais › Drivers incluídos** (via `pnputil /add-driver /install`).
 Cada pasta é um pacote `.inf` + `.cat` (+ `.sys`/`.dll`) com a assinatura original do fabricante.
 

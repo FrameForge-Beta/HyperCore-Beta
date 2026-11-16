@@ -152,12 +152,12 @@ public partial class MainWindow
         if (_makerBusy) return;
         if (!AppInstaller.WingetAvailable)
         {
-            MakerIdeResult.Text = "O winget não foi encontrado: abra FERRAMENTAS › Instalar apps para ver como resolver, ou baixe a IDE no site.";
+            MakerIdeResult.Text = "O winget não foi encontrado: abre Instalar aplicações no menu para ver como resolver, ou transfere a IDE no site.";
             return;
         }
         if (MakerDrivers.IdeRunning)
         {
-            MakerIdeResult.Text = "Feche a Arduino IDE antes (salve o sketch) e clique de novo.";
+            MakerIdeResult.Text = "Fecha a Arduino IDE antes (guarda o sketch) e carrega de novo.";
             return;
         }
         bool installed = MakerDrivers.IdeVersion() != null;

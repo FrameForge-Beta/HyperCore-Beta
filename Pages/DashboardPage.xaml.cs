@@ -3,15 +3,23 @@ using System.Windows.Controls;
 using FrameForge.Core;
 using FrameForge.Hardware;
 using FrameForge.Optimize;
+using FrameForge.Tuning;
 
 namespace FrameForge.Pages;
 
 public partial class DashboardPage : UserControl
 {
+    private SystemProbe? _probe;
+
     public DashboardPage()
     {
         InitializeComponent();
         Loaded += async (_, _) => Render(await AppServices.Probe);
+        // Scan novo: o cartão "Último scan" e os conselhos medidos atualizam-se sozinhos
+        ScanService.Instance.Completed += r =>
+        {
+            if (r.Resultado == ScanOutcome.Completo) Dispatcher.BeginInvoke(() => { if (_probe != null) Render(_probe); });
+        };
     }
 
     private async void Refresh_Click(object sender, RoutedEventArgs e)
@@ -24,6 +32,9 @@ public partial class DashboardPage : UserControl
 
     private void Render(SystemProbe p)
     {
+        _probe = p;
+        var last = ScanService.Instance.Last;
+        RenderScan(last);
         Stats.Children.Clear();
         var disp = p.PrimaryDisplay;
         Stats.Children.Add(Ui.Stat("Processador", $"{p.Cores}C/{p.Threads}T", p.CpuName));
@@ -53,7 +64,10 @@ public partial class DashboardPage : UserControl
         if (p.RunningTools.Count > 0) Line("Abertos", string.Join(", ", p.RunningTools));
 
         Advice.Children.Clear();
-        var list = HardwareAdvisor.Analyze(p);
+        // Com um scan feito, os conselhos medidos (latência da RAM, throttle, disco lento…) entram na lista
+        List<FrameForge.Optimize.Advice> list;
+        try { list = last != null ? HardwareAdvisor.AnalyzeWithScan(p, last) : HardwareAdvisor.Analyze(p); }
+        catch { list = HardwareAdvisor.Analyze(p); }
         foreach (var a in list)
         {
             var sp = new StackPanel();
@@ -65,8 +79,49 @@ public partial class DashboardPage : UserControl
             var fix = Ui.T("➜ " + a.Action, "Body");
             fix.Margin = new Thickness(0, 8, 0, 0);
             sp.Children.Add(fix);
+            if (a.Page is string page)
+            {
+                var go = Ui.Btn(a.PageLabel ?? "Abrir", (_, _) => AppServices.Navigate(page));
+                go.Margin = new Thickness(0, 10, 0, 0);
+                go.HorizontalAlignment = HorizontalAlignment.Left;
+                sp.Children.Add(go);
+            }
             Advice.Children.Add(Ui.Card(sp, Ui.Severity(a.Severity)));
         }
         if (list.Count == 0) Advice.Children.Add(Ui.T("Nada de relevante. 👌", "MutedText"));
+    }
+
+    /// <summary>Cartão "Último scan": quem segura o PC (medido) e atalho para o relatório; ou o convite para fazer um.</summary>
+    private void RenderScan(ScanReport? r)
+    {
+        ScanCard.Children.Clear();
+        var sp = new StackPanel();
+        var head = new DockPanel();
+        var open = Ui.Btn(r == null ? "Fazer um scan" : "Ver relatório", (_, _) => AppServices.Navigate("FF:scan"), r == null ? "BtnAccent" : "Btn");
+        open.VerticalAlignment = VerticalAlignment.Top;
+        DockPanel.SetDock(open, Dock.Right);
+        head.Children.Add(open);
+        var txt = new StackPanel();
+        if (r == null)
+        {
+            txt.Children.Add(Ui.T("Ainda não fizeste um scan", "H2"));
+            txt.Children.Add(Ui.T("O scan mede o PC a fundo (15–45 min) e diz quem está a segurar o FPS, com números reais em vez de estimativas.", "MutedText"));
+        }
+        else
+        {
+            txt.Children.Add(Ui.T($"ÚLTIMO SCAN · {r.Data:dd/MM/yyyy HH:mm}" + (r.Nota is int n ? $" · NOTA {n}/100" : ""), "Label", 10.5, Ui.Res("Accent2")));
+            var lim = r.Segurar.Select(f => f.Titulo).Where(t => t.Length > 0).Take(2).ToList();
+            var main = Ui.T(lim.Count > 0 ? lim[0] : r.Resumo, "H2", 16);
+            main.Margin = new Thickness(0, 6, 0, 2);
+            txt.Children.Add(main);
+            foreach (var extra in lim.Skip(1)) txt.Children.Add(Ui.T(extra, "Body"));
+            if (r.Oc is { Estavel: true, GanhoPct: double g })
+                txt.Children.Add(Ui.T($"Overclock estável encontrado: {g:+0.#;-0.#;0}% FPS.", "MutedText"));
+            if ((DateTime.Now - r.Data).TotalDays > 60)
+                txt.Children.Add(Ui.T("Este scan tem mais de 2 meses: se mudaste peças ou drivers, faz um novo.", "MutedText", 12.5, Ui.Res("Warn")));
+        }
+        head.Children.Add(txt);
+        sp.Children.Add(head);
+        ScanCard.Children.Add(Ui.Card(sp, Ui.Res("Accent")));
     }
 }

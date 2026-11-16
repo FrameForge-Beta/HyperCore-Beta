@@ -28,7 +28,7 @@ public sealed class StartupBackup
     public bool Machine { get; set; }
     public string Name { get; set; } = "";
     public string? Command { get; set; }   // registro
-    public string? Backup { get; set; }    // pasta: cópia do atalho em %AppData%\FrameForge\Startup
+    public string? Backup { get; set; }    // pasta: cópia do atalho em %AppData%\HyperCore\Startup
     public string? Original { get; set; }  // pasta: caminho original
 }
 

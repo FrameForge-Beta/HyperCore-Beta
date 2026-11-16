@@ -11,7 +11,7 @@ public sealed record MeasuredSession(
 
 public static class MeasuredSessions
 {
-    /// <summary>Lê os resumos JSON que ficam ao lado de cada relatório em %AppData%\FrameForge\Relatorios.</summary>
+    /// <summary>Lê os resumos JSON que ficam ao lado de cada relatório em %AppData%\HyperCore\Relatorios.</summary>
     public static List<MeasuredSession> Load(int max = 500)
     {
         var list = new List<MeasuredSession>();

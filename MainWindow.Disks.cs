@@ -20,7 +20,7 @@ public partial class MainWindow
         if (_diskHealthBusy) return;
         _diskHealthBusy = true;
         BtnDiskRefresh.IsEnabled = false;
-        DiskHealthStatus.Text = "Lendo os discos…";
+        DiskHealthStatus.Text = "A ler os discos…";
         try
         {
             var sensors = _monitor.Rows.ToList();
@@ -135,7 +135,7 @@ public partial class MainWindow
             Title = "Exportar relatório",
             Filter = "Relatório HTML (*.html)|*.html|Dados JSON (*.json)|*.json",
             DefaultExt = ".html",
-            FileName = $"FrameForge-relatorio-{DateTime.Now:yyyyMMdd-HHmm}",
+            FileName = $"HyperCore-relatorio-{DateTime.Now:yyyyMMdd-HHmm}",
         };
         if (dlg.ShowDialog(this) != true) return;
         string path = dlg.FileName;
@@ -175,7 +175,7 @@ public partial class MainWindow
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, "Não foi possível gerar o relatório:\n" + ex.Message, "FrameForge", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(this, "Não foi possível gerar o relatório:\n" + ex.Message, "HyperCore", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
         finally
         {
@@ -207,7 +207,7 @@ public partial class MainWindow
     {
         try
         {
-            var info = Application.GetResourceStream(new Uri("pack://application:,,,/Assets/logo-badge.png"));
+            var info = Application.GetResourceStream(new Uri("pack://application:,,,/HyperCore;component/Assets/logo-badge.png"));
             using var ms = new MemoryStream();
             info.Stream.CopyTo(ms);
             return Convert.ToBase64String(ms.ToArray());

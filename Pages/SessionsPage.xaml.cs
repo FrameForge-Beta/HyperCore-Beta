@@ -10,6 +10,7 @@ namespace FrameForge.Pages;
 
 public partial class SessionsPage : UserControl
 {
+    private static readonly string SelfName = Process.GetCurrentProcess().ProcessName;   // a própria app não é um jogo
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(1.5) };
     private readonly DispatcherTimer _saveSensitivityLater = new() { Interval = TimeSpan.FromMilliseconds(500) };
 
@@ -32,7 +33,7 @@ public partial class SessionsPage : UserControl
         foreach (var p in Process.GetProcesses()) { names[p.Id] = p.ProcessName; p.Dispose(); } // lista do sistema, sem abrir processos
         foreach (var (pid, fps) in AppServices.Frames.ActivePresenters())
         {
-            if (!names.TryGetValue(pid, out var name) || name is "dwm" or "FrameForge") continue;
+            if (!names.TryGetValue(pid, out var name) || name == "dwm" || name.Equals(SelfName, StringComparison.OrdinalIgnoreCase)) continue;
             var item = new ListBoxItem { Content = $"{name}   ·   {fps:0} FPS   ·   PID {pid}", Tag = pid };
             Presenters.Items.Add(item);
             if (sel == pid) item.IsSelected = true;
@@ -84,7 +85,7 @@ public partial class SessionsPage : UserControl
     {
         bool on = AdvCpu.IsChecked == true;
         if (on && MessageBox.Show("Isto carrega o driver PawnIO para ler a temperatura da CPU. Com anti-cheats de kernel (Valorant, FACEIT, etc.) o jogo pode recusar abrir enquanto estiver ativo. Ligar mesmo assim?",
-                "FrameForge", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+                "HyperCore", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
         {
             AdvCpu.IsChecked = false;
             return;

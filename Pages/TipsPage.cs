@@ -11,25 +11,26 @@ public sealed class TipsPage : UserControl
         ("Porque é que esta app não dá ban", "ANTI-CHEAT", new[]
         {
             "Os anti-cheats (Vanguard, EAC, BattlEye, FACEIT, Ricochet) procuram programas que MEXEM no jogo: injetar DLLs, ler/escrever a memória do jogo, hooks no DirectX, drivers vulneráveis.",
-            "O FrameForge não faz nada disso: os frames vêm de eventos ETW que o próprio Windows emite (é o método do PresentMon/CapFrameX, usado em reviews com Valorant), os sensores vêm do driver da NVIDIA e dos contadores do Windows, e o processo do jogo nunca é aberto — nem para mudar a prioridade.",
+            "O HyperCore não faz nada disso: os frames vêm de eventos ETW que o próprio Windows emite (é o método do PresentMon/CapFrameX, usado em reviews com Valorant), os sensores vêm do driver da NVIDIA e dos contadores do Windows, e o processo do jogo nunca é aberto — nem para mudar a prioridade.",
             "O overclock é aplicado no driver da placa, fora do jogo (igual ao Afterburner sem o RTSS). Os anti-cheats não se importam com isso.",
-            "O overlay do FrameForge é uma janela própria transparente por cima do jogo. Só aparece em modo 'janela sem bordas'; em ecrã inteiro exclusivo o Windows não deixa nenhuma janela por cima.",
+            "O overlay do HyperCore é uma janela própria transparente por cima do jogo. Só aparece em modo 'janela sem bordas'; em ecrã inteiro exclusivo o Windows não deixa nenhuma janela por cima.",
             "Exceção a ter cuidado: os 'Sensores avançados da CPU' usam o driver PawnIO. É assinado e moderno, mas alguns anti-cheats de kernel recusam drivers deste tipo. Por isso está desligado por omissão.",
             "Nenhum programa externo pode garantir 100% que nunca terás problemas — a regra de ouro é: nada que injete, leia memória ou automatize input.",
         }),
         ("Valorant: estatísticas e overlay", "VALORANT", new[]
         {
             "Para ver FPS no Valorant usa: Definições → Vídeo → Estatísticas (FPS do cliente, tempo de frame CPU/GPU, latência de rede, perda de pacotes). É a fonte mais fiável e é oficial.",
-            "O overlay externo do FrameForge requer 'janela sem bordas'; não aparece sobre ecrã inteiro exclusivo.",
+            "O overlay externo do HyperCore requer 'janela sem bordas'; não aparece sobre ecrã inteiro exclusivo.",
             "Para saber DE ONDE vêm as quebras, joga com 'gravar sessão' (botão JOGAR) e abre o relatório: cada quebra aparece no minuto em que aconteceu com a causa (VRAM, RAM, drivers, programa em segundo plano, CPU, GPU, rede ou o próprio jogo).",
             "O Valorant depende muito da CPU e da RAM: XMP/EXPO ligado e poucos programas em segundo plano valem mais do que qualquer tweak do Windows.",
         }),
         ("Níveis de desempenho", "OTIMIZAÇÃO", new[]
         {
-            "Seguro: só o que a Microsoft recomenda para jogos (Modo de Jogo, desligar a gravação da Game Bar, otimizações em janela, plano Alto desempenho, rato sem aceleração). Para qualquer PC.",
+            "Seguro: Modo de Jogo, sem gravação da Game Bar, otimizações em janela, rato sem aceleração e plano Alto desempenho. Para qualquer PC.",
             "Equilibrado: tira poupanças de energia que causam micro-atrasos (USB, PCIe), ativa o HAGS e trava apps da Loja em segundo plano. Recomendado para desktop.",
-            "Competitivo: plano Desempenho Máximo, núcleos sempre acordados, temporizador global, sem upload P2P de atualizações. Desktop. Mais consumo em repouso.",
-            "Extremo: desliga serviços de fundo (indexação da pesquisa, SysMain em PCs só com SSD). Perdes conveniência. Só se jogas competitivo a sério.",
+            "Competitivo: troca para o plano Desempenho Máximo, núcleos sempre acordados, temporizador global e sem envio P2P de atualizações. Só desktop. Mais consumo em repouso.",
+            "Extremo: desliga a indexação da pesquisa e, em PCs sem HDD, o SysMain. Perdes conveniência; fica completo depois de reiniciar.",
+            "O nível fica guardado: com 'Manter sempre aplicado', a app volta a aplicar sozinha o que o Windows ou outro programa desfizer.",
             "Ganho realista somando tudo: 0–5% de FPS médio, mas 1% low mais estável e menos picos. Quem promete +30% com tweaks do Windows está a mentir — esses ganhos vêm de hardware, XMP, drivers e definições do jogo.",
         }),
         ("O que dá MESMO mais FPS (por ordem)", "PRIORIDADES", new[]
@@ -68,19 +69,15 @@ public sealed class TipsPage : UserControl
         {
             "Overclock e undervolt nunca são garantidos: cada chip é diferente. Testa sempre e usa a guarda de crash.",
             "Em portáteis: nada de níveis Competitivo/Extremo nem OC. Prefere limitar FPS e undervolt — temperatura é o teu limite.",
-            "A app precisa de administrador para ler frames por ETW, aplicar overclock e mudar definições do sistema. Tudo o que muda fica registado e pode ser reposto em 'Restaurar tudo'.",
-            "Se o PC ficar instável depois de um ajuste: Overclock → Stock, Otimização → Restaurar tudo, e reinicia.",
+            "A app precisa de administrador para ler frames por ETW, aplicar overclock e mudar definições do sistema. Tudo o que muda fica registado e pode ser reposto em 'Repor Windows original'.",
+            "Se o PC ficar instável depois de um ajuste: Overclock → Stock, Níveis de desempenho → Repor Windows original, e reinicia.",
         }),
     };
 
     public TipsPage()
     {
         Ui.UseTheme(this);
-        var root = new StackPanel { Margin = new Thickness(28, 24, 28, 40) };
-        root.Children.Add(Ui.T("Dicas e avisos", "H1"));
-        var sub = Ui.T("O que funciona, o que é mito e porque é que esta app é segura com anti-cheat.", "MutedText");
-        sub.Margin = new Thickness(0, 0, 0, 16);
-        root.Children.Add(sub);
+        var root = new StackPanel { Margin = Ui.PageMargin };
         foreach (var (title, tag, lines) in Sections)
         {
             var sp = new StackPanel();

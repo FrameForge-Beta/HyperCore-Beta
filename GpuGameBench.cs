@@ -28,15 +28,30 @@ public sealed class GpuGameBench
     public TimeSpan Duration { get; init; } = TimeSpan.FromSeconds(60);
     public string AdapterName { get; init; } = "";
 
+    /// <summary>Tempo máximo à espera que a GPU acabe um frame. Mais do que isto = a GPU deixou de responder (TDR/crash do driver).</summary>
+    public TimeSpan FenceTimeout { get; init; } = TimeSpan.FromSeconds(8);
+
     public double Progress { get; private set; }
     public double CurrentFps { get; private set; }
     public string? Error { get; private set; }
     public bool Cancelled { get; private set; }
+    /// <summary>A janela foi fechada ou carregaram em ESC (também conta como <see cref="Cancelled"/>).</summary>
+    public bool ClosedByUser { get; private set; }
+    /// <summary>O dispositivo D3D foi removido/reiniciado pelo driver (crash do driver, TDR, overclock instável).</summary>
+    public bool DeviceRemoved { get; private set; }
+    /// <summary>A GPU deixou de terminar frames dentro de <see cref="FenceTimeout"/>.</summary>
+    public bool Hung { get; private set; }
+    /// <summary>Frames concluídos até agora (para um vigia confirmar que a GPU continua a trabalhar).</summary>
+    public long FramesDone => Interlocked.Read(ref _framesDone);
 
     private volatile bool _stop;
     private WndProc? _wndProc;
+    private long _framesDone;
 
     public void Cancel() => _stop = true;
+
+    // DXGI_ERROR_DEVICE_REMOVED / HUNG / RESET / DRIVER_INTERNAL_ERROR
+    private static bool IsRemovedCode(int hr) => hr is unchecked((int)0x887A0005) or unchecked((int)0x887A0006) or unchecked((int)0x887A0007) or unchecked((int)0x887A0020);
 
     // ------------------------------------------------------------------ cena (CPU)
 
@@ -338,10 +353,12 @@ float4 PostPS(FsOut i) : SV_TARGET
         var oldPriority = Thread.CurrentThread.Priority;
         Thread.CurrentThread.Priority = ThreadPriority.Highest; // medição de frametime precisa de pontualidade
         IntPtr hwnd = IntPtr.Zero;
-        string cls = "FrameForgeGameBench" + Environment.TickCount64;
+        string cls = "HyperCoreGameBench" + Environment.TickCount64;
         IntPtr hInst = GetModuleHandleW(null);
         var keep = new List<IDisposable>();
         T K<T>(T d) where T : IDisposable { keep.Add(d); return d; }
+        ID3D11Device? dev = null;
+        Interlocked.Exchange(ref _framesDone, 0);
 
         try
         {
@@ -376,6 +393,7 @@ float4 PostPS(FsOut i) : SV_TARGET
             D3D11.D3D11CreateDevice(adapter, DriverType.Unknown, DeviceCreationFlags.BgraSupport,
                                     new[] { FeatureLevel.Level_11_1, FeatureLevel.Level_11_0 }, out ID3D11Device device, out ID3D11DeviceContext ctx).CheckError();
             K(device); K(ctx);
+            dev = device;
 
             var swap = K(factory.CreateSwapChainForHwnd(device, hwnd,
                 new SwapChainDescription1((uint)Width, (uint)Height, Format.B8G8R8A8_UNorm, false, Usage.RenderTargetOutput, 2,
@@ -486,12 +504,25 @@ float4 PostPS(FsOut i) : SV_TARGET
                 {
                     // Espera ativa (sem ceder o núcleo): ceder a vez pode custar um "tick" de 15,6 ms do Windows
                     // e registraria uma travada que a GPU não teve.
-                    while (!ctx.IsDataAvailable(fence) && !_stop) Thread.SpinWait(20);
+                    long waitStart = Stopwatch.GetTimestamp();
+                    while (!ctx.IsDataAvailable(fence) && !_stop)
+                    {
+                        Thread.SpinWait(20);
+                        // Nunca ficar preso: se a GPU não acaba o frame em FenceTimeout, o driver foi abaixo (ou está a recuperar)
+                        if (Stopwatch.GetElapsedTime(waitStart) > FenceTimeout)
+                        {
+                            Hung = true;
+                            DeviceRemoved = device.DeviceRemovedReason.Failure;
+                            throw new TimeoutException("A placa gráfica deixou de responder (o driver pode ter reiniciado).");
+                        }
+                    }
+                    if (_stop) break;
                     // Momento em que a GPU terminou um frame: intervalo = tempo de frame real da GPU.
                     double done = clock.Elapsed.TotalMilliseconds;
                     if (lastDone >= 0) frameTimes.Add(done - lastDone);
                     lastDone = done;
                     frames++; titleFrames++;
+                    Interlocked.Increment(ref _framesDone);
                 }
 
                 // Câmera pelo tempo (não pelos frames): a mesma cena aparece no mesmo segundo em qualquer PC.
@@ -571,7 +602,13 @@ float4 PostPS(FsOut i) : SV_TARGET
                 {
                     // DoNotWait: se a tela ainda não liberou o buffer, pula esta apresentação em vez de travar a fila da GPU.
                     ctx.CopyResource(backBuffer, ldr);
-                    if (swap.Present(0, PresentFlags.DoNotWait).Success) lastPresent = now;
+                    var hr = swap.Present(0, PresentFlags.DoNotWait);
+                    if (hr.Success) lastPresent = now;
+                    else if (IsRemovedCode(hr.Code))
+                    {
+                        DeviceRemoved = true;
+                        throw new InvalidOperationException($"O driver de vídeo removeu o dispositivo (0x{hr.Code:X8}).");
+                    }
                 }
                 if (now - lastTitle >= 0.5)
                 {
@@ -592,6 +629,9 @@ float4 PostPS(FsOut i) : SV_TARGET
         catch (Exception ex)
         {
             Error = ex.Message;
+            // Distingue "o driver foi abaixo" de outros erros (falta de memória, shader, janela…)
+            if (IsRemovedCode(ex.HResult)) DeviceRemoved = true;
+            try { if (dev != null && dev.DeviceRemovedReason.Failure) DeviceRemoved = true; } catch { DeviceRemoved = true; }
             return null;
         }
         finally
@@ -607,7 +647,7 @@ float4 PostPS(FsOut i) : SV_TARGET
     {
         const uint WM_CLOSE = 0x0010, WM_KEYDOWN = 0x0100, WM_SYSCOMMAND = 0x0112;
         if (msg == WM_SYSCOMMAND && ((long)wParam & 0xFFF0) == 0xF100) return IntPtr.Zero; // ALT não pausa
-        if (msg == WM_CLOSE || (msg == WM_KEYDOWN && wParam == (IntPtr)0x1B)) { _stop = true; return IntPtr.Zero; }
+        if (msg == WM_CLOSE || (msg == WM_KEYDOWN && wParam == (IntPtr)0x1B)) { ClosedByUser = true; _stop = true; return IntPtr.Zero; }
         return DefWindowProcW(hWnd, msg, wParam, lParam);
     }
 

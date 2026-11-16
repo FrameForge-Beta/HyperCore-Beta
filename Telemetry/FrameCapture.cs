@@ -16,7 +16,7 @@ namespace FrameForge.Telemetry;
 /// </summary>
 public sealed class FrameCapture : IDisposable
 {
-    private const string SessionName = "FrameForge-Present";
+    private const string SessionName = "HyperCore-Present";
     private static readonly Guid DxgiProvider = new("CA11C036-0102-4A2D-A6AD-F03CFED5D3C9");
     private static readonly Guid D3D9Provider = new("783ACA0A-790E-4D7F-8451-AA850511C6B9");
     private const int DxgiPresentStart = 42, DxgiPresentStop = 43, D3D9PresentStart = 1, D3D9PresentStop = 2;

@@ -39,7 +39,7 @@ public static class Optimizer
         "ShellExperienceHost", "SearchHost", "SearchIndexer", "TextInputHost", "SecurityHealthService", "SecurityHealthSystray",
         "MsMpEng", "NisSrv", "SgrmBroker", "audiodg", "conhost", "dllhost", "spoolsv", "WmiPrvSE", "LockApp", "ApplicationFrameHost",
         "SystemSettings", "smartscreen", "MemCompression", "Secure System", "WUDFHost", "dasHost", "nvcontainer", "NVDisplay.Container",
-        "atiesrxx", "atieclxx", "amdfendrsr", "RadeonSoftware", "igfxEM", "PawnIO", "FrameForge", "cmd", "powershell", "WindowsTerminal",
+        "atiesrxx", "atieclxx", "amdfendrsr", "RadeonSoftware", "igfxEM", "PawnIO", "HyperCore", "FrameForge", "cmd", "powershell", "WindowsTerminal",
         "OpenConsole", "devenv", "Code", "dotnet",
     };
 
@@ -87,7 +87,7 @@ public static class Optimizer
             if (!hasWindow && !suggested) continue; // processos auxiliares sem janela ficam de fora
 
             string title = name, detail;
-            // FrameForge: descrição lida do ficheiro .exe (sem abrir o processo com leitura de memória, como fazia o MainModule)
+            // HyperCore: descrição lida do ficheiro .exe (sem abrir o processo com leitura de memória, como fazia o MainModule)
             try { title = ImagePath(procs[0].Id) is string path && FileVersionInfo.GetVersionInfo(path).FileDescription is { Length: > 0 } d ? d : name; } catch { }
             detail = suggested ? SuggestedApps[name] : hasWindow ? "Programa aberto" : "";
             if (procs.Count > 1) detail += $" · {procs.Count} processos";
@@ -143,7 +143,7 @@ public static class Optimizer
         long before = AvailableBytes();
         int trimmed = 0;
         int self = Environment.ProcessId;
-        // FrameForge: nunca tocar em jogos (quem está a desenhar frames) nem em processos de anti-cheat, e abrir cada processo
+        // HyperCore: nunca tocar em jogos (quem está a desenhar frames) nem em processos de anti-cheat, e abrir cada processo
         // só com o acesso mínimo para isto (antes era Process.Handle = acesso total, o que anti-cheats vigiam).
         var games = FrameForge.Core.AppServices.Frames.ActivePresenters().Select(x => x.Pid).ToHashSet();
         foreach (var p in Process.GetProcesses())

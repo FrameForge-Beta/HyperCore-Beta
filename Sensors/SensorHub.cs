@@ -164,7 +164,7 @@ public sealed class SensorHub : IDisposable
         foreach (var sub in hw.SubHardware) Walk(sub, seen);
     }
 
-    // Sensores do FrameForge que não vêm do LHM (contadores do Windows): ficam disponíveis para misturas e ventoinhas também
+    // Sensores do HyperCore que não vêm do LHM (contadores do Windows): ficam disponíveis para misturas e ventoinhas também
     private void AddSamplerSensors()
     {
         var s = AppServices.Sampler.Last;

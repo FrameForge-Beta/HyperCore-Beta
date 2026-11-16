@@ -77,6 +77,32 @@ public sealed class GameSimBench
                                  mainMs / n, parMs / n, frameTimes.Count, sw.Elapsed.TotalSeconds);
     }
 
+    /// <summary>
+    /// Verificação de estabilidade: corre um número FIXO de frames a partir do estado inicial e devolve um hash do estado final.
+    /// A simulação é determinística, por isso o hash tem de ser sempre igual; um valor diferente = erro de cálculo (CPU/RAM instável).
+    /// Devolve null se foi cancelada.
+    /// </summary>
+    public ulong? Verify(int frames, CancellationToken ct)
+    {
+        Reset();
+        _frames = 0;
+        for (int f = 0; f < frames; f++)
+        {
+            if (ct.IsCancellationRequested) return null;
+            Step(out _, out _);
+            Interlocked.Increment(ref _frames);
+            Progress = (f + 1) / (double)frames;
+        }
+        ulong h = 1469598103934665603UL; // FNV-1a sobre os bits do estado
+        for (int i = 0; i < Entities; i++)
+        {
+            h = (h ^ BitConverter.SingleToUInt32Bits(_x[i])) * 1099511628211UL;
+            h = (h ^ BitConverter.SingleToUInt32Bits(_y[i])) * 1099511628211UL;
+            h = (h ^ BitConverter.SingleToUInt32Bits(_hp[i])) * 1099511628211UL;
+        }
+        return h;
+    }
+
     private void Reset()
     {
         _rng = 12345;

@@ -115,7 +115,7 @@ public static class RestartNotice
     {
         try
         {
-            using var p = Process.Start(new ProcessStartInfo("shutdown.exe", "/r /t 15 /c \"FrameForge: a reiniciar para aplicar os ajustes. Guarda o teu trabalho.\"")
+            using var p = Process.Start(new ProcessStartInfo("shutdown.exe", "/r /t 15 /c \"HyperCore: a reiniciar para aplicar os ajustes. Guarda o teu trabalho.\"")
             { CreateNoWindow = true, UseShellExecute = false })!;
             p.WaitForExit(5000);
             int code = p.HasExited ? p.ExitCode : -1;
@@ -164,7 +164,7 @@ internal sealed class RestartDialog : Window
 
         var root = new StackPanel { Width = 470 };
         var head = new StackPanel { Orientation = Orientation.Horizontal };
-        head.Children.Add(new TextBlock { Text = "", FontFamily = new FontFamily("Segoe Fluent Icons, Segoe MDL2 Assets"), FontSize = 26, Foreground = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B)), Margin = new Thickness(0, 0, 14, 0), VerticalAlignment = VerticalAlignment.Center });
+        head.Children.Add(new TextBlock { Text = "", FontFamily = new FontFamily("Segoe Fluent Icons, Segoe MDL2 Assets"), FontSize = 26, Foreground = R("Warn", "#FBBF24"), Margin = new Thickness(0, 0, 14, 0), VerticalAlignment = VerticalAlignment.Center });
         head.Children.Add(new TextBlock { Text = "É preciso reiniciar o PC", FontSize = 20, FontWeight = FontWeights.SemiBold, Foreground = fg, VerticalAlignment = VerticalAlignment.Center });
         root.Children.Add(head);
         root.Children.Add(new TextBlock { Text = "Estes ajustes já estão gravados, mas o Windows só os usa depois de reiniciar:", Foreground = muted, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 12, 0, 0), FontSize = 13.5 });
@@ -172,7 +172,7 @@ internal sealed class RestartDialog : Window
         root.Children.Add(new TextBlock { Text = "Podes reiniciar mais tarde: o aviso fica no topo da app até reiniciares.", Foreground = muted, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 12, 0, 0), FontSize = 12.5 });
 
         // 1 segundo de espera antes de deixar responder
-        var bar = new Border { Height = 3, CornerRadius = new CornerRadius(2), Background = new SolidColorBrush(Color.FromRgb(0x4F, 0x8C, 0xFF)), HorizontalAlignment = HorizontalAlignment.Left, Width = 0, Margin = new Thickness(0, 16, 0, 0) };
+        var bar = new Border { Height = 3, CornerRadius = new CornerRadius(2), Background = R("Accent", "#2E9BFF"), HorizontalAlignment = HorizontalAlignment.Left, Width = 0, Margin = new Thickness(0, 16, 0, 0) };
         root.Children.Add(bar);
         _wait = new TextBlock { Text = "Lê o aviso… (1 s)", Foreground = muted, FontSize = 12, Margin = new Thickness(0, 6, 0, 0) };
         root.Children.Add(_wait);
@@ -205,7 +205,7 @@ internal sealed class RestartDialog : Window
         Content = new Border
         {
             Child = root, Padding = new Thickness(26, 22, 26, 22), CornerRadius = new CornerRadius(18),
-            Background = R("Card", "#0E0E0E"), BorderBrush = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B)), BorderThickness = new Thickness(1),
+            Background = R("Card", "#0E0E0E"), BorderBrush = R("Warn", "#FBBF24"), BorderThickness = new Thickness(1),
             Effect = new System.Windows.Media.Effects.DropShadowEffect { BlurRadius = 30, ShadowDepth = 0, Opacity = 0.6 },
             Margin = new Thickness(20),
         };
@@ -243,7 +243,7 @@ internal sealed class RestartDialog : Window
     private static Button MakeButton(string text, bool primary)
     {
         var b = new Button { Content = text, Margin = new Thickness(10, 0, 0, 0), Padding = new Thickness(18, 9, 18, 9), Cursor = System.Windows.Input.Cursors.Hand, FontWeight = FontWeights.SemiBold };
-        var bg = primary ? new SolidColorBrush(Color.FromRgb(0x4F, 0x8C, 0xFF)) : new SolidColorBrush(Color.FromRgb(0x23, 0x23, 0x23));
+        var bg = primary ? new SolidColorBrush(Color.FromRgb(0x2E, 0x9B, 0xFF)) : new SolidColorBrush(Color.FromRgb(0x23, 0x23, 0x23));
         var tpl = new ControlTemplate(typeof(Button));
         var border = new FrameworkElementFactory(typeof(Border));
         border.SetValue(Border.CornerRadiusProperty, new CornerRadius(10));

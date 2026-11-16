@@ -119,16 +119,16 @@ public sealed class SensorMonitor : IDisposable
     public static string Explain(CpuSensorProblem p) => p switch
     {
         CpuSensorProblem.NotElevated =>
-            "O FrameForge não está rodando como administrador, e o Windows só libera os sensores internos da CPU " +
-            "nesse modo. Feche e abra de novo aceitando o pedido de administrador.",
+            "O HyperCore não está a correr como administrador, e o Windows só disponibiliza os sensores internos da CPU " +
+            "nesse modo. Fecha e volta a abrir, aceitando o pedido de administrador.",
         CpuSensorProblem.PawnIOMissing =>
-            "Falta o driver PawnIO, que lê a temperatura e o consumo da CPU. Ele é gratuito, assinado e usado também " +
-            "pelo LibreHardwareMonitor e pelo FanControl. Depois de instalar, feche e abra o FrameForge.\n\n" +
+            "Falta o driver PawnIO, que lê a temperatura e o consumo da CPU. É gratuito, assinado e usado também " +
+            "pelo LibreHardwareMonitor e pelo FanControl. Depois de instalar, fecha e volta a abrir o HyperCore.\n\n" +
             "Atenção: é um driver de kernel. Alguns anti-cheats de kernel (Vanguard/Valorant, FACEIT) podem recusar drivers deste tipo " +
-            "e não deixar o jogo abrir. Se acontecer, desinstale o PawnIO: os relatórios de quebras do FrameForge funcionam sem ele.",
+            "e não deixar o jogo abrir. Se acontecer, desinstala o PawnIO: os relatórios de quebras do HyperCore funcionam sem ele.",
         CpuSensorProblem.ReadFailed =>
-            "O PawnIO está instalado, mas a leitura falhou. Se acabou de instalar, reinicie o PC. Se continuar, " +
-            "confira se o antivírus não bloqueou o driver ou se a CPU é muito antiga/recente para a biblioteca de sensores.",
+            "O PawnIO está instalado, mas a leitura falhou. Se acabaste de instalar, reinicia o PC. Se continuar, " +
+            "verifica se o antivírus não bloqueou o driver ou se a CPU é muito antiga/recente para a biblioteca de sensores.",
         _ => ""
     };
 

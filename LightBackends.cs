@@ -182,7 +182,7 @@ public sealed class OpenRgbBackend : ILightBackend
             _ns.ReadTimeout = 3000;
             _ns.WriteTimeout = 3000;
 
-            Write(0, SetClientName, Encoding.ASCII.GetBytes("FrameForge\0"));
+            Write(0, SetClientName, Encoding.ASCII.GetBytes("HyperCore\0"));
             Write(0, ReqProtocolVersion, BitConverter.GetBytes(3u));
             uint server;
             try { server = BitConverter.ToUInt32(ReadType(ReqProtocolVersion), 0); }
@@ -293,9 +293,9 @@ public sealed class RazerChromaBackend : ILightBackend
     {
         var body = JsonSerializer.Serialize(new
         {
-            title = "FrameForge",
-            description = "Controle de iluminação do FrameForge",
-            author = new { name = "FrameForge" },
+            title = "HyperCore",
+            description = "Controlo de iluminação do HyperCore",
+            author = new { name = "HyperCore" },
             device_supported = Kinds.Select(k => k.Key).ToArray(),
             category = "application",
         });

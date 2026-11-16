@@ -162,7 +162,7 @@ public sealed class OverlayWindow : Window
 
     private OverlayWindow()
     {
-        Title = "FrameForge overlay";
+        Title = "HyperCore overlay";
         WindowStyle = WindowStyle.None;
         AllowsTransparency = true;
         Background = Brushes.Transparent;

@@ -38,9 +38,7 @@ public sealed class MaintenancePage : UserControl
         _cancelScanButton = Ui.Btn("Cancelar análise", CancelScan_Click);
         _cancelScanButton.IsEnabled = false;
 
-        _content.Margin = new Thickness(30, 26, 30, 24);
-        _content.Children.Add(Ui.T("Manutenção do PC", "H1"));
-        _content.Children.Add(Ui.T("Liberta espaço e consulta o armazenamento sem pôr os teus dados em risco.", "MutedText"));
+        _content.Margin = new Thickness(32, 4, 32, 24);
         BuildTempCard();
         BuildDiskCleanupCard();
         BuildDefragCard();

@@ -54,36 +54,81 @@ public sealed class BenchRenderer
         int passes = 0;
         var sw = Stopwatch.StartNew();
 
+        lock (PassHashes) PassHashes.Clear();
         do
         {
-            Array.Fill(Pixels, unchecked((int)0xFF000000));
-            _bucketsDone = 0;
-            int next = -1;
-            Active = Enumerable.Repeat(-1, threads).ToArray();
-            var workers = new Thread[threads];
-            for (int t = 0; t < threads; t++)
-            {
-                int ti = t;
-                workers[t] = new Thread(() =>
-                {
-                    int b;
-                    while (!ct.IsCancellationRequested && (b = Interlocked.Increment(ref next)) < count)
-                    {
-                        Active[ti] = b;
-                        RenderBucket(Buckets[b], ct);
-                        Interlocked.Increment(ref _bucketsDone);
-                    }
-                    Active[ti] = -1;
-                }) { IsBackground = true, Name = $"BENCH {ti}" };
-                workers[t].Start();
-            }
-            foreach (var w in workers) w.Join();
+            RenderPass(threads, count, ct);
             if (ct.IsCancellationRequested) break;
             passes++;
+            lock (PassHashes) PassHashes.Add(HashPixels(Pixels, Width * Height));
             onPass?.Invoke();
         } while (sw.Elapsed < minDuration);
 
         return new BenchResult(threads, sw.Elapsed.TotalSeconds, SamplesDone, passes);
+    }
+
+    /// <summary>
+    /// Hash da imagem de cada passada completa do último Run. A imagem é determinística: passadas com hashes diferentes
+    /// significam um erro de cálculo da CPU/RAM (instabilidade, como o Prime95 deteta).
+    /// </summary>
+    public List<ulong> PassHashes { get; } = new();
+
+    /// <summary>Há passadas com resultados diferentes (erro de cálculo).</summary>
+    public bool HashMismatch { get { lock (PassHashes) return PassHashes.Distinct().Count() > 1; } }
+
+    /// <summary>
+    /// Verificação rápida: renderiza só os primeiros <paramref name="buckets"/> blocos (do centro) e devolve o hash.
+    /// Chamada várias vezes, o resultado tem de ser SEMPRE igual; null se foi cancelada a meio.
+    /// </summary>
+    public ulong? RenderHash(int threads, int buckets, CancellationToken ct)
+    {
+        int count = Math.Clamp(buckets, 1, Buckets.Count);
+        BucketsTotal = count;
+        RenderPass(threads, count, ct);
+        if (ct.IsCancellationRequested) return null;
+        // Só os píxeis dos blocos pedidos (o resto ficou preto e não conta)
+        ulong h = 1469598103934665603UL;
+        for (int i = 0; i < count; i++)
+        {
+            var (x0, y0, w, hgt) = Buckets[i];
+            for (int y = y0; y < y0 + hgt; y++)
+                for (int x = x0; x < x0 + w; x++)
+                    h = (h ^ (uint)Pixels[y * Width + x]) * 1099511628211UL;
+        }
+        return h;
+    }
+
+    private static ulong HashPixels(int[] px, int n)
+    {
+        ulong h = 1469598103934665603UL; // FNV-1a 64 bits
+        for (int i = 0; i < n; i++) h = (h ^ (uint)px[i]) * 1099511628211UL;
+        return h;
+    }
+
+    private void RenderPass(int threads, int count, CancellationToken ct)
+    {
+        Array.Fill(Pixels, unchecked((int)0xFF000000));
+        _bucketsDone = 0;
+        int next = -1;
+        Active = Enumerable.Repeat(-1, threads).ToArray();
+        var workers = new Thread[threads];
+        for (int t = 0; t < threads; t++)
+        {
+            int ti = t;
+            workers[t] = new Thread(() =>
+            {
+                int b;
+                while (!ct.IsCancellationRequested && (b = Interlocked.Increment(ref next)) < count)
+                {
+                    Active[ti] = b;
+                    RenderBucket(Buckets[b], ct);
+                    Interlocked.Increment(ref _bucketsDone);
+                }
+                Active[ti] = -1;
+            }) { IsBackground = true, Name = $"BENCH {ti}" };
+            workers[t].Start();
+        }
+        foreach (var w in workers) w.Join();
     }
 
     private void RenderBucket((int X, int Y, int W, int H) b, CancellationToken ct)

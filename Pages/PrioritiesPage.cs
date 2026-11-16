@@ -25,17 +25,13 @@ public sealed class PrioritiesPage : UserControl
     {
         "System.exe", "Registry.exe", "smss.exe", "csrss.exe", "wininit.exe", "winlogon.exe", "services.exe", "lsass.exe", "svchost.exe",
         "dwm.exe", "fontdrvhost.exe", "audiodg.exe", "MsMpEng.exe", "vgc.exe", "vgtray.exe", "EasyAntiCheat.exe", "EasyAntiCheat_EOS.exe",
-        "BEService.exe", "BEService_x64.exe", "FACEIT.exe", "faceitservice.exe", "explorer.exe", "FrameForge.exe",
+        "BEService.exe", "BEService_x64.exe", "FACEIT.exe", "faceitservice.exe", "explorer.exe", "HyperCore.exe", "FrameForge.exe", Process.GetCurrentProcess().ProcessName + ".exe",
     };
 
     public PrioritiesPage()
     {
         Ui.UseTheme(this);
-        var root = new StackPanel { Margin = new Thickness(28, 18, 28, 40) };
-        root.Children.Add(Ui.T("Prioridade dos programas", "H1"));
-        var sub = Ui.T("Como no Gestor de Tarefas (Detalhes → Definir prioridade), mas fica GRAVADO: o Windows aplica-a sozinho sempre que o programa abre, mesmo depois de reiniciar o PC.", "MutedText");
-        sub.Margin = new Thickness(0, 0, 0, 16);
-        root.Children.Add(sub);
+        var root = new StackPanel { Margin = Ui.PageMargin };
 
         // ---- explicação
         var ex = new StackPanel();
@@ -51,7 +47,7 @@ public sealed class PrioritiesPage : UserControl
         var rt = Ui.T("• Tempo real: não está disponível de propósito — pode congelar o rato, o teclado e o som e obrigar a desligar o PC no botão.", "Body", color: Ui.Res("Warn"));
         rt.Margin = new Thickness(0, 6, 0, 0);
         ex.Children.Add(rt);
-        var ac = Ui.T("Jogos com anti-cheat: é o próprio Windows que aplica a prioridade quando o jogo arranca — o FrameForge nunca abre o processo do jogo. " +
+        var ac = Ui.T("Jogos com anti-cheat: é o próprio Windows que aplica a prioridade quando o jogo arranca — o HyperCore nunca abre o processo do jogo. " +
                       "Alguns jogos/anti-cheats repõem a prioridade deles ao arrancar; nesse caso a regra simplesmente não tem efeito (vês na coluna 'Agora').", "MutedText");
         ac.Margin = new Thickness(0, 10, 0, 0);
         ex.Children.Add(ac);

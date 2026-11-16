@@ -52,7 +52,7 @@ public partial class MainWindow
     private async Task ScanGamesAsync()
     {
         BtnScanGames.IsEnabled = false;
-        LGameCount.Text = "Procurando seus jogos…";
+        LGameCount.Text = "A procurar os teus jogos…";
         try
         {
             var custom = _settings.CustomGames.ToList();
@@ -60,7 +60,7 @@ public partial class MainWindow
             ApplyGameFilter();
             var byStore = _libGames.GroupBy(g => g.Store).Select(x => $"{x.Key} {x.Count()}");
             LGameCount.Text = _libGames.Count == 0
-                ? "Nenhum jogo encontrado. Use + ADICIONAR .EXE para incluir um à mão."
+                ? "Nenhum jogo encontrado. Usa + ADICIONAR .EXE para incluir um à mão."
                 : $"{_libGames.Count} jogos · {string.Join(" · ", byStore)}";
         }
         catch (Exception ex) { LGameCount.Text = "Falhou: " + ex.Message; }

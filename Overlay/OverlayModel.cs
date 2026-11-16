@@ -102,7 +102,7 @@ public sealed class OverlayStoreData
     public uint HotkeyVirtualKey { get; set; } = 0x4F; // O
 }
 
-/// <summary>Guarda os overlays em %AppData%\FrameForge\overlays.json e cria os modelos de origem.</summary>
+/// <summary>Guarda os overlays em %AppData%\HyperCore\overlays.json e cria os modelos de origem.</summary>
 public static class OverlayStore
 {
     internal static readonly JsonSerializerOptions Json = new() { WriteIndented = true, Converters = { new JsonStringEnumConverter() } };
@@ -186,13 +186,13 @@ public static class OverlayStore
                 Items =
                 {
                     new OverlayItem { Kind = ItemKind.Box, X = 10, Y = 10, Width = 330, Height = 330, Background = "#B00B0D12", CornerRadius = 12, BorderColor = "#404F8CFF", Shadow = false },
-                    new OverlayItem { Kind = ItemKind.Game, X = 24, Y = 20, FontSize = 13, ValueColor = "#FF8B5CF6" },
+                    new OverlayItem { Kind = ItemKind.Game, X = 24, Y = 20, FontSize = 13, ValueColor = "#FF2E9BFF" },
                     new OverlayItem { Kind = ItemKind.Clock, X = 266, Y = 20, FontSize = 13, Anchor = Anchor.TopLeft, ValueColor = "#FF9CA3AF", TimeFormat = "HH:mm:ss" },
                     V("v/fps", "FPS", "", 24, 44, 28, th: new[] { Low(60, Red), Low(100, Yellow) }),
                     V("v/low1", "1%", "", 170, 52, 18),
                     new OverlayItem { Kind = ItemKind.Graph, SensorId = "v/frametime", Label = "frametime", X = 24, Y = 88, Width = 300, Height = 50, Min = 0, Max = 30, AutoScale = true, Background = "#30FFFFFF" },
                     new OverlayItem { Kind = ItemKind.Bar, SensorId = "v/gpu_load", Label = "GPU", Unit = "%", X = 24, Y = 152, Width = 300, Height = 14, FontSize = 13 },
-                    new OverlayItem { Kind = ItemKind.Bar, SensorId = "v/cpu_maxthread", Label = "CPU (thread)", Unit = "%", X = 24, Y = 188, Width = 300, Height = 14, FontSize = 13, BarColor = "#FF8B5CF6" },
+                    new OverlayItem { Kind = ItemKind.Bar, SensorId = "v/cpu_maxthread", Label = "CPU (thread)", Unit = "%", X = 24, Y = 188, Width = 300, Height = 14, FontSize = 13, BarColor = "#FF2E9BFF" },
                     new OverlayItem { Kind = ItemKind.Bar, SensorId = "v/vram_pct", Label = "VRAM", Unit = "%", X = 24, Y = 224, Width = 300, Height = 14, FontSize = 13, BarColor = "#FFF472B6",
                                       Thresholds = { new Threshold { At = 95, Color = Red, Blink = true } } },
                     V("v/gpu_temp", "GPU", "°C", 24, 262, 15, th: new[] { Hot(80), Hot(87, Red) }),

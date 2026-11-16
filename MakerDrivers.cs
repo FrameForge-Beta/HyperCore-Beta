@@ -26,7 +26,7 @@ public sealed class SerialDeviceRow
     public string State => Ok ? "FUNCIONANDO" : "COM PROBLEMA";
 }
 
-/// <summary>Driver oficial que vem dentro do FrameForge (pasta Drivers\ do projeto).</summary>
+/// <summary>Driver oficial que vem dentro do HyperCore (pasta Drivers\ do projeto).</summary>
 public sealed class BundledDriver
 {
     public SerialChip Chip { get; init; } = null!;
@@ -256,7 +256,7 @@ public static class MakerDrivers
     {
         var res = BundleResources(c);
         if (res.Count == 0) return $"O driver do {c.Name} não está incluído nesta versão.";
-        string dir = Path.Combine(Path.GetTempPath(), "FrameForge", "drivers-incluidos", c.Bundle!);
+        string dir = Path.Combine(Path.GetTempPath(), "HyperCore", "drivers-incluidos", c.Bundle!);
         if (Directory.Exists(dir)) Directory.Delete(dir, true);
         foreach (var n in res)
         {

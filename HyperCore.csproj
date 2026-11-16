@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- FrameForge: aplicação Windows para monitorização, diagnóstico e desempenho em jogos. -->
+  <!-- HyperCore (antigo FrameForge): aplicação Windows para monitorização, diagnóstico e desempenho em jogos. -->
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
@@ -9,10 +9,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
-    <AssemblyName>FrameForge</AssemblyName>
-    <RootNamespace>FrameForge</RootNamespace>
-    <Product>FrameForge</Product>
-    <Version>0.3.50</Version>
+    <AssemblyName>HyperCore</AssemblyName>
+    <RootNamespace>HyperCore</RootNamespace>
+    <Product>HyperCore</Product>
+    <Version>0.5.0</Version>
+    <FileVersion>0.5.0</FileVersion>
+    <AssemblyVersion>0.5.0</AssemblyVersion>
     <!-- Sempre otimizado: benchmarks e stress tests precisam do JIT otimizado -->
     <Optimize>true</Optimize>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -30,6 +32,11 @@
   <!-- Drivers seriais oficiais embutidos para ferramentas Maker -->
   <ItemGroup>
     <EmbeddedResource Include="Drivers\**\*" Exclude="Drivers\*.md;Drivers\*.txt" LogicalName="Drivers/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <!-- Índice de desempenho e preços de referência (upgrades), versionado e datado -->
+  <ItemGroup>
+    <EmbeddedResource Include="Data\perf-index.json" LogicalName="Data/perf-index.json" />
   </ItemGroup>
 
   <ItemGroup>

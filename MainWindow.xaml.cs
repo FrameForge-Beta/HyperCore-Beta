@@ -86,8 +86,7 @@ public partial class MainWindow : Window
 
     // OTIMIZA
     private List<BackgroundApp> _apps = new();
-    private readonly List<Tweak> _tweaks = WindowsTweaks.All(); // só as definições; o estado é lido ao abrir a página
-    private bool _optInit;
+    private readonly List<Tweak> _tweaks = WindowsTweaks.All(); // só leitura (Modo de Jogo/Game DVR na Visão geral); mudar é na página Níveis de desempenho
 
     // Stress de GPU (estilo FurMark)
     private readonly GpuBurn _burn = new();
@@ -118,33 +117,30 @@ public partial class MainWindow : Window
                     SetTrayMode(false);
                     MessageBox.Show(this,
                         $"Não foi possível ativar a área de notificação. A janela será aberta normalmente.\n\n{ex.Message}",
-                        "FrameForge", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        "HyperCore", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         };
+        // A Central Desfazer mexe na MESMA lista StartupRemoved/ComDbBackup desta janela (não numa cópia lida do disco)
+        FrameForge.Undo.UndoCenter.LegacySettingsProvider = () => _settings;
         InitForge();
         ThemeManager.Apply(_settings.LightTheme);
         UpdateThemeButton();
-        // Começa no Início ("o que queres fazer?")
-        PageFF.Content = ForgePage("home");
-        ShowPage("PageFF");
-        UpdateHelp("FF:home");
 
         // Sensores: a lista começa vazia e é preenchida quando a detecção do hardware termina (LoadHardwareAsync).
         _monitor = new SensorMonitor();
         _view = CollectionViewSource.GetDefaultView(_monitor.Rows);
         _view.GroupDescriptions.Add(new PropertyGroupDescription(nameof(SensorRow.Hardware)));
         SensorGrid.ItemsSource = _view;
-        SystemSub.Text = "Lendo informações do sistema…";
-        StatusText.Text = "Detectando o hardware…";
+        SystemSub.Text = "A ler as informações do sistema…";
+        StatusText.Text = "A detetar o hardware…";
 
         InitBench();
         SnapshotUsb();
         RefreshDrives();
-        TitlePage.Text = "Início";
         // Versão do programa mostrada no rodapé da barra lateral (vém do <Version> do csproj).
-        string appVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.3.41";
-        SideVersion.Text = $"FrameForge v{appVersion} · ferramentas para o teu PC";
+        string appVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.5.0";
+        SideVersion.Text = $"HyperCore v{appVersion}";
         UpdateDashboard();
 
         // A janela aparece já; as coletas pesadas (WMI, sensores, GPU) rodam em paralelo fora da thread da janela.
@@ -323,7 +319,7 @@ public partial class MainWindow : Window
         string why = SensorMonitor.Explain(p);
         if (p != SensorMonitor.CpuSensorProblem.PawnIOMissing)
         {
-            MessageBox.Show(why, "FrameForge", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(why, "HyperCore", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 
@@ -335,17 +331,17 @@ public partial class MainWindow : Window
             MessageBox.Show(why + "\n\nO instalador de pacotes do Windows (winget) não foi encontrado neste PC. " +
                             "Atualize o \"Instalador de Aplicativo\" pela Microsoft Store e use o botão de novo, " +
                             "ou instale o PawnIO (autor: namazso) manualmente.",
-                            "FrameForge", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            "HyperCore", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
         var r = MessageBox.Show(why + "\n\nInstalar o PawnIO agora? Vai abrir uma janela com o instalador do Windows (winget). " +
-                                "Quando terminar, feche o FrameForge e abra de novo.",
-                                "FrameForge", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                                "Quando terminar, feche o HyperCore e abra de novo.",
+                                "HyperCore", MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (r != MessageBoxResult.Yes) return;
         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("cmd.exe",
             "/k winget install --id namazso.PawnIO -e --accept-package-agreements --accept-source-agreements" +
-            " && echo. && echo Pronto! Feche esta janela e reabra o FrameForge.")
+            " && echo. && echo Pronto! Feche esta janela e reabra o HyperCore.")
         { UseShellExecute = true });
     }
 
@@ -378,7 +374,7 @@ public partial class MainWindow : Window
         {
             if (_trayEnabled) return;
             _trayEnabled = true;
-            _trayOpenItem = new MenuItem { Header = "Abrir o FrameForge" };
+            _trayOpenItem = new MenuItem { Header = "Abrir o HyperCore" };
             _trayOpenItem.Click += (_, _) => ShowFromTray();
             _trayExitItem = new MenuItem { Header = "Sair" };
             _trayExitItem.Click += (_, _) =>
@@ -386,8 +382,14 @@ public partial class MainWindow : Window
                 _exitFromTray = true;
                 Close();
             };
+            var gameItem = new MenuItem { Header = "Ligar Modo Jogo", InputGestureText = FrameForge.Games.GameMode.HotkeyText };
+            gameItem.Click += (_, _) => ToggleGameMode();
             _trayMenu = new ContextMenu();
             _trayMenu.Items.Add(_trayOpenItem);
+            _trayMenu.Items.Add(gameItem);
+            // O texto acompanha o estado (o menu é aberto à mão em TrayWindowProc, mas Opened dispara na mesma)
+            _trayMenu.Opened += (_, _) =>
+                gameItem.Header = FrameForge.Games.GameMode.IsActive ? "Desligar Modo Jogo" : "Ligar Modo Jogo";
             _trayMenu.Items.Add(new Separator());
             _trayMenu.Items.Add(_trayExitItem);
             if (IsInitialized && PresentationSource.FromVisual(this) != null)
@@ -427,11 +429,11 @@ public partial class MainWindow : Window
     {
         if (_trayIconHandle != IntPtr.Zero) return;
         string executable = Environment.ProcessPath
-            ?? throw new InvalidOperationException("Não foi possível localizar o ícone do FrameForge.");
+            ?? throw new InvalidOperationException("Não foi possível localizar o ícone do HyperCore.");
         ExtractIconEx(executable, 0, out IntPtr largeIcon, out IntPtr smallIcon, 1);
         _trayIconHandle = smallIcon != IntPtr.Zero ? smallIcon : largeIcon;
         if (_trayIconHandle == IntPtr.Zero)
-            throw new InvalidOperationException("Não foi possível carregar o ícone do FrameForge.");
+            throw new InvalidOperationException("Não foi possível carregar o ícone do HyperCore.");
         if (smallIcon != IntPtr.Zero && largeIcon != IntPtr.Zero)
             DestroyIcon(largeIcon);
 
@@ -463,7 +465,7 @@ public partial class MainWindow : Window
         uFlags = NifMessage | NifIcon | NifTip,
         uCallbackMessage = TrayMessage,
         hIcon = icon,
-        szTip = "FrameForge",
+        szTip = "HyperCore",
         szInfo = "",
         szInfoTitle = "",
     };
@@ -537,30 +539,9 @@ public partial class MainWindow : Window
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool SetForegroundWindow(IntPtr hwnd);
 
-    private void Nav_Checked(object sender, RoutedEventArgs e)
+    /// <summary>Algumas páginas carregam dados só quando abertas (chamado pelo shell ao mostrar uma aba).</summary>
+    private void OnPageOpened(string page)
     {
-        if (PageSystem == null) return; // disparado durante InitializeComponent
-        var item = (FrameworkElement)sender;
-        string page = (string)item.Tag;
-        _currentTag = page;
-        UpdateHelp(page);
-        if (page.StartsWith("FF:")) { PageFF.Content = ForgePage(page[3..]); page = "PageFF"; }
-        ShowPage(page);
-
-        // Abre a categoria da página (ex.: quando o painel pula direto para o Benchmark)
-        // e mostra "CATEGORIA · página" na barra de título.
-        string name = item is ContentControl { Content: Panel panel }
-            ? panel.Children.OfType<TextBlock>().LastOrDefault()?.Text ?? "" : "";
-        foreach (var group in _navGroups.Values)
-        {
-            if (!group.Items.Children.Contains(item)) continue;
-            group.Toggle.IsChecked = true;
-            name = $"{group.Toggle.Content} · {name}";
-            break;
-        }
-        TitlePage.Text = name;
-
-        // Algumas páginas carregam dados só quando abertas.
         switch (page)
         {
             case "PageDash": UpdateDashboard(); break;
@@ -900,14 +881,15 @@ public partial class MainWindow : Window
         return sp;
     }
 
-    private static Brush GradeBrush(string grade) => grade switch
+    // Notas A–E com as cores do tema (Good → Accent → Warn → Bad); E é um vermelho mais escuro
+    private Brush GradeBrush(string grade) => grade switch
     {
-        "A" => new SolidColorBrush(Color.FromRgb(0x22, 0xC5, 0x5E)),
-        "B" => new SolidColorBrush(Color.FromRgb(0xA7, 0x8B, 0xFA)),
-        "C" => new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B)),
-        "D" => new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)),
+        "A" => (Brush)FindResource("Good"),
+        "B" => (Brush)FindResource("Accent"),
+        "C" => (Brush)FindResource("Warn"),
+        "D" => (Brush)FindResource("Bad"),
         "E" => new SolidColorBrush(Color.FromRgb(0xB9, 0x1C, 0x1C)),
-        _ => new SolidColorBrush(Color.FromRgb(0x4A, 0x4A, 0x4A)),
+        _ => (Brush)FindResource("LineStrong"),
     };
 
     private void OpenReport(string path)
@@ -1180,16 +1162,9 @@ public partial class MainWindow : Window
 
     // ---------------- OTIMIZA ----------------
 
-    /// <summary>Carrega a página OTIMIZA quando ela é aberta (os ajustes do Windows só na primeira vez).</summary>
+    /// <summary>Carrega a página OTIMIZA quando ela é aberta.</summary>
     private void InitOptimize()
     {
-        if (!_optInit)
-        {
-            _optInit = true;
-            foreach (var t in _tweaks)
-                try { t.Refresh(); } catch (Exception ex) { t.Status = $"Não foi possível ler: {ex.Message}"; }
-            OptTweaks.ItemsSource = _tweaks;
-        }
         RefreshApps();
         UpdateRamStatus();
     }
@@ -1241,28 +1216,8 @@ public partial class MainWindow : Window
         UpdateRamStatus();
     }
 
-    private void Tweak_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not CheckBox { Tag: Tweak t } box) return;
-        bool turnOn = box.IsChecked == true;
-        try
-        {
-            t.Write(turnOn, _settings);
-            _settings.Save();
-            t.Refresh();
-            t.Status = t.IsOn == turnOn
-                ? (turnOn ? "Aplicado." : "Desligado.") + (t.NeedsRestart ? " Reinicie o PC para valer." : "")
-                : "O Windows não aceitou a mudança (pode exigir administrador).";
-            if (t.IsOn == turnOn && t.NeedsRestart && !FrameForge.RestartNotice.Toggled(t.Title, turnOn))
-                t.Status = "Anulou a mudança anterior: já não é preciso reiniciar.";
-        }
-        catch (Exception ex)
-        {
-            t.Refresh();
-            t.Status = $"Falhou: {ex.Message}";
-        }
-        box.IsChecked = t.IsOn; // o binding é só leitura: volta ao estado real
-    }
+    /// <summary>Os ajustes do Windows vivem na página Níveis de desempenho (o cartão antigo daqui foi retirado).</summary>
+    private void BtnOpenLevels_Click(object sender, RoutedEventArgs e) => AppServices.Navigate("FF:optimize");
 
     // ----- USB e portas COM -----
 
@@ -1304,7 +1259,7 @@ public partial class MainWindow : Window
     private bool RequireAdmin()
     {
         if (SensorMonitor.IsElevated) return true;
-        MessageBox.Show("Esta ação precisa do FrameForge aberto como administrador.", "FrameForge",
+        MessageBox.Show("Esta ação precisa do HyperCore aberto como administrador.", "HyperCore",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
         return false;
     }
@@ -1367,24 +1322,6 @@ public partial class MainWindow : Window
         }
         catch (Exception ex) { UsbResult.Text = $"Falhou: {ex.Message}"; }
         ScanUsb();
-    }
-
-    private void BtnRestoreTweaks_Click(object sender, RoutedEventArgs e)
-    {
-        if (_settings.TweakBackup.Count == 0)
-        {
-            MessageBox.Show("Nenhum ajuste foi alterado pelo FrameForge ainda.", "OTIMIZA",
-                            MessageBoxButton.OK, MessageBoxImage.Information);
-            return;
-        }
-        var r = MessageBox.Show("Voltar todos os ajustes do Windows para como estavam antes do FrameForge alterá-los?",
-                                "OTIMIZA", MessageBoxButton.YesNo, MessageBoxImage.Question);
-        if (r != MessageBoxResult.Yes) return;
-        var before = _tweaks.Where(t => t.NeedsRestart && _settings.TweakBackup.ContainsKey(t.Id)).ToDictionary(t => t, t => t.IsOn);
-        WindowsTweaks.RestoreAll(_tweaks, _settings);
-        foreach (var t in _tweaks) { t.Refresh(); t.Status = "Restaurado."; }
-        var changed = before.Where(kv => kv.Key.IsOn != kv.Value).Select(kv => (kv.Key.Title, kv.Key.IsOn)).ToList();
-        if (changed.Count > 0) FrameForge.RestartNotice.ToggledMany(changed);
     }
 
     // ---------------- BENCH: benchmarks de jogo ----------------
@@ -1803,17 +1740,17 @@ public partial class MainWindow : Window
             string why = SensorMonitor.IsPawnIOInstalled
                 ? ""
                 : "\n\nCausa provável: o driver PawnIO não está instalado. Instale com:\n" +
-                  "winget install namazso.PawnIO\ne reabra o FrameForge.";
+                  "winget install namazso.PawnIO\ne reabra o HyperCore.";
             var r = MessageBox.Show("Nenhum sensor de temperatura da CPU foi encontrado, então o corte automático " +
                                     "por temperatura da CPU NÃO funcionará. Continuar mesmo assim?" + why,
-                                    "FrameForge", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                                    "HyperCore", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (r != MessageBoxResult.Yes) return;
         }
         if (gpu && MainGpuTemp() == null)
         {
             var r = MessageBox.Show("Nenhum sensor de temperatura da GPU foi encontrado, então o corte automático " +
                                     "por temperatura da GPU NÃO funcionará. Continuar mesmo assim?",
-                                    "FrameForge", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                                    "HyperCore", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (r != MessageBoxResult.Yes) return;
         }
 

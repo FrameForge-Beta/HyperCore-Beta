@@ -78,7 +78,33 @@ public sealed class SystemProbe
             Board = $"{o["Manufacturer"]} {o["Product"]}".Trim();
         foreach (var o in Wmi("SELECT SMBIOSBIOSVersion FROM Win32_BIOS"))
             BiosVersion = o["SMBIOSBIOSVersion"]?.ToString() ?? "?";
-        IsLaptop = Wmi("SELECT Name FROM Win32_Battery").Any();
+        IsLaptop = DetectLaptop();
+    }
+
+    // Win32_SystemEnclosure.ChassisTypes de portáteis/tablets: Portable, Laptop, Notebook, Hand Held, Docking Station, Sub Notebook,
+    // Expansion Chassis... (8,9,10,11,12,14,18,21) e Tablet, Convertible, Detachable (30,31,32)
+    private static readonly HashSet<int> PortableChassis = new() { 8, 9, 10, 11, 12, 14, 18, 21, 30, 31, 32 };
+
+    /// <summary>Portátil = caixa de portátil OU uma bateria que não seja de UPS (um UPS USB aparece como bateria num desktop).</summary>
+    private static bool DetectLaptop()
+    {
+        bool chassis = false, battery = false;
+        try
+        {
+            foreach (var o in Wmi("SELECT ChassisTypes FROM Win32_SystemEnclosure"))
+                if (o["ChassisTypes"] is Array types && types.Cast<object>().Any(t => PortableChassis.Contains(Convert.ToInt32(t)))) chassis = true;
+        }
+        catch { }
+        try
+        {
+            foreach (var o in Wmi("SELECT Name, DeviceID, Description FROM Win32_Battery"))
+            {
+                string id = $"{o["Name"]} {o["DeviceID"]} {o["Description"]}";
+                if (!Regex.IsMatch(id, @"\bUPS\b|Uninterruptible|Back-UPS|Smart-UPS|No-break|Nobreak", RegexOptions.IgnoreCase)) battery = true;
+            }
+        }
+        catch { }
+        return chassis || battery;
     }
 
     private void ReadGpu()
@@ -193,9 +219,13 @@ public sealed class SystemProbe
         bool auto = Wmi("SELECT AutomaticManagedPagefile FROM Win32_ComputerSystem").Select(o => o["AutomaticManagedPagefile"] is true).FirstOrDefault();
         PagefileOff = !auto && !Wmi("SELECT Name FROM Win32_PageFileUsage").Any();
 
-        var plan = Run("powercfg.exe", "/getactivescheme");
-        var m = Regex.Match(plan, @"([0-9a-fA-F\-]{36})\s+\((.+)\)");
-        if (m.Success) { PowerPlanGuid = m.Groups[1].Value.ToLowerInvariant(); PowerPlan = m.Groups[2].Value; }
+        try // o Run lança exceção se o powercfg falhar: o resto da leitura continua
+        {
+            var plan = Run("powercfg.exe", "/getactivescheme");
+            var m = Regex.Match(plan, @"([0-9a-fA-F\-]{36})\s+\((.+)\)");
+            if (m.Success) { PowerPlanGuid = m.Groups[1].Value.ToLowerInvariant(); PowerPlan = m.Groups[2].Value; }
+        }
+        catch { }
 
         Hags = RegDword(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "HwSchMode") is int h ? h == 2 : null;
         GameMode = RegDword(Registry.CurrentUser, @"Software\Microsoft\GameBar", "AutoGameModeEnabled") is int g ? g == 1 : true;
@@ -225,12 +255,32 @@ public sealed class SystemProbe
         return k?.GetValue(name) is int v ? v : null;
     }
 
-    public static string Run(string exe, string args)
+    /// <summary>
+    /// Corre um programa da linha de comandos e devolve o que escreveu. Se ele falhar (código de saída ≠ 0) ou não responder,
+    /// lança exceção com a mensagem dele — assim uma recusa do Windows nunca passa por "aplicado".
+    /// </summary>
+    public static string Run(string exe, string args, int timeoutMs = 15_000)
     {
-        var psi = new ProcessStartInfo(exe, args) { RedirectStandardOutput = true, UseShellExecute = false, CreateNoWindow = true };
-        using var p = Process.Start(psi)!;
-        string o = p.StandardOutput.ReadToEnd();
-        p.WaitForExit(10_000);
+        var psi = new ProcessStartInfo(exe, args)
+        {
+            RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false, CreateNoWindow = true,
+        };
+        using var p = Process.Start(psi) ?? throw new InvalidOperationException($"Não consegui abrir o {Path.GetFileName(exe)}.");
+        var stdout = p.StandardOutput.ReadToEndAsync();
+        var stderr = p.StandardError.ReadToEndAsync();
+        if (!p.WaitForExit(timeoutMs))
+        {
+            try { p.Kill(); } catch { }
+            throw new TimeoutException($"O {Path.GetFileName(exe)} não respondeu.");
+        }
+        p.WaitForExit(); // garante que a saída redirecionada já foi lida até ao fim
+        string o = stdout.Result, e = stderr.Result;
+        if (p.ExitCode != 0)
+        {
+            string msg = (e.Trim().Length > 0 ? e : o).Trim();
+            msg = msg.Split('\n', StringSplitOptions.RemoveEmptyEntries).Select(l => l.Trim()).FirstOrDefault(l => l.Length > 0) ?? "";
+            throw new InvalidOperationException($"O Windows recusou ({Path.GetFileName(exe)}, código {p.ExitCode})" + (msg.Length > 0 ? ": " + msg : "."));
+        }
         return o;
     }
 
