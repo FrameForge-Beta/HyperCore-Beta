@@ -21,9 +21,9 @@ public sealed record UpdateInfo(Version Version, string Tag, string Notes, strin
 /// </summary>
 public static class Updater
 {
-    // Repositório onde são publicadas as versões (tem de ser público: a app procura sem conta nem token)
+    // Repositório PÚBLICO só com as versões (o código fica privado no FrameForge-Beta): a app procura sem conta nem token
     public const string Owner = "FrameForge-Beta";
-    public const string Repo = "FrameForge-Beta";
+    public const string Repo = "HyperCore-Releases";
     public const string AssetName = "HyperCore.exe";
 
     public const string ArgWait = "--esperar";

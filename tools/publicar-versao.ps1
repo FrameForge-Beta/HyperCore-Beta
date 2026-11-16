@@ -10,7 +10,7 @@
 param(
     [string]$Notas = "",
     [string]$NotasFicheiro = "",
-    [string]$Repo = "FrameForge-Beta/FrameForge-Beta",
+    [string]$Repo = "FrameForge-Beta/HyperCore-Releases",
     [switch]$Rascunho
 )
 $ErrorActionPreference = 'Stop'
