@@ -1,4 +1,4 @@
-# Publica uma versão nova do HyperCore nas Releases do GitHub, para a atualização automática da app a encontrar.
+﻿# Publica uma versão nova do HyperCore nas Releases do GitHub, para a atualização automática da app a encontrar.
 #
 # Uso (na pasta do repositório, com o gh autenticado):
 #   1. Sobe a versão no HyperCore.csproj (<Version>, <FileVersion>, <AssemblyVersion>), ex.: 0.5.1
@@ -22,7 +22,9 @@ if (-not $versao) { throw "Não encontrei <Version> no HyperCore.csproj" }
 $tag = "v$versao"
 Write-Host "Versão: $versao ($tag) -> $Repo"
 
-if (gh release view $tag --repo $Repo 2>$null) { throw "A release $tag já existe. Sobe a versão no HyperCore.csproj primeiro." }
+# (via cmd: no PowerShell 5.1, o stderr de um programa externo com ErrorActionPreference=Stop rebenta o script)
+cmd /c "gh release view $tag --repo $Repo >nul 2>nul"
+if ($LASTEXITCODE -eq 0) { throw "A release $tag já existe. Sobe a versão no HyperCore.csproj primeiro." }
 
 $saida = Join-Path $PWD "publicar"
 if (Test-Path $saida) { Remove-Item $saida -Recurse -Force }
