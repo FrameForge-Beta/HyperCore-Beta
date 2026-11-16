@@ -1,6 +1,6 @@
 # HyperCore — guia da aplicação
 
-**v0.4.0**
+**v0.5.0**
 - Novo nome: o FrameForge passa a chamar-se **HyperCore** (novo ícone). No primeiro arranque, os dados de `%AppData%\\FrameForge` são copiados para `%AppData%\\HyperCore` (a pasta antiga não é apagada) e a tarefa de arranque com o Windows passa a chamar-se "HyperCore".
 
 **v0.3.24**
@@ -55,7 +55,7 @@ Para mostrar FPS em ecrã inteiro exclusivo, usa as estatísticas ou o overlay i
 
 ## 5. Como usar
 
-1. Instala `artifacts\\installer\\HyperCore-Setup-0.4.0.exe` ou abre `publicar\\HyperCore.exe`. A publicação autónoma não requer instalar o .NET 8 Desktop Runtime. A aplicação pode pedir administrador para ETW, overclock e ajustes do sistema.
+1. Instala `artifacts\\installer\\HyperCore-Setup-0.5.0.exe` ou abre `publicar\\HyperCore.exe`. A publicação autónoma não requer instalar o .NET 8 Desktop Runtime. A aplicação pode pedir administrador para ETW, overclock e ajustes do sistema.
 2. No **Painel**, verifica os avisos importantes.
 3. Em **Jogos**, escolhe um jogo e ativa a gravação da sessão; ou usa **Sessões e relatórios** para gravar um jogo já aberto com **Ctrl+Alt+R**.
 4. Joga durante 10–20 minutos e consulta o relatório em `%AppData%\\HyperCore\\Relatorios`.

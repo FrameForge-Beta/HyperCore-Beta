@@ -6,7 +6,7 @@
 
 **O ecossistema definitivo para Windows de monitorização em tempo real, telemetria segura para jogos, diagnóstico de hardware e otimização de desempenho.**
 
-[![Versão](https://img.shields.io/badge/Versão-0.4.0_Beta-7928CA?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/FrameForge-Beta/FrameForge-Beta/releases/latest)
+[![Versão](https://img.shields.io/badge/Versão-0.5.0_Beta-2E9BFF?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/FrameForge-Beta/FrameForge-Beta/releases/latest)
 [![Plataforma](https://img.shields.io/badge/.NET-8.0_WPF-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Linguagem](https://img.shields.io/badge/Linguagem-C%23_12_%2F_XAML-239120?style=for-the-badge&logo=csharp&logoColor=white)](https://learn.microsoft.com/dotnet/csharp/)
 [![Anti-Cheat Safe](https://img.shields.io/badge/Anti--Cheat-100%25_Seguro_(Sem_Injeção)-00C853?style=for-the-badge&logo=shield&logoColor=white)](#-arquitetura-anti-cheat-segura)
@@ -87,7 +87,7 @@ O HyperCore foi desenhado desde o primeiro dia respeitando as diretrizes dos sis
 
 ### Opção 1: Instalador Oficial (Recomendado)
 1. Acede aos [Releases](https://github.com/FrameForge-Beta/FrameForge-Beta/releases/latest).
-2. Transfere o ficheiro `HyperCore-Setup-0.4.0.exe`.
+2. Transfere o ficheiro `HyperCore-Setup-0.5.0.exe`.
 3. Executa o instalador como Administrador e segue os passos simples do assistente.
 
 > **Vens do FrameForge?** O instalador atualiza por cima (substitui o FrameForge em Programas e Funcionalidades e remove o `FrameForge.exe` e os atalhos antigos). No primeiro arranque, o HyperCore copia as tuas definições, backups e relatórios de `%AppData%\FrameForge` para `%AppData%\HyperCore` (a pasta antiga fica intacta) e troca a tarefa de arranque com o Windows pela nova.
