@@ -12,3 +12,6 @@ AGENTS.md
 .idea/
 .vscode/
 Native/
+
+# Chave de leitura das atualizações (nunca no git)
+tools/update-token.txt

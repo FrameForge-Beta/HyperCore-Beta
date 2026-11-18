@@ -21,7 +21,8 @@ public sealed record UpdateInfo(Version Version, string Tag, string Notes, strin
 /// </summary>
 public static class Updater
 {
-    // Repositório PÚBLICO só com as versões (o código fica privado no FrameForge-Beta): a app procura sem conta nem token
+    // Repositório PRIVADO só com as versões (o código fica no FrameForge-Beta). A app lê-o com uma chave do GitHub
+    // só de leitura e só para este repositório, posta no exe na compilação (tools\publicar-versao.ps1) — nunca no git.
     public const string Owner = "FrameForge-Beta";
     public const string Repo = "HyperCore-Releases";
     public const string AssetName = "HyperCore.exe";
@@ -37,6 +38,27 @@ public static class Updater
     public static event Action? AvailableChanged;
 
     private static readonly HttpClient Http = CreateClient();
+    private static readonly string? Token = ReadToken();
+
+    /// <summary>Esta cópia sabe procurar atualizações? (só as compiladas pelo script de publicação trazem a chave)</summary>
+    public static bool Configured => Token != null;
+
+    private static string? ReadToken()
+    {
+        foreach (var a in typeof(Updater).Assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyMetadataAttribute), false))
+            if (a is System.Reflection.AssemblyMetadataAttribute { Key: "HyperCoreUpdateToken", Value: { Length: > 10 } v }) return v.Trim();
+        return null;
+    }
+
+    /// <summary>Pedido à API do GitHub com a chave (o .NET não a reenvia quando o GitHub redireciona a transferência para o armazenamento).</summary>
+    private static HttpRequestMessage Api(string url, string accept)
+    {
+        var req = new HttpRequestMessage(HttpMethod.Get, url);
+        req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
+        req.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
+        if (Token != null) req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+        return req;
+    }
     private static readonly SemaphoreSlim Busy = new(1, 1);
 
     private static HttpClient CreateClient()
@@ -51,8 +73,9 @@ public static class Updater
     /// <summary>Procura uma versão nova. Devolve null se já está em dia. Lança exceção com mensagem simples se não conseguir procurar.</summary>
     public static async Task<UpdateInfo?> CheckAsync(CancellationToken ct = default)
     {
-        using var req = new HttpRequestMessage(HttpMethod.Get, $"https://api.github.com/repos/{Owner}/{Repo}/releases/latest");
-        req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
+        if (Token == null)
+            throw new InvalidOperationException("Esta cópia do HyperCore foi compilada sem a chave de atualização, por isso não consegue procurar versões novas.");
+        using var req = Api($"https://api.github.com/repos/{Owner}/{Repo}/releases/latest", "application/vnd.github+json");
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         cts.CancelAfter(TimeSpan.FromSeconds(20));
         HttpResponseMessage resp;
@@ -63,7 +86,9 @@ public static class Updater
         using (resp)
         {
             if (resp.StatusCode == System.Net.HttpStatusCode.NotFound)
-                throw new InvalidOperationException("Ainda não há versões publicadas (ou o repositório das versões não é público).");
+                throw new InvalidOperationException("Ainda não há versões publicadas (ou a chave de atualização não tem acesso ao repositório das versões).");
+            if (resp.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                throw new InvalidOperationException("A chave de atualização expirou ou foi revogada. Instala a versão mais recente à mão uma vez.");
             if ((int)resp.StatusCode is 403 or 429)
                 throw new InvalidOperationException("O GitHub está a limitar pedidos. Tenta daqui a uma hora.");
             resp.EnsureSuccessStatusCode();
@@ -95,7 +120,8 @@ public static class Updater
             foreach (var a in assets.EnumerateArray())
             {
                 string name = a.GetProperty("name").GetString() ?? "";
-                string dl = a.GetProperty("browser_download_url").GetString() ?? "";
+                // "url" (API) funciona em repositórios privados com a chave; browser_download_url só em públicos
+                string dl = a.TryGetProperty("url", out var api) && api.GetString() is { Length: > 0 } au ? au : a.GetProperty("browser_download_url").GetString() ?? "";
                 if (string.Equals(name, AssetName, StringComparison.OrdinalIgnoreCase))
                 {
                     url = dl;
@@ -135,7 +161,8 @@ public static class Updater
             string expected = await ExpectedHashAsync(info, ct).ConfigureAwait(false);
             if (File.Exists(final) && Verify(final, expected, info.Version)) return final; // já transferido antes
 
-            using (var resp = await Http.GetAsync(info.DownloadUrl, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false))
+            using (var dlReq = Api(info.DownloadUrl, "application/octet-stream"))
+            using (var resp = await Http.SendAsync(dlReq, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false))
             {
                 resp.EnsureSuccessStatusCode();
                 long total = resp.Content.Headers.ContentLength ?? info.Size;
@@ -168,7 +195,10 @@ public static class Updater
         string? h = info.Sha256;
         if (h != null && h.StartsWith("url:", StringComparison.Ordinal))
         {
-            string txt = await Http.GetStringAsync(h[4..], ct).ConfigureAwait(false);
+            using var shaReq = Api(h[4..], "application/octet-stream");
+            using var shaResp = await Http.SendAsync(shaReq, ct).ConfigureAwait(false);
+            shaResp.EnsureSuccessStatusCode();
+            string txt = await shaResp.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
             h = txt.Trim().Split(' ', '\t', '\r', '\n')[0];
         }
         h = h?.Trim().ToLowerInvariant();

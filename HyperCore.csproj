@@ -55,4 +55,10 @@
     <PackageReference Include="Vortice.Dxc" Version="3.8.3" />
   </ItemGroup>
 
+  <!-- Chave do GitHub só de leitura para o repositório privado das versões (atualização automática).
+       Vem da variável de ambiente HyperCoreUpdateToken, posta pelo tools\publicar-versao.ps1 a partir de
+       tools\update-token.txt (fora do git). Compilações sem ela funcionam, só não procuram atualizações. -->
+  <ItemGroup Condition="'$(HyperCoreUpdateToken)' != ''">
+    <AssemblyMetadata Include="HyperCoreUpdateToken" Value="$(HyperCoreUpdateToken)" />
+  </ItemGroup>
 </Project>
