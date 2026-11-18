@@ -3,7 +3,7 @@
 !include "LogicLib.nsh"
 
 !define APP_NAME "HyperCore"
-!define APP_VERSION "0.5.0"
+!define APP_VERSION "0.5.1"
 !define APP_PUBLISHER "HyperCore"
 ; MANTER este APP_ID: é o mesmo do FrameForge, para a atualização substituir a versão antiga em Programas e Funcionalidades.
 !define APP_ID "{1A6A35B4-CE8B-4A2D-A135-F1A340C0D164}"

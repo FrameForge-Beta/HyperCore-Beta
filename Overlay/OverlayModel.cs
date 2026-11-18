@@ -100,6 +100,7 @@ public sealed class OverlayStoreData
     public bool HotkeyEnabled { get; set; } = true;
     public uint HotkeyModifiers { get; set; } = 0x0001 | 0x0002; // Ctrl+Alt
     public uint HotkeyVirtualKey { get; set; } = 0x4F; // O
+    public int Version { get; set; }          // migrações já feitas aos overlays guardados (1 = temperatura do CPU)
 }
 
 /// <summary>Guarda os overlays em %AppData%\HyperCore\overlays.json e cria os modelos de origem.</summary>
@@ -117,14 +118,43 @@ public static class OverlayStore
             if (File.Exists(File_))
             {
                 var d = JsonSerializer.Deserialize<OverlayStoreData>(File.ReadAllText(File_), Json);
-                if (d != null && d.Profiles.Count > 0) return d;
+                if (d != null && d.Profiles.Count > 0) { Migrate(d); return d; }
             }
         }
         catch { }
-        var data = new OverlayStoreData();
+        var data = new OverlayStoreData { Version = CurrentVersion };
         data.Profiles.AddRange(Presets());
         data.Active = data.Profiles[1].Name;
         return data;
+    }
+
+    private const int CurrentVersion = 1;
+
+    /// <summary>
+    /// Overlays guardados por versões antigas: junta a temperatura do CPU ao lado do uso do CPU (como a da gráfica ao lado do uso da
+    /// gráfica), só nos overlays que mostram o uso do CPU como valor e ainda não têm a temperatura. Corre uma vez.
+    /// </summary>
+    private static void Migrate(OverlayStoreData d)
+    {
+        if (d.Version >= CurrentVersion) return;
+        foreach (var p in d.Profiles)
+        {
+            if (p.Items.Any(i => i.SensorId == "v/cpu_temp")) continue;
+            var cpu = p.Items.FirstOrDefault(i => i.Kind == ItemKind.Value && i.SensorId == "v/cpu_total");
+            if (cpu == null) continue;
+            // Mesmo afastamento que a temperatura da gráfica tem do uso da gráfica (no Clássico: 78 px)
+            var gpu = p.Items.FirstOrDefault(i => i.Kind == ItemKind.Value && i.SensorId == "v/gpu_load");
+            var gpuTemp = p.Items.FirstOrDefault(i => i.Kind == ItemKind.Value && i.SensorId == "v/gpu_temp");
+            double dx = gpu != null && gpuTemp != null && Math.Abs(gpu.Y - gpuTemp.Y) < 1 ? gpuTemp.X - gpu.X : 78;
+            p.Items.Insert(p.Items.IndexOf(cpu) + 1, new OverlayItem
+            {
+                Kind = ItemKind.Value, SensorId = "v/cpu_temp", Label = "", Unit = "°C", X = cpu.X + dx, Y = cpu.Y, FontSize = cpu.FontSize,
+                Anchor = cpu.Anchor, LabelColor = cpu.LabelColor, ValueColor = gpuTemp?.ValueColor ?? cpu.ValueColor,
+                Thresholds = { Hot(80), Hot(90, "#FFEF4444") },
+            });
+        }
+        d.Version = CurrentVersion;
+        try { File.WriteAllText(File_, JsonSerializer.Serialize(d, Json)); } catch { }
     }
 
     public static void Save()
@@ -167,6 +197,7 @@ public static class OverlayStore
                     V("v/gpu_load", "GPU", "%", 22, 134, 15),
                     V("v/gpu_temp", "", "°C", 100, 134, 15, th: new[] { Hot(80), Hot(87, Red) }),
                     V("v/cpu_total", "CPU", "%", 22, 162, 15),
+                    V("v/cpu_temp", "", "°C", 100, 162, 15, th: new[] { Hot(80), Hot(90, Red) }),
                     V("v/ram_pct", "RAM", "%", 150, 162, 15, th: new[] { Hot(85), Hot(93, Red) }),
                     V("v/vram_pct", "VRAM", "%", 150, 134, 15, th: new[] { Hot(90), Hot(97, Red) }),
                 },
@@ -199,7 +230,8 @@ public static class OverlayStore
                     V("v/gpu_power", "", "W", 140, 262, 15),
                     V("v/gpu_clock", "", "MHz", 210, 262, 15),
                     V("v/ram_used", "RAM", "GB", 24, 296, 15, 1),
-                    V("v/dpc", "DPC", "%", 170, 296, 15, 1, th: new[] { Hot(3, Red) }),
+                    V("v/cpu_temp", "CPU", "°C", 120, 296, 15, th: new[] { Hot(80), Hot(90, Red) }),
+                    V("v/dpc", "DPC", "%", 220, 296, 15, 1, th: new[] { Hot(3, Red) }),
                 },
             },
         };

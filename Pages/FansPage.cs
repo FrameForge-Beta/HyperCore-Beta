@@ -484,6 +484,31 @@ public sealed class FansPage : UserControl
         _live.Add(update);
         update();
 
+        // Identificar: põe esta saída a 100% durante 6 s para se ouvir/ver qual é (ex.: o water cooler) e devolve-a como estava
+        var identify = Ui.Btn("Identificar (100% durante 6 s)", (_, _) => { }, "Btn");
+        identify.HorizontalAlignment = HorizontalAlignment.Left;
+        identify.Margin = new Thickness(0, 0, 0, 10);
+        identify.ToolTip = "Acelera só esta ventoinha/bomba durante 6 segundos. A que fizer barulho ou subir de RPM é esta. Depois volta ao que estava.";
+        identify.Click += async (_, _) =>
+        {
+            identify.IsEnabled = false;
+            bool engineOwns = C.Enabled && E.IsAttached && cc.Mode != ControlMode.Auto;
+            try
+            {
+                try { ctl.SetSoftware(Math.Min(100, (float)ctl.MaxSoftwareValue)); }
+                catch (Exception ex) { identify.Content = "Não deu para mexer: " + ex.Message; return; }
+                for (int i = 6; i > 0; i--) { identify.Content = $"A 100%… {i} s"; await Task.Delay(1000); }
+            }
+            finally
+            {
+                // Com o HyperCore a controlar, o próximo ciclo da curva/manual repõe sozinho; senão devolve à BIOS
+                if (!engineOwns) try { ctl.SetDefault(); } catch { }
+                if (identify.Content is string t && t.StartsWith("A 100%")) identify.Content = "Identificar (100% durante 6 s)";
+                identify.IsEnabled = true;
+            }
+        };
+        sp.Children.Add(identify);
+
         var mode = Combo(new[] { ("Automático (BIOS/driver decide)", ControlMode.Auto), ("Seguir uma curva", ControlMode.Curve), ("Manual (velocidade fixa)", ControlMode.Manual) },
                          cc.Mode, v => { cc.Mode = v; Save(); BuildControls(); });
         sp.Children.Add(Field("Modo", mode));

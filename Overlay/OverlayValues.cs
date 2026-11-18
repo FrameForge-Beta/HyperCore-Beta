@@ -138,6 +138,7 @@ public static class OverlayValues
         new("v/gpu_fan", "Gráfica", "Ventoinha", "%", SensorKind.Control),
         new("v/vram_pct", "Gráfica", "VRAM usada", "%", SensorKind.Load),
         new("v/vram_used", "Gráfica", "VRAM usada", "GB", SensorKind.Data),
+        new("v/cpu_temp", "Processador", "Temperatura", "°C", SensorKind.Temperature),
         new("v/cpu_total", "Processador", "Uso total", "%", SensorKind.Load),
         new("v/cpu_maxthread", "Processador", "Thread mais ocupado", "%", SensorKind.Load),
         new("v/cpu_clock", "Processador", "Clock efetivo", "MHz", SensorKind.Clock),
@@ -196,6 +197,7 @@ public static class OverlayValues
                 return s.VramTotalMB > 0 ? 100.0 * s.VramUsedMB!.Value / s.VramTotalMB.Value : null;
             }
             case "v/vram_used": return GpuValue(SensorKind.Data, "GPU Memory Used") is float vram ? vram / 1024.0 : s.VramUsedMB / 1024.0;
+            case "v/cpu_temp": return CpuTemperature() ?? s.CpuTemp;
             case "v/cpu_total": return CpuValue(SensorKind.Load, "CPU Total") ?? s.CpuTotal;
             case "v/cpu_maxthread":
             {
@@ -236,6 +238,31 @@ public static class OverlayValues
     private static float? CpuValue(SensorKind kind, string name) =>
         SensorHub.Instance.FindValue(e => e.HardwareType == LibreHardwareMonitor.Hardware.HardwareType.Cpu &&
             e.Kind == kind && e.Name == name);
+
+    // Nomes do sensor principal de temperatura do processador, por ordem de preferência (AMD Tctl/Tdie, Intel Package...)
+    private static readonly string[] CpuTempNames =
+        { "Core (Tctl/Tdie)", "CPU Package", "Package", "Tctl", "Tdie", "Core (Tctl)", "Core (Tdie)", "CCD1 (Tdie)", "Core Max", "Core Average" };
+
+    /// <summary>
+    /// Temperatura do CPU vinda da melhor fonte disponível: o sensor do próprio processador e, se não houver,
+    /// o sensor "CPU" do chip da placa-mãe (ITE/Nuvoton). Valores fora de 1–125 °C são ignorados (sensor desligado/avariado).
+    /// </summary>
+    public static double? CpuTemperature()
+    {
+        static bool Ok(float v) => v is > 1 and < 125;
+        var hub = SensorHub.Instance;
+        foreach (var name in CpuTempNames)
+            if (hub.FindValue(e => e.HardwareType == LibreHardwareMonitor.Hardware.HardwareType.Cpu && e.Kind == SensorKind.Temperature &&
+                                   string.Equals(e.Name, name, StringComparison.OrdinalIgnoreCase) && e.Value is float v && Ok(v)) is float t)
+                return t;
+        var any = hub.FindValues(e => e.HardwareType == LibreHardwareMonitor.Hardware.HardwareType.Cpu && e.Kind == SensorKind.Temperature &&
+                                      e.Value is float v && Ok(v));
+        if (any.Count > 0) return any.Max();
+        // Placa-mãe: o chip de sensores (Super I/O) costuma ter uma entrada "CPU" com a temperatura do socket
+        var board = hub.FindValues(e => e.HardwareType == LibreHardwareMonitor.Hardware.HardwareType.SuperIO && e.Kind == SensorKind.Temperature &&
+                                        e.Lhm?.Name is "CPU" or "CPU Core" or "CPU Socket" && e.Value is float v && Ok(v));
+        return board.Count > 0 ? board.Max() : null;
+    }
 
     public static string GameName(int pid) => pid == 0 ? "" : SystemSampler.ProcessName(pid) ?? "";
 }

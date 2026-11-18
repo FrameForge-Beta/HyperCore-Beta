@@ -146,7 +146,7 @@ public sealed class SensorHub : IDisposable
                 string id = s.Identifier.ToString();
                 if (!_byId.TryGetValue(id, out var e))
                 {
-                    e = new SensorEntry { Id = id, Name = s.Name, Group = h.Name, HardwareType = h.HardwareType, Kind = KindOf(s.SensorType), Unit = UnitOf(s.SensorType), Lhm = s };
+                    e = new SensorEntry { Id = id, Name = FriendlyName(s, h), Group = FriendlyGroup(h), HardwareType = h.HardwareType, Kind = KindOf(s.SensorType), Unit = UnitOf(s.SensorType), Lhm = s };
                     _byId[id] = e;
                     _entries.Add(e);
                 }
@@ -155,6 +155,49 @@ public sealed class SensorHub : IDisposable
             AddSamplerSensors();
             ComputeCustom();
         }
+    }
+
+    /// <summary>O chip de sensores da placa-mãe aparece com o nome técnico (ex.: "ITE IT8689E", "Nuvoton NCT6798D"): mostra "Placa-mãe".</summary>
+    private static string FriendlyGroup(IHardware h) => h.HardwareType switch
+    {
+        HardwareType.SuperIO or HardwareType.EmbeddedController => "Placa-mãe",
+        _ => h.Name,
+    };
+
+    /// <summary>Nomes dos sensores da placa-mãe em português (os do processador, gráfica e discos já vêm com nomes claros).</summary>
+    private static string FriendlyName(ISensor s, IHardware h)
+    {
+        if (h.HardwareType is not (HardwareType.SuperIO or HardwareType.EmbeddedController)) return s.Name;
+        string n = s.Name;
+        string Num(string prefix, string pt) => n.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) ? pt + n[prefix.Length..] : n;
+        return s.SensorType switch
+        {
+            SensorType.Temperature => n switch
+            {
+                "CPU" or "CPU Core" or "CPU Socket" => "Temperatura do CPU",
+                "System" or "Motherboard" => "Temperatura da placa",
+                "Chipset" or "PCH" => "Temperatura do chipset",
+                "VRM" or "VRM MOS" or "MOS" => "Temperatura dos VRM",
+                _ => Num("Temperature", "Temperatura"),
+            },
+            SensorType.Fan => n switch
+            {
+                "CPU Fan" or "CPU" => "Ventoinha do CPU",
+                "Pump" or "AIO Pump" or "CPU OPT" or "W_PUMP+" => "Bomba do water cooler",
+                _ when n.StartsWith("System Fan", StringComparison.OrdinalIgnoreCase) => Num("System Fan", "Ventoinha da caixa"),
+                _ when n.StartsWith("Chassis Fan", StringComparison.OrdinalIgnoreCase) => Num("Chassis Fan", "Ventoinha da caixa"),
+                _ => Num("Fan", "Ventoinha"),
+            },
+            SensorType.Control => n switch
+            {
+                "CPU Fan" or "CPU" => "Controlo da ventoinha do CPU",
+                "Pump" or "AIO Pump" or "CPU OPT" or "W_PUMP+" => "Controlo da bomba",
+                _ when n.StartsWith("System Fan", StringComparison.OrdinalIgnoreCase) => Num("System Fan", "Controlo da ventoinha da caixa"),
+                _ when n.StartsWith("Chassis Fan", StringComparison.OrdinalIgnoreCase) => Num("Chassis Fan", "Controlo da ventoinha da caixa"),
+                _ => Num("Fan", "Controlo da ventoinha"),
+            },
+            _ => n,
+        };
     }
 
     private static void Walk(IHardware hw, List<(ISensor, IHardware)> seen)
