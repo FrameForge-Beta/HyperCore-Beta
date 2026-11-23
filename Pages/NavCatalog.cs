@@ -143,18 +143,18 @@ public static class NavCatalog
                 "energia bateria plano consumo portatil"),
         }, "meu pc computador hardware"),
 
-        new("S:tests", "O MEU PC", "Testes", "", "Benchmark, stress test e teste de periféricos.", new NavTab[]
+        new("S:tests", "O MEU PC", "Stress test e testes", "", "Stress test, benchmark e teste do rato, teclado e ecrã.", new NavTab[]
         {
-            new("PageBench", "Benchmark", "", "Dá uma nota à CPU, GPU, memória e disco para comparar.",
-                "Testes que dão uma nota à CPU, GPU, ray tracing, memória e disco. Bom para comparar antes/depois de um ajuste. Põe o PC a trabalhar a fundo durante o teste.",
-                "benchmark pontuacao nota cinebench comparar"),
             new("PageStress", "Stress test", "", "CPU, RAM e GPU a 100% com corte automático por temperatura.",
                 "Põe CPU/RAM/GPU a 100% para ver temperaturas máximas e estabilidade. Pára sozinho se passar do limite de temperatura que escolheres.",
-                "stress furmark prime carga maxima estabilidade"),
+                "stress teste de stress stresstest fazer stress test carga 100 furmark prime occt aida temperatura maxima aquece estabilidade aguenta crasha"),
+            new("PageBench", "Benchmark", "", "Dá uma nota à CPU, GPU, memória e disco para comparar.",
+                "Testes que dão uma nota à CPU, GPU, ray tracing, memória e disco. Bom para comparar antes/depois de um ajuste. Põe o PC a trabalhar a fundo durante o teste.",
+                "benchmark pontuacao nota cinebench 3dmark comparar quanto vale o meu pc"),
             new("FF:peripherals", "Periféricos", "", "Rato, teclado e ecrã: polling, cliques, teclas e píxeis.",
                 "Taxa de polling do rato, duplo clique avariado, botões e roda, teclas ao mesmo tempo (ghosting), píxeis mortos, rasto de movimento e refresh real do ecrã.",
                 "rato teclado ecra polling hz duplo clique pixeis mortos ghosting mouse botoes roda rasto refresh real"),
-        }, "testes testar"),
+        }, "testes testar stress test benchmark"),
 
         new("S:drivers", "O MEU PC", "Drivers e RGB", "", "Drivers atualizados e as luzes do PC num só sítio.", new NavTab[]
         {

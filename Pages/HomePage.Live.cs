@@ -387,16 +387,21 @@ public sealed partial class HomePage
 
     // =================================================================== atalhos
 
+    // "O que queres fazer?": ações em linguagem simples, cada uma leva direto à página certa
     private static readonly (string Glyph, string Label, string Sub, string Tag)[] Shortcuts =
     {
-        ("", "Scan completo", "Mede e afina sozinho", "FF:scan"),
-        ("", "Níveis", "Afinar o Windows", "FF:optimize"),
-        ("", "Overlay", "FPS por cima do jogo", "FF:overlay"),
-        ("", "Ping e lag", "Rede para jogar online", "FF:netgame"),
-        ("", "Ventoinhas", "Curvas e ruído", "FF:fans"),
-        ("", "Limpeza rápida", "Liberta RAM agora", "PageOptimize"),
-        ("", "Visão geral", "Gráficos ao vivo", "PageDash"),
-        ("", "Central Desfazer", "Repor o que mudou", "FF:undo"),
+        ("", "Fazer um stress test", "Vê se o PC aguenta a 100% sem aquecer", "PageStress"),
+        ("", "Medir o FPS num jogo", "Abre o jogo e grava a sessão", "FF:games"),
+        ("", "Ligar o overlay de FPS", "FPS e temperaturas por cima do jogo", "FF:overlay"),
+        ("", "Ver as temperaturas", "CPU, gráfica e discos ao vivo", "PageSensors"),
+        ("", "Testar o ping e o lag", "Antes de jogar online", "FF:netgame"),
+        ("", "Overclock automático", "Encontra o máximo estável sozinho", "FF:scan"),
+        ("", "Dar mais FPS ao Windows", "Ajustes por níveis, tudo volta atrás", "FF:optimize"),
+        ("", "Controlar as ventoinhas", "Velocidade e ruído, incluindo water cooler", "FF:fans"),
+        ("", "Limpar o PC", "Liberta RAM e apaga ficheiros inúteis", "PageOptimize"),
+        ("", "Fazer um benchmark", "Dá uma nota ao teu PC", "PageBench"),
+        ("", "Testar rato, teclado e ecrã", "Polling, cliques e píxeis mortos", "FF:peripherals"),
+        ("", "Desfazer o que mudei", "Volta tudo como estava", "FF:undo"),
     };
 
     private UIElement BuildShortcuts()
@@ -413,13 +418,13 @@ public sealed partial class HomePage
             DockPanel.SetDock(icon, Dock.Left);
             dock.Children.Add(icon);
             var text = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
-            text.Children.Add(new TextBlock { Text = label, FontSize = 13, FontWeight = FontWeights.SemiBold, TextTrimming = TextTrimming.CharacterEllipsis });
+            text.Children.Add(new TextBlock { Text = label, FontSize = 14, FontWeight = FontWeights.SemiBold, TextTrimming = TextTrimming.CharacterEllipsis });
             text.Children.Add(new TextBlock { Text = sub, FontSize = 11.5, Foreground = Ui.Res("Muted"), TextTrimming = TextTrimming.CharacterEllipsis });
             dock.Children.Add(text);
             var tile = new Border
             {
                 Background = Ui.Res("Card"), BorderBrush = Ui.Res("Line"), BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(12),
-                Padding = new Thickness(12, 10, 12, 10), Margin = new Thickness(0, 0, 10, 10), Cursor = Cursors.Hand, Child = dock,
+                Padding = new Thickness(14, 14, 14, 14), Margin = new Thickness(0, 0, 10, 10), Cursor = Cursors.Hand, Child = dock, ToolTip = sub,
             };
             tile.MouseEnter += (_, _) => { tile.BorderBrush = Ui.Res("Accent"); tile.Background = Ui.Res("Hover"); };
             tile.MouseLeave += (_, _) => { tile.BorderBrush = Ui.Res("Line"); tile.Background = Ui.Res("Card"); };

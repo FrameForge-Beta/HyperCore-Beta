@@ -1239,7 +1239,7 @@
                                     <TextBlock Text="Modo de janela" Foreground="{DynamicResource Muted}" FontSize="12" Margin="0,8,0,0"/>
                                     <WrapPanel x:Name="LModePanel" Margin="0,4,0,10">
                                     <RadioButton Style="{StaticResource Chip}" GroupName="LMode" Content="Padrão do jogo" Tag="default" IsChecked="True" Checked="LProfile_Changed"/>
-                                    <RadioButton Style="{StaticResource Chip}" GroupName="LMode" Content="Tela cheia" Tag="full" Checked="LProfile_Changed"/>
+                                    <RadioButton Style="{StaticResource Chip}" GroupName="LMode" Content="Ecrã inteiro" Tag="full" Checked="LProfile_Changed"/>
                                     <RadioButton Style="{StaticResource Chip}" GroupName="LMode" Content="Sem bordas" Tag="borderless" Checked="LProfile_Changed"/>
                                     <RadioButton Style="{StaticResource Chip}" GroupName="LMode" Content="Janela" Tag="window" Checked="LProfile_Changed"/>
                                 </WrapPanel>
@@ -2690,6 +2690,38 @@
                     </Grid.RowDefinitions>
 
 
+                    <!-- Começar já: 3 testes prontos (as opções detalhadas ficam por baixo) -->
+                    <Border Grid.Row="0" Style="{StaticResource CardBorder}" Margin="0,0,0,14">
+                        <StackPanel>
+                            <TextBlock Text="Começar já" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource Fg}"/>
+                            <TextBlock Text="Escolhe um teste e ele começa logo. Pára sozinho se o processador ou a gráfica aquecerem demais. Para parar antes, carrega em PARAR."
+                                       Foreground="{DynamicResource Muted}" FontSize="12.5" TextWrapping="Wrap" Margin="0,4,0,12"/>
+                            <UniformGrid Columns="3">
+                                <Button Style="{StaticResource OutlineButton}" Tag="rapido" Click="StressPreset_Click" Margin="0,0,8,0" Padding="14,12" HorizontalContentAlignment="Left"
+                                        ToolTip="Processador e memória a 100% durante 5 minutos. Bom para ver se aquece demais.">
+                                    <StackPanel>
+                                        <TextBlock Text="Teste rápido · 5 min" FontSize="14" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Processador e memória" Foreground="{DynamicResource Muted}" FontSize="12"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Style="{StaticResource OutlineButton}" Tag="completo" Click="StressPreset_Click" Margin="4,0,4,0" Padding="14,12" HorizontalContentAlignment="Left"
+                                        ToolTip="Processador, memória e gráfica a 100% durante 15 minutos. Confirma se o PC é estável (ex.: depois de um overclock).">
+                                    <StackPanel>
+                                        <TextBlock Text="Teste completo · 15 min" FontSize="14" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Processador, memória e gráfica" Foreground="{DynamicResource Muted}" FontSize="12"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Style="{StaticResource OutlineButton}" Tag="gpu" Click="StressPreset_Click" Margin="8,0,0,0" Padding="14,12" HorizontalContentAlignment="Left"
+                                        ToolTip="Só a placa gráfica a 100% durante 10 minutos. Bom para testar o overclock da gráfica e as ventoinhas.">
+                                    <StackPanel>
+                                        <TextBlock Text="Só a gráfica · 10 min" FontSize="14" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Overclock e ventoinhas da gráfica" Foreground="{DynamicResource Muted}" FontSize="12"/>
+                                    </StackPanel>
+                                </Button>
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
                     <!-- Configuração -->
                     <Border Grid.Row="1" Style="{StaticResource CardBorder}" Margin="0,0,0,14">
                         <Grid>
@@ -2705,7 +2737,7 @@
                             <!-- Linha 1: geral + CPU/RAM -->
                             <WrapPanel>
                                 <StackPanel Margin="0,0,36,0">
-                                    <TextBlock Text="COMPONENTES" Style="{StaticResource Label}"/>
+                                    <TextBlock Text="O QUE TESTAR" Style="{StaticResource Label}"/>
                                     <StackPanel Orientation="Horizontal" Height="30">
                                         <CheckBox x:Name="ChkCpu" Content="CPU" IsChecked="True" Margin="0,0,20,0"/>
                                         <CheckBox x:Name="ChkRam" Content="RAM" Checked="ChkRam_Click" Unchecked="ChkRam_Click" Margin="0,0,20,0"/>
@@ -2743,11 +2775,11 @@
                                             <RadioButton Style="{StaticResource Chip}" GroupName="GpuRes" Content="720p" Tag="1280x720" Margin="0,0,6,0"/>
                                             <RadioButton Style="{StaticResource Chip}" GroupName="GpuRes" Content="1080p" Tag="1920x1080" Margin="0,0,6,0" IsChecked="True"/>
                                             <RadioButton Style="{StaticResource Chip}" GroupName="GpuRes" Content="1440p" Tag="2560x1440" Margin="0,0,6,0"/>
-                                            <RadioButton Style="{StaticResource Chip}" GroupName="GpuRes" Content="Tela cheia" Tag="full" Margin="0"/>
+                                            <RadioButton Style="{StaticResource Chip}" GroupName="GpuRes" Content="Ecrã inteiro" Tag="full" Margin="0"/>
                                         </StackPanel>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,24,0">
-                                        <TextBlock Text="ANTI-ALIASING" Style="{StaticResource Label}"/>
+                                        <TextBlock Text="QUALIDADE DA IMAGEM" Style="{StaticResource Label}"/>
                                         <StackPanel x:Name="GpuMsaaPanel" Orientation="Horizontal">
                                             <RadioButton Style="{StaticResource Chip}" GroupName="GpuMsaa" Content="Off" Tag="1" Margin="0,0,6,0"/>
                                             <RadioButton Style="{StaticResource Chip}" GroupName="GpuMsaa" Content="4x MSAA" Tag="4" Margin="0,0,6,0" IsChecked="True"/>
@@ -2868,7 +2900,7 @@
                     <!-- Log -->
                     <Border Grid.Row="4" Style="{StaticResource CardBorder}" Padding="18,14,10,10">
                         <DockPanel>
-                            <TextBlock DockPanel.Dock="Top" Text="REGISTRO" Style="{StaticResource Label}"/>
+                            <TextBlock DockPanel.Dock="Top" Text="O QUE ACONTECEU" Style="{StaticResource Label}"/>
                             <ListBox x:Name="StressLog" FontFamily="{StaticResource Mono}" FontSize="12"
                                      Foreground="{DynamicResource Muted}" ItemContainerStyle="{StaticResource PlainItem}"/>
                         </DockPanel>

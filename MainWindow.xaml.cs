@@ -139,7 +139,7 @@ public partial class MainWindow : Window
         SnapshotUsb();
         RefreshDrives();
         // Versão do programa mostrada no rodapé da barra lateral (vém do <Version> do csproj).
-        string appVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.5.2";
+        string appVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.5.3";
         SideVersion.Text = $"HyperCore v{appVersion}";
         FrameForge.Pages.UpdateFlow.Attach(SideVersion); // vira "Nova versão · atualizar" quando há uma
         UpdateDashboard();
@@ -1695,8 +1695,22 @@ public partial class MainWindow : Window
 
     private void BtnStress_Click(object sender, RoutedEventArgs e)
     {
-        if (TestRunning) StopStress("Parado pelo usuário");
+        if (TestRunning) StopStress("Parado por ti");
         else StartStress();
+    }
+
+    /// <summary>Botões "Começar já" do stress test: escolhem as opções certas e começam logo.</summary>
+    private void StressPreset_Click(object sender, RoutedEventArgs e)
+    {
+        if (TestRunning) { StopStress("Parado por ti"); return; } // a correr: o botão pára (não arranca outro por cima)
+        string kind = (sender as FrameworkElement)?.Tag as string ?? "rapido";
+        ChkCpu.IsChecked = kind != "gpu";
+        ChkRam.IsChecked = kind != "gpu";
+        ChkGpu.IsChecked = kind != "rapido";
+        TxtDuration.Text = kind switch { "completo" => "15", "gpu" => "10", _ => "5" };
+        ChkRam_Click(sender, e);
+        ChkGpu_Click(sender, e);
+        StartStress();
     }
 
     private void ChkRam_Click(object sender, RoutedEventArgs e)

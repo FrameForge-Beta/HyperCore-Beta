@@ -12,9 +12,9 @@
     <AssemblyName>HyperCore</AssemblyName>
     <RootNamespace>HyperCore</RootNamespace>
     <Product>HyperCore</Product>
-    <Version>0.5.2</Version>
-    <FileVersion>0.5.2</FileVersion>
-    <AssemblyVersion>0.5.2</AssemblyVersion>
+    <Version>0.5.3</Version>
+    <FileVersion>0.5.3</FileVersion>
+    <AssemblyVersion>0.5.3</AssemblyVersion>
     <!-- Sempre otimizado: benchmarks e stress tests precisam do JIT otimizado -->
     <Optimize>true</Optimize>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

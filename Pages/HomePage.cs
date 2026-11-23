@@ -49,6 +49,13 @@ public sealed partial class HomePage : UserControl
 
         root.Children.Add(BuildHero());
 
+        // Primeiro o que a pessoa quer fazer (ações em linguagem simples); o estado ao vivo vem depois
+        var shortTitle = Ui.SectionTitle("O que queres fazer?");
+        shortTitle.Margin = new Thickness(0, 10, 0, 10);
+        root.Children.Add(shortTitle);
+        var shortcuts = (UniformGrid)BuildShortcuts();
+        root.Children.Add(shortcuts);
+
         var liveTitle = Ui.SectionTitle("Agora no teu PC");
         liveTitle.Margin = new Thickness(0, 10, 0, 10);
         root.Children.Add(liveTitle);
@@ -68,11 +75,6 @@ public sealed partial class HomePage : UserControl
         duo.Children.Add(game);
         root.Children.Add(duo);
 
-        var shortTitle = Ui.SectionTitle("Atalhos");
-        shortTitle.Margin = new Thickness(0, 14, 0, 10);
-        root.Children.Add(shortTitle);
-        var shortcuts = (UniformGrid)BuildShortcuts();
-        root.Children.Add(shortcuts);
 
         // Em janelas estreitas: 2 cartões por linha em vez de 4, e Modo Jogo / último jogo um por baixo do outro.
         root.SizeChanged += (_, e) =>
