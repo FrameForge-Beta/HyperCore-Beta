@@ -6,7 +6,7 @@
 
 **O ecossistema completo para Windows de monitorização em tempo real, telemetria segura para jogos, diagnóstico de hardware, otimização de desempenho e gestão total de aplicações.**
 
-[![Versão](https://img.shields.io/badge/Versão-0.5.5_Beta-2E9BFF?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/FrameForge-Beta/FrameForge-Beta/releases/latest)
+[![Versão](https://img.shields.io/badge/Versão-0.5.5_Beta-2E9BFF?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/FrameForge-Beta/HyperCore-Beta/releases/latest)
 [![Plataforma](https://img.shields.io/badge/.NET-8.0_WPF-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Linguagem](https://img.shields.io/badge/Linguagem-C%23_12_%2F_XAML-239120?style=for-the-badge&logo=csharp&logoColor=white)](https://learn.microsoft.com/dotnet/csharp/)
 [![Anti-Cheat Safe](https://img.shields.io/badge/Anti--Cheat-100%25_Seguro_(Sem_Injeção)-00C853?style=for-the-badge&logo=shield&logoColor=white)](#-arquitetura-anti-cheat-segura)
@@ -83,7 +83,7 @@ O **HyperCore** (antigo FrameForge) é uma suite completa de diagnóstico, telem
 ## 📁 Estrutura do Projeto
 
 ```text
-FrameForge-Beta/
+HyperCore-Beta/
 ├── Apps/          # Atualizador winget, API personalizada winstall.app e desinstalador estilo Revo
 ├── Benchmarks/    # Benchmarks de CPU, GPU (DX11/12/RT), RAM, disco e stress test
 ├── Core/          # Serviços globais, definições, ChangeJournal (Central Desfazer) e mapa de disco
@@ -120,7 +120,7 @@ FrameForge-Beta/
 ## 🚀 Como Instalar ou Compilar
 
 ### Opção 1: Instalador / Atualizador Oficial (Recomendado)
-1. Acede às [Releases](https://github.com/FrameForge-Beta/FrameForge-Beta/releases/latest).
+1. Acede às [Releases](https://github.com/FrameForge-Beta/HyperCore-Beta/releases/latest).
 2. Transfere e executa **`HyperCore-Setup-0.5.5.exe`** como Administrador.
 3. Se já tiveres uma versão anterior do HyperCore ou FrameForge instalada, o assistente fecha a versão antiga, atualiza automaticamente na mesma pasta e preserva as tuas definições em `%AppData%\HyperCore`.
 
@@ -128,8 +128,8 @@ FrameForge-Beta/
 Requer [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) no Windows:
 
 ```bash
-git clone https://github.com/FrameForge-Beta/FrameForge-Beta.git
-cd FrameForge-Beta
+git clone https://github.com/FrameForge-Beta/HyperCore-Beta.git
+cd HyperCore-Beta
 dotnet build HyperCore.csproj -c Release
 dotnet run --project HyperCore.csproj -c Release
 ```
