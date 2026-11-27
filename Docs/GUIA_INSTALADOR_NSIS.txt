@@ -1,0 +1,175 @@
+# GUIA COMPLETO - COMO CRIAR O INSTALADOR NSIS DO HYPERCORE
+
+Este documento explica todo o processo passo a passo para criar o instalador NSIS do HyperCore com a aba Atualizar aplicacoes (via winget).
+
+---
+
+## 1. PRERREQUISITOS
+
+Antes de comecar, certifique-se de que o seguinte esta instalado:
+
+### .NET 8 SDK (ou superior)
+- Baixe em: https://dotnet.microsoft.com/download/dotnet/8.0
+- Verifique: dotnet --version
+
+### NSIS 3.08+ (Nullsoft Scriptable Install System)
+- Baixe em: https://nsis.sourceforge.io/Download
+- Instalacao padrao: C:\Program Files (x86)\NSIS\makensis.exe
+- Verifique: makensis /VERSION
+
+### Windows SDK (Targeting Packs) - OBRIGATORIO para build .NET Windows
+O .NET 8 precisa dos Windows Targeting Packs para compilar projetos net8.0-windows.
+
+Instale via Visual Studio Installer:
+1. Abra Visual Studio Installer
+2. Clique em Modificar na instalacao do Visual Studio Community/Professional/Enterprise
+3. Vaca em Componentes individuais
+4. Procure e marque:
+   - Windows 10 SDK (10.0.19041.0) ou Windows 11 SDK (10.0.22621.0)
+   - .NET Framework 4.8 Targeting Pack
+5. Clique em Modificar para instalar
+
+Ou instale via linha de comando (se disponivel):
+powershell
+winget install Microsoft.WindowsSDK.10.0.18362
+
+---
+
+## 2. COMPILACAO DO PROJETO .NET
+
+### Passo 2.1 - Restaurar pacotes NuGet
+powershell
+dotnet restore HyperCore.csproj
+
+Se houver erro de Value cannot be null (Parameter path1) no NuGet:
+- Exclua a pasta obj/ completamente
+- Crie um ficheiro NuGet.Config na raiz do projeto:
+  <?xml version="1.0" encoding="utf-8"?>
+  <configuration>
+    <config>
+      <add key="globalPackagesFolder" value="C:\Users\<SEU_USUARIO>\.nuget\packages" />
+    </config>
+    <packageSources>
+      <clear />
+      <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+    </packageSources>
+  </configuration>
+
+### Passo 2.2 - Build em modo Release
+powershell
+dotnet build HyperCore.csproj -c Release
+
+### Passo 2.3 - Publish (gera a pasta publicar/)
+powershell
+dotnet publish HyperCore.csproj -c Release -r win-x64 --self-contained false -o publicar
+
+Nota: Se usar --self-contained false, o utilizador precisa ter .NET 8 Runtime instalado.
+Se usar --self-contained true, o instalador fica maior mas nao precisa de .NET no PC do utilizador.
+
+---
+
+## 3. CRIACAO DO INSTALADOR NSIS
+
+### Passo 3.1 - Verificar o script NSIS
+O ficheiro installer/HyperCore.nsi ja esta configurado. Principais secoes:
+
+- !define APP_NAME "HyperCore" - Nome da aplicacao
+- !define APP_VERSION "0.5.0" - Versao
+- OutFile "..\artifacts\installer\HyperCore-Setup-${APP_VERSION}.exe" - Ficheiro de saida
+- File /r /x "*.pdb" "..\publicar\*.*" - Copia binarios da pasta publicar/
+
+### Passo 3.2 - Compilar o instalador
+powershell
+# Navegue para a pasta installer
+cd installer
+
+# Compile com makensis
+"C:\Program Files (x86)\NSIS\makensis.exe" HyperCore.nsi
+
+Saida esperada:
+Processing script file: "HyperCore.nsi"
+Output: "C:\...\artifacts\installer\HyperCore-Setup-0.5.0.exe"
+Total size: XXXXXXX / XXXXXXX bytes (XX.X%)
+
+### Passo 3.3 - Local do instalador gerado
+artifacts/installer/HyperCore-Setup-0.5.0.exe
+
+---
+
+## 4. ALTERACOES FEITAS NO CODIGO (ABA ATUALIZAR APLICACOES)
+
+Estas foram as alteracoes implementadas nos ficheiros do projeto:
+
+### 4.1 - Pages/NavCatalog.cs
+- Secao "S:apps" renomeada: "Instalar aplicacoes" -> "Atualizar aplicacoes"
+- Descricao atualizada para mencionar winstall.app
+- NavTab "PageApps": Label="Atualizar aplicacoes", Help explica o propósito
+
+### 4.2 - MainWindow.xaml (PageApps)
+- Boto principal: "INSTALAR SELECIONADOS" -> "ATUALIZAR SELECIONADOS"
+- Banner de aviso (borda amarela com ícone de aviso) explicando:
+  * Esta aba mostra atualizacoes para apps ja instalados via winget
+  * Nao instala novos apps
+  * Para instalacao precisariamos desenvolver mapa de IDs winget do zero
+  * O site winstall.app ja faz isso de forma completa
+- Hyperlink clicavel para https://winstall.app/
+- Botao "ABRIR WINSTALL.APP"
+- Status dos apps: "ATUALIZAR" (com update) / "ATUALIZADO" (sem update)
+
+### 4.3 - AppInstaller.cs
+- InstallableApp: adicionada propriedade HasUpdate
+- CanSelect agora = Installed && HasUpdate (só seleciona se tem update)
+- Novo metodo CheckUpdatesAsync(): usa winget upgrade --id --dry-run para verificar updates
+- RefreshInstalled(): agora reseta HasUpdate=false
+- InstallAsync(): suporta upgrade=true para fazer atualizacao
+
+### 4.4 - MainWindow.Apps.cs
+- InitApps() chama RefreshAppsList()
+- RefreshAppsList(): verifica apps instalados + chama CheckUpdatesAsync()
+- Boto "ATUALIZAR SELECIONADOS" so habilitado se houver updates
+- BtnAppsInstall_Click(): usa InstallAsync(upgrade=true)
+- Novos handlers: BtnWinstall_Click() + WinstallLink_RequestNavigate()
+
+---
+
+## 5. POSSIVEIS PROBLEMAS E SOLUCOES
+
+| Problema | Solucao |
+|----------|---------|
+| .NET SDK nao encontrado | Instale o .NET 8 SDK em https://dotnet.microsoft.com/download |
+| makensis nao encontrado | Instale NSIS em https://nsis.sourceforge.io/Download |
+| Erro de permissao | Rode o PowerShell como Administrador |
+| Publish falha | Verifique se HyperCore.csproj tem TargetFramework net8.0-windows |
+| NuGet Value cannot be null | Exclua pasta obj/ e crie NuGet.Config com globalPackagesFolder |
+| Windows SDK nao encontrado | Instale via Visual Studio Installer (Componentes individuais) |
+
+---
+
+## 6. RESUMO DO FLUXO COMPLETO
+
+```
+1. Instalar .NET 8 SDK
+2. Instalar NSIS 3.08+
+3. Instalar Windows SDK Targeting Packs (via VS Installer)
+4. dotnet restore HyperCore.csproj
+5. dotnet publish -c Release -r win-x64 --self-contained false -o publicar
+6. cd installer
+7. makensis.exe HyperCore.nsi
+8. Instalador gerado em: artifacts/installer/HyperCore-Setup-0.5.0.exe
+```
+
+---
+
+## 7. INSTALADOR GERADO
+
+O instalador NSIS inclui:
+- Copia dos binarios da pasta publicar/
+- Atalhos no Menu Iniciar e Area de Trabalho (opcionais)
+- Registro de desinstalacao no Windows
+- Suporte a instalacao silenciosa (/S)
+- Detecao de instalacao anterior (atualizacao)
+- Limpeza de ficheiros legados (FrameForge)
+
+---
+
+# FIM DO DOCUMENTO

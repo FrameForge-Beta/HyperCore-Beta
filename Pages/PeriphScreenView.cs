@@ -20,6 +20,7 @@ internal sealed class PeriphScreenView : StackPanel, IPeriphView
     private CancellationTokenSource? _cts;
     private bool _measuredOnce;
     private Window? _testWindow;
+    private Window? _fixerWindow;
 
     public PeriphScreenView()
     {
@@ -50,7 +51,10 @@ internal sealed class PeriphScreenView : StackPanel, IPeriphView
             "Abrir em ecrã inteiro", () => OpenTest(m => new MotionTestWindow(m)), MotionPreview()));
         Children.Add(tests);
 
-        var tip = Ui.T("Dentro dos testes: clica ou usa as setas para mudar · Esc sai.", "MutedText", 12);
+        // ------------------------------------------------ recuperador de píxeis presos (estilo JScreenFix)
+        Children.Add(BuildPixelFixerCard());
+
+        var tip = Ui.T("Dentro dos testes em ecrã inteiro: clica ou usa as setas para mudar · Esc sai.", "MutedText", 12);
         tip.Margin = new Thickness(2, 0, 0, 0);
         Children.Add(tip);
 
@@ -326,13 +330,18 @@ internal sealed class PeriphScreenView : StackPanel, IPeriphView
         for (int i = 0; i < 3; i++)
         {
             g.RowDefinitions.Add(new RowDefinition());
-            var lane = new Grid { Background = new SolidColorBrush(shades[i]) };
+            var laneBg = new SolidColorBrush(shades[i]); laneBg.Freeze();
+            var lane = new Grid { Background = laneBg };
             Grid.SetRow(lane, i);
+            var objBg = i == 2 ? new SolidColorBrush(Color.FromRgb(0x0A, 0x0E, 0x18)) : Brushes.White;
+            if (objBg is SolidColorBrush sb && !sb.IsFrozen) sb.Freeze();
+            var dotBg = new SolidColorBrush(Color.FromRgb(0x2E, 0x9B, 0xFF)); dotBg.Freeze();
             var obj = new Border
             {
                 Width = 34, Height = 13, CornerRadius = new CornerRadius(4), HorizontalAlignment = HorizontalAlignment.Left,
-                Background = i == 2 ? new SolidColorBrush(Color.FromRgb(0x0A, 0x0E, 0x18)) : Brushes.White,
-                Child = new Ellipse { Width = 7, Height = 7, Fill = new SolidColorBrush(Color.FromRgb(0x2E, 0x9B, 0xFF)), HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(5, 0, 0, 0) }
+                Background = objBg,
+                CacheMode = new BitmapCache(),
+                Child = new Ellipse { Width = 7, Height = 7, Fill = dotBg, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(5, 0, 0, 0) }
             };
             var tt = new TranslateTransform(-40, 0);
             obj.RenderTransform = tt;
@@ -348,6 +357,84 @@ internal sealed class PeriphScreenView : StackPanel, IPeriphView
         // posição de repouso para a imagem estática (antes da animação)
         foreach (Grid lane in g.Children) ((TranslateTransform)((Border)lane.Children[0]).RenderTransform).X = 90;
         return Rounded(g);
+    }
+
+    private Border BuildPixelFixerCard()
+    {
+        var sp = new StackPanel();
+
+        var body = new Grid();
+        body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(116) });
+        body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+        var preview = PixelNoisePreview();
+        preview.Margin = new Thickness(0, 0, 18, 0);
+        preview.VerticalAlignment = VerticalAlignment.Top;
+        body.Children.Add(preview);
+
+        var info = new StackPanel();
+        info.Children.Add(PeriphUi.CardHead("", "Recuperar píxeis presos (estilo JScreenFix)",
+            "Abre uma caixinha flutuante que podes arrastar para cima do píxel afetado. Os píxeis dentro da caixa mudam de cor milhões de vezes por segundo para tentar desbloquear o subpíxel."));
+
+        foreach (var b in new[]
+        {
+            "Arrasta a caixa para cima do ponto preso e deixa a correr cerca de 10 minutos.",
+            "Podes mudar o tamanho da caixa (P / M / G) e alternar entre ruído RGB por píxel e flash sólido.",
+            "Atenção: contém luzes a piscar rapidamente — evita olhar diretamente para a caixa se fores sensível."
+        })
+        {
+            var row = new DockPanel { Margin = new Thickness(0, 2, 0, 3) };
+            var dot = new Ellipse { Width = 5, Height = 5, Margin = new Thickness(2, 8, 11, 0), VerticalAlignment = VerticalAlignment.Top };
+            dot.SetResourceReference(Shape.FillProperty, "Accent2");
+            DockPanel.SetDock(dot, Dock.Left);
+            row.Children.Add(dot);
+            row.Children.Add(Ui.T(b, "Body", 13));
+            info.Children.Add(row);
+        }
+
+        var openBtn = PeriphUi.Btn("", "Ativar caixa de recuperação", (_, _) => OpenPixelFixer(), "BtnAccent");
+        openBtn.Margin = new Thickness(0, 14, 0, 12);
+        openBtn.HorizontalAlignment = HorizontalAlignment.Left;
+        info.Children.Add(openBtn);
+
+        var warn = PeriphUi.Verdict("");
+        PeriphUi.SetVerdict(warn, "Warn",
+            "Aviso: nem sempre os píxeis mortos irão voltar à vida com este processo. Esta técnica funciona sobretudo em píxeis presos (com cor fixa); píxeis totalmente mortos (pretos) por avaria física normalmente não recuperam.");
+        info.Children.Add(warn.Box);
+
+        Grid.SetColumn(info, 1);
+        body.Children.Add(info);
+        sp.Children.Add(body);
+        return PeriphUi.Card(sp);
+    }
+
+    /// <summary>Miniatura estática de ruído RGB colorido (representação da caixa de recuperação).</summary>
+    private static FrameworkElement PixelNoisePreview()
+    {
+        const int cols = 8, rows = 8;
+        var g = new UniformGrid { Columns = cols, Rows = rows, Width = 96, Height = 96 };
+        Color[] pal =
+        {
+            Color.FromRgb(255, 0, 0), Color.FromRgb(0, 255, 0), Color.FromRgb(0, 0, 255),
+            Color.FromRgb(255, 255, 0), Color.FromRgb(255, 0, 255), Color.FromRgb(0, 255, 255),
+            Colors.White, Colors.Black
+        };
+        var rng = new Random(42);
+        for (int i = 0; i < cols * rows; i++)
+            g.Children.Add(new Rectangle { Fill = new SolidColorBrush(pal[rng.Next(pal.Length)]) });
+        return Rounded(g);
+    }
+
+    private async void OpenPixelFixer()
+    {
+        if (_monitors.Count == 0) await LoadMonitorsAsync();
+        var m = (_target.SelectedItem as ComboBoxItem)?.Tag as MonitorInfo ?? _monitors.FirstOrDefault();
+        if (m == null) return;
+        try { _fixerWindow?.Close(); } catch { }
+        var w = new PixelFixerWindow(m);
+        w.Closed += (_, _) => { if (ReferenceEquals(_fixerWindow, w)) _fixerWindow = null; };
+        _fixerWindow = w;
+        w.Show();
     }
 
     private static Border Rounded(FrameworkElement inner)

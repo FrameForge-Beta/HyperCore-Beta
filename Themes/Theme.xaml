@@ -597,7 +597,8 @@
         <Setter Property="CaretBrush" Value="{DynamicResource Fg}"/>
         <Setter Property="SelectionBrush" Value="{DynamicResource Accent}"/>
         <Setter Property="FontSize" Value="13"/>
-        <Setter Property="Padding" Value="8,7"/>
+        <Setter Property="Padding" Value="10,6"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
@@ -607,7 +608,7 @@
                             <TextBlock x:Name="ph" Text="{TemplateBinding Tag}" Foreground="{DynamicResource Faint}"
                                        Margin="{TemplateBinding Padding}" Padding="2,0,0,0" Visibility="Collapsed"
                                        VerticalAlignment="Center" IsHitTestVisible="False"/>
-                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>

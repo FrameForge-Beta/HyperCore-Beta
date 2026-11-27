@@ -40,6 +40,7 @@ public partial class MainWindow
             "sessions" => new SessionsPage(),
             "optimize" => new OptimizePage(),
             "maintenance" => new MaintenancePage(),
+            "mapadisco" => new MapaDiscoPage(),
             "oc" => new OverclockPage(),
             "scan" => new ScanPage(),
             "tips" => new TipsPage(),

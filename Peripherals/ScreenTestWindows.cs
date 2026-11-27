@@ -9,6 +9,19 @@ using static FrameForge.Peripherals.PeriphNative;
 
 namespace FrameForge.Peripherals;
 
+/// <summary>Estado partilhado para pausar leituras pesadas de sensores/NVML durante testes visuais de fluidez.</summary>
+public static class ScreenTestState
+{
+    private static int _motionCount;
+    public static bool IsMotionTestOpen => Volatile.Read(ref _motionCount) > 0;
+    internal static void EnterMotionTest() => Interlocked.Increment(ref _motionCount);
+    internal static void ExitMotionTest()
+    {
+        if (Interlocked.Decrement(ref _motionCount) < 0)
+            Interlocked.Exchange(ref _motionCount, 0);
+    }
+}
+
 /// <summary>Janela de ecrã inteiro num monitor escolhido, sem bordas e por cima de tudo. Esc fecha.</summary>
 internal abstract class FullscreenTestWindow : Window
 {
@@ -144,10 +157,13 @@ internal sealed class MotionTestWindow : FullscreenTestWindow
     private int _speed = 3;
     private bool _paused;
     private double _pos;            // em píxeis físicos
+    private double _dpiScale = 1.0;
     private TimeSpan _last = TimeSpan.Zero;
+    private long _lastTick;
     private int _frames;
     private double _fps;
     private long _fpsStart = System.Diagnostics.Stopwatch.GetTimestamp();
+    private bool _enteredMotionState;
 
     public MotionTestWindow(MonitorInfo m) : base(m, "HyperCore · Rasto e movimento")
     {
@@ -156,16 +172,19 @@ internal sealed class MotionTestWindow : FullscreenTestWindow
         for (int i = 0; i < shades.Length; i++)
         {
             _lanes.RowDefinitions.Add(new RowDefinition());
-            var lane = new Grid { Background = new SolidColorBrush(shades[i].Bg), ClipToBounds = true };
+            var bgBrush = new SolidColorBrush(shades[i].Bg); bgBrush.Freeze();
+            var lane = new Grid { Background = bgBrush, ClipToBounds = true };
             Grid.SetRow(lane, i);
+            var lblBrush = new SolidColorBrush(i == 2 ? Color.FromRgb(0x30, 0x30, 0x30) : Color.FromRgb(0x9A, 0xA4, 0xB8)); lblBrush.Freeze();
             var label = new TextBlock
             {
                 Text = shades[i].Name.ToUpperInvariant(), FontSize = 11, FontWeight = FontWeights.Bold, Margin = new Thickness(18, 0, 0, 12),
                 VerticalAlignment = VerticalAlignment.Bottom, HorizontalAlignment = HorizontalAlignment.Left,
-                Foreground = new SolidColorBrush(i == 2 ? Color.FromRgb(0x30, 0x30, 0x30) : Color.FromRgb(0x9A, 0xA4, 0xB8))
+                Foreground = lblBrush
             };
             lane.Children.Add(label);
             var obj = MakeObject(i == 2);
+            obj.CacheMode = new BitmapCache();
             var tt = new TranslateTransform();
             obj.RenderTransform = tt;
             lane.Children.Add(obj);
@@ -183,10 +202,19 @@ internal sealed class MotionTestWindow : FullscreenTestWindow
         MouseWheel += (_, e) => Change(e.Delta > 0 ? 1 : -1);
         Loaded += (_, _) =>
         {
+            _dpiScale = VisualTreeHelper.GetDpi(this).DpiScaleX;
+            _lastTick = System.Diagnostics.Stopwatch.GetTimestamp();
+            _fpsStart = _lastTick;
+            if (!_enteredMotionState) { ScreenTestState.EnterMotionTest(); _enteredMotionState = true; }
             CompositionTarget.Rendering += OnFrame;
             Hint("Segue o objeto com os olhos.\nUm rasto atrás dele é ghosting; um contorno claro à frente é overdrive a mais.\n↑/↓ ou clique muda a velocidade  ·  Espaço pausa  ·  Esc sai");
         };
-        Closed += (_, _) => CompositionTarget.Rendering -= OnFrame;
+        DpiChanged += (_, e) => _dpiScale = e.NewDpi.DpiScaleX;
+        Closed += (_, _) =>
+        {
+            CompositionTarget.Rendering -= OnFrame;
+            if (_enteredMotionState) { ScreenTestState.ExitMotionTest(); _enteredMotionState = false; }
+        };
     }
 
     private static FrameworkElement MakeObject(bool onLight)
@@ -236,15 +264,18 @@ internal sealed class MotionTestWindow : FullscreenTestWindow
     {
         var t = e is RenderingEventArgs r ? r.RenderingTime : TimeSpan.Zero;
         if (t == _last) return; // o mesmo frame pode chegar duas vezes
-        double dt = _last == TimeSpan.Zero ? 0 : (t - _last).TotalSeconds;
         _last = t;
-        if (dt > 0.25) dt = 0; // a janela esteve parada
-        _frames++;
+
         long now = System.Diagnostics.Stopwatch.GetTimestamp();
+        double dt = _lastTick == 0 ? 0 : (now - _lastTick) / (double)System.Diagnostics.Stopwatch.Frequency;
+        _lastTick = now;
+        if (dt > 0.25) dt = 0; // a janela esteve parada
+
+        _frames++;
         double el = (now - _fpsStart) / (double)System.Diagnostics.Stopwatch.Frequency;
         if (el >= 0.5) { _fps = _frames / el; _frames = 0; _fpsStart = now; UpdateInfo(); }
 
-        double scale = VisualTreeHelper.GetDpi(this).DpiScaleX;
+        double scale = _dpiScale > 0 ? _dpiScale : 1.0;
         if (!_paused) _pos += Speeds[_speed] * dt;
         double laneW = ActualWidth * scale;
         double objW = 168 * scale;
@@ -254,5 +285,226 @@ internal sealed class MotionTestWindow : FullscreenTestWindow
         double x = (_pos - objW) / scale;
         x = Math.Round(x * scale) / scale; // anda em píxeis inteiros (sem desfocar de propósito)
         foreach (var m in _moves) m.X = x;
+    }
+}
+
+/// <summary>
+/// Caixa flutuante arrastável estilo JScreenFix: altera aleatoriamente as cores de cada píxel (ruído RGB puro
+/// ou flash RGB) à taxa de atualização do monitor (milhões de transições de píxeis por segundo) para tentar
+/// recuperar píxeis presos. Fica por cima das janelas até o utilizador a fechar.
+/// </summary>
+internal sealed class PixelFixerWindow : Window
+{
+    private static readonly int[] Sizes = { 120, 200, 320 };
+    private static readonly string[] SizeLabels = { "P", "M", "G" };
+    // Paleta de alta energia (cores primárias/secundárias puras em BGR32) para estimular os 3 subpíxeis R/G/B
+    private static readonly uint[] VividPalette =
+    {
+        0xFF0000FF, // Vermelho puro
+        0xFF00FF00, // Verde puro
+        0xFFFF0000, // Azul puro
+        0xFF00FFFF, // Amarelo
+        0xFFFF00FF, // Magenta
+        0xFFFFFF00, // Ciano
+        0xFFFFFFFF, // Branco
+        0xFF000000  // Preto
+    };
+
+    private readonly MonitorInfo _monitor;
+    private readonly System.Windows.Controls.Image _img = new() { Stretch = Stretch.Fill };
+    private readonly TextBlock _timerText = new() { Text = "00:00", FontSize = 11.5, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 8, 0) };
+    private readonly Button _sizeBtn;
+    private readonly Button _modeBtn;
+    private readonly System.Windows.Threading.DispatcherTimer _clock = new() { Interval = TimeSpan.FromSeconds(1) };
+    private readonly System.Diagnostics.Stopwatch _sw = new();
+
+    private System.Windows.Media.Imaging.WriteableBitmap? _bmp;
+    private int _sizeIdx = 1; // 200×200 por omissão
+    private bool _flashMode;  // false = ruído por píxel (estilo JScreenFix), true = flash sólido R/G/B/W/K
+    private int _flashStep;
+    private uint _rng = 0xA3C59AC3u;
+    private TimeSpan _lastFrame = TimeSpan.Zero;
+
+    public PixelFixerWindow(MonitorInfo monitor)
+    {
+        _monitor = monitor;
+        Title = "HyperCore · Recuperar píxeis";
+        WindowStyle = WindowStyle.None;
+        ResizeMode = ResizeMode.NoResize;
+        AllowsTransparency = false;
+        Topmost = true;
+        ShowInTaskbar = true;
+        WindowStartupLocation = WindowStartupLocation.Manual;
+        Background = new SolidColorBrush(Color.FromRgb(0x0B, 0x0F, 0x1A));
+        FontFamily = new FontFamily("Segoe UI Variable Text, Segoe UI");
+
+        var root = new DockPanel { LastChildFill = true };
+
+        // Barra superior compacta (arrastável) com temporizador, tamanho, modo e fechar
+        var bar = new DockPanel
+        {
+            Height = 30,
+            Background = new SolidColorBrush(Color.FromRgb(0x11, 0x18, 0x27)),
+            Cursor = Cursors.SizeAll
+        };
+        bar.MouseLeftButtonDown += (_, e) => { if (e.ButtonState == MouseButtonState.Pressed) try { DragMove(); } catch { } };
+
+        var closeBtn = MiniBtn("✕", "Fechar (Esc)", (_, _) => Close());
+        closeBtn.Foreground = new SolidColorBrush(Color.FromRgb(0xFC, 0xA5, 0xA5));
+        DockPanel.SetDock(closeBtn, Dock.Right);
+        bar.Children.Add(closeBtn);
+
+        _modeBtn = MiniBtn("Ruído", "Alternar entre ruído por píxel (JScreenFix) e flash sólido RGB", (_, _) =>
+        {
+            _flashMode = !_flashMode;
+            _modeBtn.Content = _flashMode ? "Flash" : "Ruído";
+        });
+        DockPanel.SetDock(_modeBtn, Dock.Right);
+        bar.Children.Add(_modeBtn);
+
+        _sizeBtn = MiniBtn("M", "Mudar tamanho da caixa (P: 120px · M: 200px · G: 320px)", (_, _) =>
+        {
+            _sizeIdx = (_sizeIdx + 1) % Sizes.Length;
+            ApplyBoxSize();
+        });
+        DockPanel.SetDock(_sizeBtn, Dock.Right);
+        bar.Children.Add(_sizeBtn);
+
+        var leftInfo = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(8, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
+        var grip = new TextBlock { Text = "⋮⋮", Foreground = new SolidColorBrush(Color.FromRgb(0x94, 0xA3, 0xB8)), FontSize = 12, Margin = new Thickness(0, 0, 6, 0), VerticalAlignment = VerticalAlignment.Center };
+        leftInfo.Children.Add(grip);
+        leftInfo.Children.Add(_timerText);
+        bar.Children.Add(leftInfo);
+
+        DockPanel.SetDock(bar, Dock.Top);
+        root.Children.Add(bar);
+
+        // Área de píxeis (também arrastável ao clicar e segurar)
+        RenderOptions.SetBitmapScalingMode(_img, BitmapScalingMode.NearestNeighbor);
+        var stage = new Border
+        {
+            BorderBrush = new SolidColorBrush(Color.FromRgb(0x2E, 0x9B, 0xFF)),
+            BorderThickness = new Thickness(1),
+            Cursor = Cursors.SizeAll,
+            ToolTip = "Arrasta para cima do píxel preso · Esc fecha",
+            Child = _img
+        };
+        stage.MouseLeftButtonDown += (_, e) => { if (e.ButtonState == MouseButtonState.Pressed) try { DragMove(); } catch { } };
+        root.Children.Add(stage);
+
+        Content = root;
+
+        _clock.Tick += (_, _) =>
+        {
+            var e = _sw.Elapsed;
+            _timerText.Text = e.TotalHours >= 1 ? e.ToString(@"hh\:mm\:ss") : e.ToString(@"mm\:ss");
+        };
+
+        KeyDown += (_, e) =>
+        {
+            if (e.Key == Key.Escape) { Close(); e.Handled = true; }
+        };
+
+        Loaded += (_, _) =>
+        {
+            ApplyBoxSize(centerOnMonitor: true);
+            _sw.Start();
+            _clock.Start();
+            ScreenTestState.EnterMotionTest();
+            CompositionTarget.Rendering += OnRender;
+            Activate();
+        };
+
+        Closed += (_, _) =>
+        {
+            CompositionTarget.Rendering -= OnRender;
+            ScreenTestState.ExitMotionTest();
+            _clock.Stop();
+            _sw.Stop();
+        };
+    }
+
+    private static Button MiniBtn(string text, string tip, RoutedEventHandler click)
+    {
+        var b = new Button
+        {
+            Content = text,
+            ToolTip = tip,
+            Foreground = new SolidColorBrush(Color.FromRgb(0xE2, 0xE8, 0xF0)),
+            Background = Brushes.Transparent,
+            BorderThickness = new Thickness(0),
+            Padding = new Thickness(7, 2, 7, 2),
+            FontSize = 11,
+            FontWeight = FontWeights.SemiBold,
+            Cursor = Cursors.Hand,
+            VerticalAlignment = VerticalAlignment.Stretch
+        };
+        b.Click += click;
+        return b;
+    }
+
+    private void ApplyBoxSize(bool centerOnMonitor = false)
+    {
+        int px = Sizes[_sizeIdx];
+        _sizeBtn.Content = SizeLabels[_sizeIdx];
+        Width = px + 2;
+        Height = px + 32;
+        _bmp = new System.Windows.Media.Imaging.WriteableBitmap(px, px, 96, 96, PixelFormats.Bgr32, null);
+        _img.Source = _bmp;
+
+        if (centerOnMonitor)
+        {
+            double dpiX = VisualTreeHelper.GetDpi(this).DpiScaleX;
+            double dpiY = VisualTreeHelper.GetDpi(this).DpiScaleY;
+            double monLeft = _monitor.X / dpiX;
+            double monTop = _monitor.Y / dpiY;
+            double monW = _monitor.Width / dpiX;
+            double monH = _monitor.Height / dpiY;
+            Left = monLeft + (monW - Width) / 2;
+            Top = monTop + (monH - Height) / 2;
+        }
+    }
+
+    private unsafe void OnRender(object? sender, EventArgs e)
+    {
+        if (_bmp == null) return;
+        var t = e is RenderingEventArgs r ? r.RenderingTime : TimeSpan.Zero;
+        if (t == _lastFrame) return;
+        _lastFrame = t;
+
+        int w = _bmp.PixelWidth;
+        int h = _bmp.PixelHeight;
+        _bmp.Lock();
+        try
+        {
+            uint* ptr = (uint*)_bmp.BackBuffer;
+            int count = w * h;
+            if (_flashMode)
+            {
+                uint color = VividPalette[_flashStep++ % VividPalette.Length];
+                for (int i = 0; i < count; i++) ptr[i] = color;
+            }
+            else
+            {
+                // Xorshift32 inline: gera milhões de trocas de cor de píxeis por segundo com quase zero CPU
+                uint s = _rng;
+                fixed (uint* pal = VividPalette)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        s ^= s << 13;
+                        s ^= s >> 17;
+                        s ^= s << 5;
+                        ptr[i] = pal[s & 7];
+                    }
+                }
+                _rng = s;
+            }
+            _bmp.AddDirtyRect(new Int32Rect(0, 0, w, h));
+        }
+        finally
+        {
+            _bmp.Unlock();
+        }
     }
 }

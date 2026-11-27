@@ -61,7 +61,10 @@ public sealed class StressTester
         _threads.Clear();
         _cts.Dispose();
         _cts = null;
-        GC.Collect();
+        // Forçar liberação imediata da memória alocada pelo teste de RAM
+        GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
+        GC.WaitForPendingFinalizers();
+        GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
     }
 
     private void StartThread(ThreadStart body, string name)

@@ -113,11 +113,13 @@ public static class NavCatalog
         {
             new("PageOptimize", "Limpeza rápida", "", "Liberta memória e fecha programas de fundo antes de jogar.",
                 "Liberta memória e fecha programas de fundo antes de jogar. Não mexe em jogos abertos.", "limpar ram memoria fechar programas"),
-            new("FF:maintenance", "Manutenção", "", "Ficheiros temporários, limpeza do Windows e desfragmentação de HDDs.",
-                "Limpa ficheiros temporários antigos, abre a ferramenta nativa de limpeza do Windows, desfragmenta apenas HDDs e calcula o espaço ocupado por pastas. SSDs nunca são desfragmentados.",
-                "limpar temporarios espaco disco desfragmentar lixo"),
+            new("FF:maintenance", "Manutenção", "", "Ficheiros temporários, limpeza do Windows, desfragmentação de HDDs e mapa do disco.",
+                "Limpa ficheiros temporários antigos, abre a ferramenta nativa de limpeza do Windows, desfragmenta apenas HDDs e mostra um mapa visual do que ocupa espaço no disco. SSDs nunca são desfragmentados.",
+                "limpar temporarios espaco disco desfragmentar lixo mapa do disco"),
             new("PageStartup", "Arranque do Windows", "", "Programas que abrem sozinhos com o Windows.",
                 "Programas que abrem sozinhos com o Windows. Desligar não desinstala nada e pode ser desfeito.", "arranque inicializacao startup boot lento"),
+            new("FF:mapadisco", "Mapa do Disco", "", "Mapa visual do que ocupa espaço no disco com blocos (treemap).",
+                "Veja visualmente o que ocupa espaço no disco com um mapa de blocos (treemap). Cada bloco é uma pasta ou arquivo. Só lê: não apaga nada.", "mapa do disco treemap espaco ficheiros pastas"),
         }, "limpeza limpar arranque"),
 
         // ---------------- O MEU PC ----------------
@@ -151,9 +153,9 @@ public static class NavCatalog
             new("PageStress", "Stress test", "", "CPU, RAM e GPU a 100% com corte automático por temperatura.",
                 "Põe CPU/RAM/GPU a 100% para ver temperaturas máximas e estabilidade. Pára sozinho se passar do limite de temperatura que escolheres.",
                 "stress furmark prime carga maxima estabilidade"),
-            new("FF:peripherals", "Periféricos", "", "Rato, teclado e ecrã: polling, cliques, teclas e píxeis.",
-                "Taxa de polling do rato, duplo clique avariado, botões e roda, teclas ao mesmo tempo (ghosting), píxeis mortos, rasto de movimento e refresh real do ecrã.",
-                "rato teclado ecra polling hz duplo clique pixeis mortos ghosting mouse botoes roda rasto refresh real"),
+            new("FF:peripherals", "Periféricos", "", "Rato, teclado, ecrã, comando, fones e câmara.",
+                "Taxa de polling do rato, duplo clique avariado, botões e roda, teclas ao mesmo tempo (ghosting), píxeis mortos, rasto de movimento, refresh real do ecrã, comando de videojogo (botões, analógicos, drift e vibração), fones estéreo (esquerda, direita, ambos e frequências) e teste de câmara/webcam.",
+                "rato teclado ecra comando controle gamepad joystick xbox playstation drift vibracao fones auscultadores headset audio som esquerda direita stereo estereo balanco camara camera webcam video polling hz duplo clique pixeis mortos presos recuperar jscreenfix ghosting mouse botoes roda rasto refresh real"),
         }, "testes testar"),
 
         new("S:drivers", "O MEU PC", "Drivers e RGB", "", "Drivers atualizados e as luzes do PC num só sítio.", new NavTab[]
@@ -169,11 +171,18 @@ public static class NavCatalog
                 "ch340 cp210x ftdi prolific serial", Advanced: true),
         }, "drivers rgb luzes"),
 
-        new("S:apps", "O MEU PC", "Instalar aplicações", "", "Os essenciais de uma vez, pelas fontes oficiais.", new NavTab[]
+        new("S:apps", "O MEU PC", "Aplicações", "", "Atualiza, instala em lote e desinstala programas com limpeza de resíduos.", new NavTab[]
         {
-            new("PageApps", "Instalar aplicações", "", "Os essenciais de uma vez, pelas fontes oficiais.",
-                "Instala os essenciais (Steam, Discord, Chrome…) de uma vez, pelas fontes oficiais (winget).", "instalar apps programas winget steam discord chrome formatar"),
-        }, "instalar programas apps"),
+            new("PageApps", "Atualizar aplicações", "", "Atualiza os apps já instalados no PC via winget.",
+                "Detecta automaticamente os aplicativos instalados no seu PC com atualização pendente via winget e permite marcar apps como 'Nunca atualizar'.",
+                "atualizar apps programas winget upgrade nunca atualizar"),
+            new("PageAppsInstall", "Instalar aplicações", "", "Catálogo completo (+16.500 apps) com categorias, pacotes e instalação em lote.",
+                "Pesquise, explore categorias e pacotes prontos (baseados no winstall.app) e instale vários aplicativos de uma só vez via winget.",
+                "instalar apps programas loja catalogo winstall pacotes lote batch winget install"),
+            new("PageAppsUninstall", "Desinstalar aplicações", "", "Desinstala programas, força remoção e limpa sobras (estilo Revo Uninstaller).",
+                "Lista programas Win32 e apps da Microsoft Store, alerta em vermelho sobre componentes críticos do sistema, permite forçar desinstalação e limpa pastas e chaves de registro residuais.",
+                "desinstalar remover revo uninstaller lixo residuos forcar registro limpar"),
+        }, "atualizar instalar desinstalar programas apps winget winstall revo"),
 
         // ---------------- rodapé ----------------
         new("S:undo", Footer, "Central Desfazer", "", "Tudo o que o HyperCore mudou, para desfazer com um clique.", new NavTab[]

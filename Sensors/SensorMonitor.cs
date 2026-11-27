@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using LibreHardwareMonitor.Hardware;
 
 namespace ResetExplode;
@@ -9,6 +9,7 @@ public sealed class SensorMonitor : IDisposable
     private readonly Computer _computer;
     private readonly Dictionary<string, SensorRow> _index = new();
     private volatile bool _open;
+    private int _refreshing;
 
     public ObservableCollection<SensorRow> Rows { get; } = new();
     public bool IsOpen => _open;
@@ -35,6 +36,76 @@ public sealed class SensorMonitor : IDisposable
         if (!_open) return;
         foreach (var hw in _computer.Hardware)
             Walk(hw);
+    }
+
+    /// <summary>
+    /// Executa a leitura pesada de hardware (hw.Update: MSR, NVML, SMBus, SMART) fora da UI thread
+    /// e aplica apenas os valores já lidos nas ObservableCollection rows na UI thread — evitando travamentos de animação.
+    /// </summary>
+    public async Task RefreshAsync()
+    {
+        if (!_open) return;
+        if (Interlocked.Exchange(ref _refreshing, 1) == 1) return;
+
+        try
+        {
+            var snapshot = await Task.Run(() =>
+            {
+                var list = new List<(string Id, string Hardware, string Category, string Name, SensorType Type, HardwareType HwType, float? Value, float? Min, float? Max)>(128);
+                if (!_open) return list;
+                foreach (var hw in _computer.Hardware)
+                    CollectHardware(hw, list);
+                return list;
+            });
+
+            if (!_open) return;
+
+            foreach (var s in snapshot)
+            {
+                if (!_index.TryGetValue(s.Id, out var row))
+                {
+                    row = new SensorRow
+                    {
+                        Id = s.Id,
+                        Hardware = s.Hardware,
+                        Category = s.Category,
+                        Name = s.Name,
+                        Type = s.Type,
+                        HardwareType = s.HwType
+                    };
+                    _index[s.Id] = row;
+                    Rows.Add(row);
+                }
+                row.Update(s.Value, s.Min, s.Max);
+            }
+        }
+        catch { }
+        finally
+        {
+            Interlocked.Exchange(ref _refreshing, 0);
+        }
+    }
+
+    private static void CollectHardware(
+        IHardware hw,
+        List<(string Id, string Hardware, string Category, string Name, SensorType Type, HardwareType HwType, float? Value, float? Min, float? Max)> list)
+    {
+        try { hw.Update(); } catch { }
+        foreach (var s in hw.Sensors)
+        {
+            list.Add((
+                s.Identifier.ToString(),
+                hw.Name,
+                SensorRow.CategoryName(s.SensorType),
+                s.Name,
+                s.SensorType,
+                hw.HardwareType,
+                s.Value,
+                s.Min,
+                s.Max));
+        }
+        foreach (var sub in hw.SubHardware)
+            CollectHardware(sub, list);
     }
 
     private void Walk(IHardware hw)

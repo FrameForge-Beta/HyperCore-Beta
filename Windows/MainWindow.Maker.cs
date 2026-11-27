@@ -161,12 +161,14 @@ public partial class MainWindow
             return;
         }
         bool installed = MakerDrivers.IdeVersion() != null;
-        var app = new InstallableApp { Name = "Arduino IDE", WingetId = "ArduinoSA.IDE.stable" };
+        var app = new UpdatableApp { Name = "Arduino IDE", WingetId = "ArduinoSA.IDE.stable" };
         MakerBusy(true);
         MakerIdeResult.Text = installed ? "Atualizando a Arduino IDE… (pode levar alguns minutos)" : "Instalando a Arduino IDE… (pode levar alguns minutos)";
         try
         {
-            var (ok, msg) = await AppInstaller.InstallAsync(app, CancellationToken.None, upgrade: installed);
+            var result = await AppInstaller.InstallAsync(app, CancellationToken.None);
+                        var ok = result.Ok;
+                        var msg = result.Message;
             // "upgrade" sem versão nova responde com o código de "nada para atualizar"
             MakerIdeResult.Text = installed && ok && msg != "Instalado." ? "A IDE já está na versão mais recente." : msg;
         }

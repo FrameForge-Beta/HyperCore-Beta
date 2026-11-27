@@ -147,18 +147,20 @@ public partial class MainWindow : Window
         Loaded += async (_, _) => await LoadHardwareAsync();
 
         _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-        _timer.Tick += (_, _) =>
+        _timer.Tick += async (_, _) =>
         {
-            // Durante a cena de GPU as leituras de sensores (NVML/driver) ficam pausadas: cada consulta trava o driver
-            // por um instante e aparecia como engasgo no 1% low do benchmark.
-            if (_gpuBenchActive) return;
-            _monitor.Refresh();
+            // Durante a cena de GPU ou teste de movimento de ecrã as leituras de sensores (NVML/driver) ficam pausadas:
+            // cada consulta pode travar o driver da GPU por um instante e causar engasgos visíveis.
+            if (_gpuBenchActive || FrameForge.Peripherals.ScreenTestState.IsMotionTestOpen) return;
+            await _monitor.RefreshAsync();
+            if (_gpuBenchActive || FrameForge.Peripherals.ScreenTestState.IsMotionTestOpen) return;
             if (_monitor.IsOpen) StatusText.Text = $"{_monitor.Rows.Count} sensores · atualizado {DateTime.Now:HH:mm:ss}";
             UpdateStressPanel();
-            UpdateGpuLive();
+            if (PageGpu.IsVisible || PageDash.IsVisible || PageOc.IsVisible || PageBottleneck.IsVisible || PageOverlay.IsVisible || _overlay != null)
+                UpdateGpuLive();
             UpdateCpuSensorWarning();
             CollectDashSample();
-            UpdateBottleneck();
+            if (PageBottleneck.IsVisible) UpdateBottleneck();
             if (PageBench.IsVisible) UpdateBenchLive();
             if (PageOptimize.IsVisible) UpdateRamStatus();
         };
@@ -554,6 +556,8 @@ public partial class MainWindow : Window
             case "PageDriver": InitDriver(); break;
             case "PageStartup": ScanStartup(); break;
             case "PageApps": InitApps(); break;
+            case "PageAppsInstall": InitAppsInstall(); break;
+            case "PageAppsUninstall": InitAppsUninstall(); break;
             case "PageMakerPorts": ScanUsb(); break;
             case "PageMakerDrv": InitMakerDrivers(); break;
             case "PageOptimize": InitOptimize(); break;
@@ -562,7 +566,7 @@ public partial class MainWindow : Window
 
     private void ShowPage(string name)
     {
-        foreach (var p in new FrameworkElement[] { PageFF, PageDash, PageSystem, PageSensors, PageGpu, PageGames, PageBottleneck, PageOverlay, PageBench, PageOptimize, PageOc, PageInteg, PageLauncher, PageDriver, PageStartup, PageApps, PageMakerPorts, PageMakerDrv, PageDisks, PageEnergy, PageNet, PageStress })
+        foreach (var p in new FrameworkElement[] { PageFF, PageDash, PageSystem, PageSensors, PageGpu, PageGames, PageBottleneck, PageOverlay, PageBench, PageOptimize, PageOc, PageInteg, PageLauncher, PageDriver, PageStartup, PageApps, PageAppsInstall, PageAppsUninstall, PageMakerPorts, PageMakerDrv, PageDisks, PageEnergy, PageNet, PageStress })
             p.Visibility = p.Name == name ? Visibility.Visible : Visibility.Collapsed;
     }
 

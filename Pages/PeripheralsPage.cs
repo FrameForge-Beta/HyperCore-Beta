@@ -8,8 +8,10 @@ namespace FrameForge.Pages;
 
 /// <summary>
 /// Testes › Periféricos (tag "FF:peripherals"): rato (polling por Raw Input, botões, roda, duplo clique avariado),
-/// teclado (teclado visual, teclas ao mesmo tempo / ghosting) e ecrã (refresh real medido, píxeis mortos e rasto em
-/// ecrã inteiro). Só leitura: nenhum teste muda o PC, por isso não há nada a registar na Central Desfazer.
+/// teclado (teclado visual, teclas ao mesmo tempo / ghosting), ecrã (refresh real medido, píxeis mortos e rasto em
+/// ecrã inteiro), comando (botões, analógicos, drift e vibração), fones (esquerda, direita, ambos, equilíbrio e
+/// frequências) e câmara (webcam ao vivo, resolução, FPS e iluminação). Só leitura: nenhum teste muda o PC, por isso
+/// não há nada a registar na Central Desfazer.
 /// O cabeçalho (título, descrição, abas da secção) vem da janela principal; a página começa logo no conteúdo.
 /// </summary>
 public sealed class PeripheralsPage : UserControl
@@ -30,7 +32,10 @@ public sealed class PeripheralsPage : UserControl
         _tabs = new TabStrip()
             .Add("mouse", "Rato", "", "Polling, botões, roda e duplo clique")
             .Add("keys", "Teclado", "", "Todas as teclas e teclas ao mesmo tempo")
-            .Add("screen", "Ecrã", "", "Refresh real, píxeis mortos e rasto");
+            .Add("screen", "Ecrã", "", "Refresh real, píxeis mortos e rasto")
+            .Add("gamepad", "Comando", "", "Botões, analógicos, gatilhos, drift e vibração")
+            .Add("audio", "Fones", "", "Esquerda, direita, ambos, equilíbrio e frequências")
+            .Add("camera", "Câmara", "", "Webcam ao vivo, resolução, FPS e iluminação");
         _tabs.Margin = new Thickness(0, 0, 0, 14);
         _tabs.SelectionChanged += Show;
         root.Children.Add(_tabs);
@@ -44,7 +49,11 @@ public sealed class PeripheralsPage : UserControl
             _loaded = true;
             ComponentDispatcher.ThreadPreprocessMessage += OnPreprocess;
             _window = Window.GetWindow(this);
-            if (_window != null) _window.Deactivated += OnDeactivated;
+            if (_window != null)
+            {
+                _window.Deactivated += OnDeactivated;
+                _window.Closing += OnClosing;
+            }
             _active?.Activate();
         };
         Unloaded += (_, _) =>
@@ -52,7 +61,11 @@ public sealed class PeripheralsPage : UserControl
             if (!_loaded) return;
             _loaded = false;
             ComponentDispatcher.ThreadPreprocessMessage -= OnPreprocess;
-            if (_window != null) _window.Deactivated -= OnDeactivated;
+            if (_window != null)
+            {
+                _window.Deactivated -= OnDeactivated;
+                _window.Closing -= OnClosing;
+            }
             _window = null;
             _active?.Deactivate();
         };
@@ -61,7 +74,7 @@ public sealed class PeripheralsPage : UserControl
         Show(_lastTab);
     }
 
-    /// <summary>Abre uma aba interna por código ("mouse", "keys" ou "screen").</summary>
+    /// <summary>Abre uma aba interna por código ("mouse", "keys", "screen", "gamepad", "audio" ou "camera").</summary>
     public void ShowTab(string key) { _tabs.Select(key); Show(key); }
 
     private void Show(string key)
@@ -72,6 +85,9 @@ public sealed class PeripheralsPage : UserControl
             {
                 "keys" => new PeriphKeyboardView(),
                 "screen" => new PeriphScreenView(),
+                "gamepad" => new PeriphGamepadView(),
+                "audio" => new PeriphAudioView(),
+                "camera" => new PeriphCameraView(),
                 _ => new PeriphMouseView(),
             };
             _views[key] = v;
@@ -93,6 +109,8 @@ public sealed class PeripheralsPage : UserControl
     }
 
     private void OnDeactivated(object? sender, EventArgs e) => _active?.WindowDeactivated();
+
+    private void OnClosing(object? sender, System.ComponentModel.CancelEventArgs e) => _active?.Deactivate();
 
     private void OnPreprocess(ref MSG msg, ref bool handled)
     {

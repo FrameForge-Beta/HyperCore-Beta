@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -73,6 +73,8 @@ public partial class MainWindow
         }
         _lightTimer = new DispatcherTimer(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(33) };
         _lightTimer.Tick += LightTick;
+        // Só inicia o timer se houver dispositivos; caso contrário fica parado até o usuário conectar algo
+        if (_lightVms.Count > 0) _lightTimer.Start();
         LightColor_Changed(null, null!);
         BtnOrgbOpen.Content = FindOpenRgb() != null ? "ABRIR O OPENRGB" : "BAIXAR O OPENRGB";
         _ = ConnectAllAsync(); // primeira abertura da aba: tenta conectar em tudo
@@ -410,6 +412,9 @@ public partial class MainWindow
 
     private void LightTick(object? sender, EventArgs e)
     {
+        // Se não há dispositivos selecionados, não faz nada (evita consumo de CPU contínuo)
+        if (_lightVms == null || !_lightVms.Any(v => v.Selected)) return;
+
         double t = _lightClock.Elapsed.TotalSeconds;
         double bright = LightBright.Value / 100.0;
         double speed = LightSpeed.Value;
