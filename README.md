@@ -2,7 +2,7 @@
 
 # ⚡ HyperCore
 
-**Cada núcleo no máximo.** _(antigo FrameForge)_
+**Cada núcleo no máximo.**
 
 **O ecossistema completo para Windows de monitorização em tempo real, telemetria segura para jogos, diagnóstico de hardware, otimização de desempenho e gestão total de aplicações.**
 
@@ -21,7 +21,7 @@
 
 ## 📖 Sobre o Projeto
 
-O **HyperCore** (antigo FrameForge) é uma suite completa de diagnóstico, telemetria, afinação e manutenção para utilizadores exigentes e PC gaming no Windows. Desenvolvido em **C# / .NET 8 / WPF**, combina leitura de hardware de baixo nível, eventos do kernel (ETW) sem injeção em jogos, testes de periféricos e uma central completa de aplicações — tudo numa única interface escura moderna (azul elétrico & ciano) acelerada por GPU.
+O **HyperCore** é uma suite completa de diagnóstico, telemetria, afinação e manutenção para utilizadores exigentes e PC gaming no Windows. Desenvolvido em **C# / .NET 8 / WPF**, combina leitura de hardware de baixo nível, eventos do kernel (ETW) sem injeção em jogos, testes de periféricos e uma central completa de aplicações — tudo numa única interface escura moderna (azul elétrico & ciano) acelerada por GPU.
 
 ---
 
@@ -122,7 +122,7 @@ HyperCore-Beta/
 ### Opção 1: Instalador / Atualizador Oficial (Recomendado)
 1. Acede às [Releases](https://github.com/FrameForge-Beta/HyperCore-Beta/releases/latest).
 2. Transfere e executa **`HyperCore-Setup-0.5.5.exe`** como Administrador.
-3. Se já tiveres uma versão anterior do HyperCore ou FrameForge instalada, o assistente fecha a versão antiga, atualiza automaticamente na mesma pasta e preserva as tuas definições em `%AppData%\HyperCore`.
+3. Se já tiveres uma versão anterior do HyperCore instalada, o assistente fecha a versão antiga, atualiza automaticamente na mesma pasta e preserva as tuas definições em `%AppData%\HyperCore`.
 
 ### Opção 2: Compilar a partir do Código-Fonte
 Requer [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) no Windows:

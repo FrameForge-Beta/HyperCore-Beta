@@ -1,14 +1,12 @@
 # HyperCore — guia da aplicação
 
-**v0.5.0**
-- Novo nome: o FrameForge passa a chamar-se **HyperCore** (novo ícone). No primeiro arranque, os dados de `%AppData%\\FrameForge` são copiados para `%AppData%\\HyperCore` (a pasta antiga não é apagada) e a tarefa de arranque com o Windows passa a chamar-se "HyperCore".
-
-**v0.3.24**
-- Corrigida a leitura de RAM no overlay: percentagem e GB usam agora a memória física disponível reportada pelo Windows, como o Gestor de Tarefas.
+**v0.5.5**
+- Central de Aplicações completa (**Atualizar**, **Instalar via catálogo winstall** e **Desinstalar estilo Revo Uninstaller**).
+- Leitura assíncrona de sensores fora da UI thread para fluidez nos testes de ecrã (Hz, rasto e recuperador de píxeis).
 
 ## 1. Visão geral
 
-O HyperCore (antigo FrameForge) é uma aplicação Windows para desempenho em jogos e diagnóstico de quebras. Combina captura de frames, sensores e relatórios para ajudar a identificar causas prováveis e sugerir próximos passos.
+O HyperCore é uma aplicação Windows para desempenho em jogos e diagnóstico de quebras. Combina captura de frames, sensores e relatórios para ajudar a identificar causas prováveis e sugerir próximos passos.
 
 ## 2. Como funciona
 

@@ -168,7 +168,7 @@ O instalador NSIS inclui:
 - Registro de desinstalacao no Windows
 - Suporte a instalacao silenciosa (/S)
 - Detecao de instalacao anterior (atualizacao)
-- Limpeza de ficheiros legados (FrameForge)
+- Limpeza de ficheiros legados de versões anteriores
 
 ---
 
